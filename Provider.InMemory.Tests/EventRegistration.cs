@@ -89,10 +89,44 @@ namespace Provider.InMemory.Tests
             service.RegisterEvent(e1);
             service.RegisterEvent(e2);
 
-            var contexts = service.FilterEvents(new string[] { });
+            var context = service.FilterEvents(new string[] { })
+                .OrderByDescending(x => x.Event.On)
+                .First();
 
-            Assert.Equal("Hello World", contexts.First().State["MyVal"]);
-            Assert.Equal("Hello World Again", contexts.First().State["MyNextVal"]);
+            Assert.Equal("Hello World", context.State["MyVal"]);
+            Assert.Equal("Hello World Again", context.State["MyNextVal"]);
+        }
+
+
+        [Fact]
+        public void RegisteringEvent_StateIsMerged_Chronologically()
+        {
+            var service = new TimeLineService();
+
+            var e1 = new Event()
+            {
+                On = "2001/01/01 01:01",
+                Type = "MyEventType",
+                Entity = "E1",
+                Observations = new string[] { "State.MyVal=Hello World" }
+            };
+
+            var e2 = new Event()
+            {
+                On = "2001/01/01 01:02",
+                Type = "MyEventType",
+                Entity = "E1",
+                Observations = new string[] { "State.MyNextVal=Hello World Again" }
+            };
+
+            service.RegisterEntity("E1", "MyEntityType");
+
+            service.RegisterEvent(e1);
+            service.RegisterEvent(e2);
+
+            var contexts = service.FilterEvents(new string[] { }).OrderBy(x => x.Event.On);
+
+            Assert.False(contexts.First().State.ContainsKey("MyNextVal"));
         }
 
 
@@ -122,7 +156,7 @@ namespace Provider.InMemory.Tests
             service.RegisterEvent(e1);
             service.RegisterEvent(e2);
 
-            var contexts = service.FilterEvents(new string[] { });
+            var contexts = service.FilterEvents(new string[] { }).OrderByDescending(x => x.Event.On);
 
             Assert.Equal("Hello World Again", contexts.First().State["MyVal"]);
         }

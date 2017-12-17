@@ -28,9 +28,15 @@ namespace Chronicity.Provider.InMemory
 
             // Merge prior state
 
-            var prior = TrackedState.Where(x => x.Entity == e.Entity && x.On < tracked.On).OrderByDescending(x => x.On).FirstOrDefault();
+            var prior = TrackedState.Where(x => x.Entity == tracked.Entity && x.On < tracked.On).OrderByDescending(x => x.On).FirstOrDefault();
 
-            if (prior != null) tracked.State = prior.State;
+            if (prior != null)
+            {
+                foreach(var key in prior.State.Keys)
+                {
+                    tracked.State[key] = prior.State[key];
+                }
+            }
 
             // Parse expressions
 
@@ -53,7 +59,8 @@ namespace Chronicity.Provider.InMemory
             {
                 Event = x,
                 State = TrackedState
-                .Where(xx => x.Entity == xx.Entity && xx.On >= xx.On).OrderBy(xx => xx.On)
+                .Where(xx => x.Entity == xx.Entity && DateTime.Parse(x.On) >= xx.On)
+                .OrderByDescending(xx => xx.On)
                 .First()
                 .State
             }); 
