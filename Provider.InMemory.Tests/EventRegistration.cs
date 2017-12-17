@@ -3,7 +3,6 @@ using System;
 using Xunit;
 using Chronicity.Core.Events;
 using System.Collections.Generic;
-using Chronicity.Core.Entities;
 using System.Linq;
 
 namespace Provider.InMemory.Tests
@@ -16,14 +15,8 @@ namespace Provider.InMemory.Tests
             var service = new TimeLineService();
             var e = new Event()
             {
-                 Id = "1",
-                 On = new DateTime(2000,1,1),
-                 Type = "MyEventType",
-                 Changes = new Chronicity.Core.Entities.State()
-                 {
-                     AttributeChanges = new List<Chronicity.Core.Entities.Attribute>(),
-                     RelationshipChanges = new List<Relationship>()
-                 }
+                 On = "2001/01/01",
+                 Type = "MyEventType"
             };
 
             Assert.Throws<Exception>(() => service.RegisterEvent(e));
@@ -36,27 +29,103 @@ namespace Provider.InMemory.Tests
             var service = new TimeLineService();
             var e = new Event()
             {
-                Id = "1",
-                On = new DateTime(2000, 1, 1),
+                On = "2001/01/01",
                 Type = "MyEventType",
-                EntityId = "E1",
-                Changes = new Chronicity.Core.Entities.State()
-                {
-                    AttributeChanges = new List<Chronicity.Core.Entities.Attribute>(),
-                    RelationshipChanges = new List<Relationship>()
-                }
+                Entity = "E1"
             };
 
             service.RegisterEntity("E1", "MyEntityType");
             service.RegisterEvent(e);
 
-            var contexts = service.FilterEvents(new Filter()
-            {
-                EntityId = new List<string>() { "E1" }
-            });
+            var contexts = service.FilterEvents(new string[] {});
             
             Assert.Single(contexts);
 
         }
+
+        [Fact]
+        public void RegisteringEvent_StateIsSet()
+        {
+            var service = new TimeLineService();
+            var e = new Event()
+            {
+                On = "2001/01/01",
+                Type = "MyEventType",
+                Entity = "E1",
+                Observations = new string[] { "State.MyVal=Hello World" }
+            };
+
+            service.RegisterEntity("E1", "MyEntityType");
+            service.RegisterEvent(e);
+
+            var contexts = service.FilterEvents(new string[] { });
+
+            Assert.Equal("Hello World", contexts.First().State["MyVal"]);
+        }
+
+        [Fact]
+        public void RegisteringEvent_StateIsMerged()
+        {
+            var service = new TimeLineService();
+
+            var e1 = new Event()
+            {
+                On = "2001/01/01 01:01",
+                Type = "MyEventType",
+                Entity = "E1",
+                Observations = new string[] { "State.MyVal=Hello World" }
+            };
+
+            var e2 = new Event()
+            {
+                On = "2001/01/01 01:02",
+                Type = "MyEventType",
+                Entity = "E1",
+                Observations = new string[] { "State.MyNextVal=Hello World Again" }
+            };
+
+            service.RegisterEntity("E1", "MyEntityType");
+
+            service.RegisterEvent(e1);
+            service.RegisterEvent(e2);
+
+            var contexts = service.FilterEvents(new string[] { });
+
+            Assert.Equal("Hello World", contexts.First().State["MyVal"]);
+            Assert.Equal("Hello World Again", contexts.First().State["MyNextVal"]);
+        }
+
+
+        [Fact]
+        public void RegisteringEvent_StateIsOverwritten()
+        {
+            var service = new TimeLineService();
+
+            var e1 = new Event()
+            {
+                On = "2001/01/01 01:01",
+                Type = "MyEventType",
+                Entity = "E1",
+                Observations = new string[] { "State.MyVal=Hello World" }
+            };
+
+            var e2 = new Event()
+            {
+                On = "2001/01/01 01:02",
+                Type = "MyEventType",
+                Entity = "E1",
+                Observations = new string[] { "State.MyVal=Hello World Again" }
+            };
+
+            service.RegisterEntity("E1", "MyEntityType");
+
+            service.RegisterEvent(e1);
+            service.RegisterEvent(e2);
+
+            var contexts = service.FilterEvents(new string[] { });
+
+            Assert.Equal("Hello World Again", contexts.First().State["MyVal"]);
+        }
+
     }
 }

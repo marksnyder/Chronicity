@@ -5,4 +5,8 @@
     <RootNamespace>Chronicity.Core</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\" />
+  </ItemGroup>
+
 </Project>

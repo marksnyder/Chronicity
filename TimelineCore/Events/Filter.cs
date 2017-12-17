@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Chronicity.Core.Entities;
 
 namespace Chronicity.Core.Events
 {

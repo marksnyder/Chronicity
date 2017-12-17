@@ -9,7 +9,7 @@ namespace Chronicity.Core
         void RegisterEntity(string id, string type);
         string GetEntityType(string id);
         void RegisterEvent(Event e);
-        IEnumerable<Context> FilterEvents(Filter filter);
+        IEnumerable<Context> FilterEvents(IEnumerable<string> exrpessions);
    
     }
 }
