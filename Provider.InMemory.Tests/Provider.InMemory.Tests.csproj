@@ -4,6 +4,18 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <AssemblyName>Chronicity.Provider.InMemory.Tests</AssemblyName>
+
+    <PackageId />
+
+    <Authors />
+
+    <Company />
+
+    <Product />
+
+    <Version>111</Version>
   </PropertyGroup>
 
   <ItemGroup>

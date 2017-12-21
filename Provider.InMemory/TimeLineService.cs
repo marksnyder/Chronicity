@@ -19,23 +19,35 @@ namespace Chronicity.Provider.InMemory
             if (!EntityRegistrations.Keys.Contains(e.Entity)) throw new Exception("Unable to add event for unregistered entity type");
 
             Events.Add(e);
-            var tracked = new TimeTrackedState()
+            TimeTrackedState tracked;
+
+            // Check for concurrent state. If none then create new
+            tracked = TrackedState.Where(x => x.Entity == e.Entity && x.On == DateTime.Parse(e.On))
+                .OrderByDescending(x => x.On)
+                .FirstOrDefault();
+
+            if (tracked == null)
             {
-                Entity = e.Entity,
-                On = DateTime.Parse(e.On),
-                State = new Dictionary<string, string>()
-            };
-
-            // Merge prior state
-
-            var prior = TrackedState.Where(x => x.Entity == tracked.Entity && x.On < tracked.On).OrderByDescending(x => x.On).FirstOrDefault();
-
-            if (prior != null)
-            {
-                foreach(var key in prior.State.Keys)
+                tracked = new TimeTrackedState()
                 {
-                    tracked.State[key] = prior.State[key];
+                    Entity = e.Entity,
+                    On = DateTime.Parse(e.On),
+                    State = new Dictionary<string, string>()
+                };
+
+                // Merge prior state
+
+                var prior = TrackedState.Where(x => x.Entity == tracked.Entity && x.On < tracked.On).OrderByDescending(x => x.On).FirstOrDefault();
+
+                if (prior != null)
+                {
+                    foreach (var key in prior.State.Keys)
+                    {
+                        tracked.State[key] = prior.State[key];
+                    }
                 }
+
+                TrackedState.Add(tracked);
             }
 
             // Parse expressions
@@ -48,7 +60,7 @@ namespace Chronicity.Provider.InMemory
                 }
             }
 
-            TrackedState.Add(tracked);
+            
             
         }
 

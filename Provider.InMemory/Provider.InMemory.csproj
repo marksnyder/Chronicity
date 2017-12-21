@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RootNamespace>Chronicity.Provider.InMemory</RootNamespace>
+    <AssemblyName>Chronicity.Provider.InMemory</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

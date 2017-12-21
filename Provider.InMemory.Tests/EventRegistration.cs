@@ -129,6 +129,40 @@ namespace Provider.InMemory.Tests
             Assert.False(contexts.First().State.ContainsKey("MyNextVal"));
         }
 
+        [Fact]
+        public void RegisteringEvent_StateIsMerged_Simultaneously()
+        {
+            var service = new TimeLineService();
+
+            var e1 = new Event()
+            {
+                On = "2001/01/01 01:01",
+                Type = "MyEventType",
+                Entity = "E1",
+                Observations = new string[] { "State.MyVal=Hello World" }
+            };
+
+            var e2 = new Event()
+            {
+                On = "2001/01/01 01:01",
+                Type = "MyEventType",
+                Entity = "E1",
+                Observations = new string[] { "State.MyNextVal=Hello World Again" }
+            };
+
+            service.RegisterEntity("E1", "MyEntityType");
+
+            service.RegisterEvent(e1);
+            service.RegisterEvent(e2);
+
+            var contexts = service.FilterEvents(new string[] { }).OrderBy(x => x.Event.On);
+
+            Assert.True(contexts.First().State.ContainsKey("MyNextVal"));
+            Assert.True(contexts.First().State.ContainsKey("MyVal"));
+            Assert.True(contexts.Skip(1).First().State.ContainsKey("MyNextVal"));
+            Assert.True(contexts.Skip(1).First().State.ContainsKey("MyVal"));
+        }
+
 
         [Fact]
         public void RegisteringEvent_StateIsOverwritten()
