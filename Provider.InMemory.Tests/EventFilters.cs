@@ -20,14 +20,14 @@ namespace Provider.InMemory.Tests
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
                 Entity = "E1",
-                Observations = new string[] { "State.MyVal=Hello World" }
+                Observations = new string[] { "Entity.State.MyVal=Hello World" }
             };
 
             service.RegisterEntity("E1", "MyEntityType");
             service.RegisterEvent(e1);
 
-            var match = service.FilterEvents(new string[] { "State.MyVal=Hello World" });
-            var nonMatch = service.FilterEvents(new string[] { "State.MyVal=Not The One!" });
+            var match = service.FilterEvents(new string[] { "Entity.State.MyVal=Hello World" });
+            var nonMatch = service.FilterEvents(new string[] { "Entity.State.MyVal=Not The One!" });
 
             Assert.Single(match);
             Assert.Empty(nonMatch);
@@ -124,6 +124,53 @@ namespace Provider.InMemory.Tests
             Assert.Single(match);
             Assert.Equal("MyEventType1", match.First().Event.Type);
         }
+
+        [Fact]
+        public void FilterEvent_EntityTypeMatch()
+        {
+            var service = new TimeLineService();
+
+            var e1 = new Event()
+            {
+                On = "2001/01/01 01:01",
+                Type = "MyEventType",
+                Entity = "E1",
+                Observations = new string[] { "State.MyVal=Hello World" }
+            };
+
+            service.RegisterEntity("E1", "MyEntityType");
+            service.RegisterEvent(e1);
+
+            var match = service.FilterEvents(new string[] { "Entity.Type=MyEntityType" });
+            var nonMatch = service.FilterEvents(new string[] { "Entity.Type=Not The One!" });
+
+            Assert.Single(match);
+            Assert.Empty(nonMatch);
+        }
+
+        [Fact]
+        public void FilterEvent_EventTypeMatch()
+        {
+            var service = new TimeLineService();
+
+            var e1 = new Event()
+            {
+                On = "2001/01/01 01:01",
+                Type = "MyEventType",
+                Entity = "E1",
+                Observations = new string[] { "State.MyVal=Hello World" }
+            };
+
+            service.RegisterEntity("E1", "MyEntityType");
+            service.RegisterEvent(e1);
+
+            var match = service.FilterEvents(new string[] { "Type=MyEventType" });
+            var nonMatch = service.FilterEvents(new string[] { "Type=Not The One!" });
+
+            Assert.Single(match);
+            Assert.Empty(nonMatch);
+        }
+
 
     }
 }

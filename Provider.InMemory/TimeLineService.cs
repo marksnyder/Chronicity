@@ -13,6 +13,15 @@ namespace Chronicity.Provider.InMemory
         private List<Event> Events = new List<Event>();
         private List<TimeTrackedState> TrackedState = new List<TimeTrackedState>();
 
+        public IDictionary<string, string> GetEntityState(string entityid, string on)
+        {
+            var match = TrackedState.Where(x => x.Entity == entityid && x.On == DateTime.Parse(on)).FirstOrDefault();
+
+            if (match == null) return new Dictionary<string,string>();
+
+            return match.State;
+        }
+
         public void RegisterEvent(Event e)
         {
             if (String.IsNullOrEmpty(e.Entity)) throw new Exception("You must specify an entity id");
@@ -98,9 +107,9 @@ namespace Chronicity.Provider.InMemory
 
         private void ParseObservation(string observation, Dictionary<string,string> state)
         {
-            if(observation.StartsWith("State."))
+            if(observation.StartsWith("Entity.State."))
             {
-                var expression = observation.Replace("State.", "");
+                var expression = observation.Replace("Entity.State.", "");
                 var var = expression.Split('=')[0];
                 var value = expression.Split('=')[1];
                 state[var] = value;
@@ -111,19 +120,35 @@ namespace Chronicity.Provider.InMemory
         {
             var ret = contexts;
 
-            if (expression.StartsWith("State."))
+            if (expression.StartsWith("Entity.State."))
             {
-                var e = expression.Replace("State.", "");
+                var e = expression.Replace("Entity.State.", "");
                 var var = e.Split('=')[0];
                 var value = e.Split('=')[1];
                 ret = ret.Where(x => x.State.ContainsKey(var) && x.State[var] == value);
             }
-            else if(expression.StartsWith("On."))
+            else if (expression.StartsWith("Entity.Type"))
+            {
+                var e = expression.Replace("Entity.", "");
+                var action = e.Split('=')[0];
+
+                if (action == "Type")
+                {
+                    var value = e.Split('=')[1];
+                    ret = ret.Where(x => EntityRegistrations[x.Event.Entity] == value);
+                }
+            }
+            else if (expression.StartsWith("Type"))
+            {
+                var value = expression.Split('=')[1];
+                ret = ret.Where(x => x.Event.Type == value);
+            }
+            else if (expression.StartsWith("On."))
             {
                 var e = expression.Replace("On.", "");
-                var action = e.Split('=')[0];            
+                var action = e.Split('=')[0];
 
-                if(action == "After")
+                if (action == "After")
                 {
                     var value = DateTime.Parse(e.Split('=')[1]);
                     ret = ret.Where(x => DateTime.Parse(x.Event.On) > value);
@@ -139,7 +164,7 @@ namespace Chronicity.Provider.InMemory
                     var value1 = DateTime.Parse(value[0]);
                     var value2 = DateTime.Parse(value[1]);
                     ret = ret.Where(x => DateTime.Parse(x.Event.On) > value1 && DateTime.Parse(x.Event.On) < value2);
-                }        
+                }
             }
 
             return ret;

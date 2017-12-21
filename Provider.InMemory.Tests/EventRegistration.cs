@@ -52,7 +52,7 @@ namespace Provider.InMemory.Tests
                 On = "2001/01/01",
                 Type = "MyEventType",
                 Entity = "E1",
-                Observations = new string[] { "State.MyVal=Hello World" }
+                Observations = new string[] { "Entity.State.MyVal=Hello World" }
             };
 
             service.RegisterEntity("E1", "MyEntityType");
@@ -73,7 +73,7 @@ namespace Provider.InMemory.Tests
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
                 Entity = "E1",
-                Observations = new string[] { "State.MyVal=Hello World" }
+                Observations = new string[] { "Entity.State.MyVal=Hello World" }
             };
 
             var e2 = new Event()
@@ -81,7 +81,7 @@ namespace Provider.InMemory.Tests
                 On = "2001/01/01 01:02",
                 Type = "MyEventType",
                 Entity = "E1",
-                Observations = new string[] { "State.MyNextVal=Hello World Again" }
+                Observations = new string[] { "Entity.State.MyNextVal=Hello World Again" }
             };
 
             service.RegisterEntity("E1", "MyEntityType");
@@ -108,7 +108,7 @@ namespace Provider.InMemory.Tests
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
                 Entity = "E1",
-                Observations = new string[] { "State.MyVal=Hello World" }
+                Observations = new string[] { "Entity.State.MyVal=Hello World" }
             };
 
             var e2 = new Event()
@@ -116,7 +116,7 @@ namespace Provider.InMemory.Tests
                 On = "2001/01/01 01:02",
                 Type = "MyEventType",
                 Entity = "E1",
-                Observations = new string[] { "State.MyNextVal=Hello World Again" }
+                Observations = new string[] { "Entity.State.MyNextVal=Hello World Again" }
             };
 
             service.RegisterEntity("E1", "MyEntityType");
@@ -139,7 +139,7 @@ namespace Provider.InMemory.Tests
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
                 Entity = "E1",
-                Observations = new string[] { "State.MyVal=Hello World" }
+                Observations = new string[] { "Entity.State.MyVal=Hello World" }
             };
 
             var e2 = new Event()
@@ -147,7 +147,7 @@ namespace Provider.InMemory.Tests
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
                 Entity = "E1",
-                Observations = new string[] { "State.MyNextVal=Hello World Again" }
+                Observations = new string[] { "Entity.State.MyNextVal=Hello World Again" }
             };
 
             service.RegisterEntity("E1", "MyEntityType");
@@ -174,7 +174,7 @@ namespace Provider.InMemory.Tests
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
                 Entity = "E1",
-                Observations = new string[] { "State.MyVal=Hello World" }
+                Observations = new string[] { "Entity.State.MyVal=Hello World" }
             };
 
             var e2 = new Event()
@@ -182,7 +182,7 @@ namespace Provider.InMemory.Tests
                 On = "2001/01/01 01:02",
                 Type = "MyEventType",
                 Entity = "E1",
-                Observations = new string[] { "State.MyVal=Hello World Again" }
+                Observations = new string[] { "Entity.State.MyVal=Hello World Again" }
             };
 
             service.RegisterEntity("E1", "MyEntityType");
