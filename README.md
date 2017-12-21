@@ -4,3 +4,4 @@ Chronicity seeks to provide a data store that is time and state centric. As oppo
 
 This method of storage and retrieval will help data consumers solve analytical problems with less effort when time and context are key components.
 
+Docs at http://chronicity.io
