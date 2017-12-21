@@ -15,7 +15,9 @@ namespace Chronicity.Provider.InMemory
 
         public IDictionary<string, string> GetEntityState(string entityid, string on)
         {
-            var match = TrackedState.Where(x => x.Entity == entityid && x.On == DateTime.Parse(on)).FirstOrDefault();
+            var match = TrackedState.Where(x => x.Entity == entityid && x.On <= DateTime.Parse(on))
+                .OrderByDescending(x => x.On)
+                .FirstOrDefault();
 
             if (match == null) return new Dictionary<string,string>();
 
