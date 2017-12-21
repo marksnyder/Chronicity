@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <!-- Required elements-->
+        <id>Chronicity.Core</id>
+        <version>1</version>
+        <description>chronicity.io</description>
+        <authors>Mark Snyder</authors>
+    </metadata>
+    <files>
+		<file src="TimelineCore\bin\Release\netcoreapp2.0\publish\core.dll" target="lib\netcoreapp2.0" />
+	</files>
+</package>
