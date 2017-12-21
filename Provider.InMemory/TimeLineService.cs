@@ -101,8 +101,8 @@ namespace Chronicity.Provider.InMemory
             if(observation.StartsWith("State."))
             {
                 var expression = observation.Replace("State.", "");
-                var var = expression.Split("=")[0];
-                var value = expression.Split("=")[1];
+                var var = expression.Split('=')[0];
+                var value = expression.Split('=')[1];
                 state[var] = value;
             }
         }
@@ -114,28 +114,28 @@ namespace Chronicity.Provider.InMemory
             if (expression.StartsWith("State."))
             {
                 var e = expression.Replace("State.", "");
-                var var = e.Split("=")[0];
-                var value = e.Split("=")[1];
+                var var = e.Split('=')[0];
+                var value = e.Split('=')[1];
                 ret = ret.Where(x => x.State.ContainsKey(var) && x.State[var] == value);
             }
             else if(expression.StartsWith("On."))
             {
                 var e = expression.Replace("On.", "");
-                var action = e.Split("=")[0];            
+                var action = e.Split('=')[0];            
 
                 if(action == "After")
                 {
-                    var value = DateTime.Parse(e.Split("=")[1]);
+                    var value = DateTime.Parse(e.Split('=')[1]);
                     ret = ret.Where(x => DateTime.Parse(x.Event.On) > value);
                 }
                 else if (action == "Before")
                 {
-                    var value = DateTime.Parse(e.Split("=")[1]);
+                    var value = DateTime.Parse(e.Split('=')[1]);
                     ret = ret.Where(x => DateTime.Parse(x.Event.On) < value);
                 }
                 else if (action == "Between")
                 {
-                    var value = e.Split("=")[1].Split(",");
+                    var value = e.Split('=')[1].Split(',');
                     var value1 = DateTime.Parse(value[0]);
                     var value2 = DateTime.Parse(value[1]);
                     ret = ret.Where(x => DateTime.Parse(x.Event.On) > value1 && DateTime.Parse(x.Event.On) < value2);

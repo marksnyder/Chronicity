@@ -8,6 +8,6 @@
         <authors>Mark Snyder</authors>
     </metadata>
     <files>
-		<file src="TimelineCore\bin\Release\netcoreapp2.0\publish\core.dll" target="lib\netcoreapp2.0" />
+		<file src="TimelineCore\bin\Release\netstandard2.0\publish\core.dll" target="lib\netstandard2.0" />
 	</files>
 </package>
