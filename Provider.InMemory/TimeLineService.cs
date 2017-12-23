@@ -175,6 +175,7 @@ namespace Chronicity.Provider.InMemory
         public class TimeTrackedState
         {
             public Dictionary<string,string> State { get; set; }
+            public List<string> Links { get; set; }
             public DateTime On { get; set; }
             public string Entity { get; set; }
         }
