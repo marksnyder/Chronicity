@@ -43,7 +43,8 @@ namespace Chronicity.Provider.InMemory
                 {
                     Entity = e.Entity,
                     On = DateTime.Parse(e.On),
-                    State = new Dictionary<string, string>()
+                    State = new Dictionary<string, string>(),
+                    Links = new List<string>()
                 };
 
                 // Merge prior state
@@ -67,7 +68,7 @@ namespace Chronicity.Provider.InMemory
             {
                 foreach (var observation in e.Observations)
                 {
-                    ParseObservation(observation, tracked.State);
+                    ParseObservation(observation, tracked.State, tracked.Links);
                 }
             }
 
@@ -81,11 +82,10 @@ namespace Chronicity.Provider.InMemory
             var contexts = Events.Select(x => new Context()
             {
                 Event = x,
-                State = TrackedState
-                .Where(xx => x.Entity == xx.Entity && DateTime.Parse(x.On) >= xx.On)
-                .OrderByDescending(xx => xx.On)
-                .First()
-                .State
+                State = TrackedState.Where(xx => x.Entity == xx.Entity && DateTime.Parse(x.On) >= xx.On).OrderByDescending(xx => xx.On).First().State,
+                Links = TrackedState.Where(xx => x.Entity == xx.Entity && DateTime.Parse(x.On) >= xx.On).OrderByDescending(xx => xx.On).First().Links,
+                LinkedState = GetLinkedState(TrackedState.Where(xx => x.Entity == xx.Entity && DateTime.Parse(x.On) >= xx.On).OrderByDescending(xx => xx.On).First().Links, DateTime.Parse(x.On))
+
             }); 
 
             foreach(var expression in expressions)
@@ -95,6 +95,22 @@ namespace Chronicity.Provider.InMemory
 
             return contexts;
 
+        }
+
+        private Dictionary<string,Dictionary<string,string>> GetLinkedState(List<string> links, DateTime on)
+        {
+            var ret = new Dictionary<string, Dictionary<string, string>>();
+
+            foreach(var link in links)
+            {
+                var match = TrackedState.Where(x => x.Entity == link && x.On <= on)
+               .OrderByDescending(x => x.On)
+               .FirstOrDefault();
+
+                if (match != null) ret[link] = match.State;
+            }
+
+            return ret;
         }
 
         public string GetEntityType(string id)
@@ -107,7 +123,7 @@ namespace Chronicity.Provider.InMemory
             EntityRegistrations.Add(id, type);
         }
 
-        private void ParseObservation(string observation, Dictionary<string,string> state)
+        private void ParseObservation(string observation, Dictionary<string,string> state, List<string> links)
         {
             if(observation.StartsWith("Entity.State."))
             {
@@ -115,6 +131,13 @@ namespace Chronicity.Provider.InMemory
                 var var = expression.Split('=')[0];
                 var value = expression.Split('=')[1];
                 state[var] = value;
+            }
+            else if (observation.StartsWith("Entity.Links.Add"))
+            {
+                var expression = observation.Replace("Entity.Links.Add", "");
+                var var = expression.Split('=')[0];
+                var value = expression.Split('=')[1];
+                links.Add(value);
             }
         }
 

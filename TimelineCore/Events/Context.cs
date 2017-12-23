@@ -9,5 +9,6 @@ namespace Chronicity.Core.Events
         public Event Event { get; set; }
         public Dictionary<string,string> State { get; set; }
         public List<string> Links { get; set; }
+        public Dictionary<string,Dictionary<string,string>> LinkedState { get; set; }
     }
 }
