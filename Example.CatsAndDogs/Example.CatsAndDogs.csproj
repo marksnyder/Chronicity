@@ -17,6 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Provider.InMemory\Provider.InMemory.csproj" />
+    <ProjectReference Include="..\TimelineCore\Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="SampleData\Austin_Animal_Center_Intakes.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

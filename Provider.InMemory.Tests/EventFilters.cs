@@ -23,7 +23,6 @@ namespace Provider.InMemory.Tests
                 Observations = new string[] { "Entity.State.MyVal=Hello World" }
             };
 
-            service.RegisterEntity("E1", "MyEntityType");
             service.RegisterEvent(e1);
 
             var match = service.FilterEvents(new string[] { "Entity.State.MyVal=Hello World" });
@@ -53,7 +52,6 @@ namespace Provider.InMemory.Tests
                 Entity = "E1"
             };
 
-            service.RegisterEntity("E1", "MyEntityType");
             service.RegisterEvent(e1);
             service.RegisterEvent(e2);
 
@@ -84,7 +82,6 @@ namespace Provider.InMemory.Tests
                 Entity = "E1"
             };
 
-            service.RegisterEntity("E1", "MyEntityType");
             service.RegisterEvent(e1);
             service.RegisterEvent(e2);
 
@@ -115,7 +112,6 @@ namespace Provider.InMemory.Tests
                 Entity = "E1"
             };
 
-            service.RegisterEntity("E1", "MyEntityType");
             service.RegisterEvent(e1);
             service.RegisterEvent(e2);
 
@@ -125,28 +121,7 @@ namespace Provider.InMemory.Tests
             Assert.Equal("MyEventType1", match.First().Event.Type);
         }
 
-        [Fact]
-        public void FilterEvent_EntityTypeMatch()
-        {
-            var service = new TimeLineService();
 
-            var e1 = new Event()
-            {
-                On = "2001/01/01 01:01",
-                Type = "MyEventType",
-                Entity = "E1",
-                Observations = new string[] { "State.MyVal=Hello World" }
-            };
-
-            service.RegisterEntity("E1", "MyEntityType");
-            service.RegisterEvent(e1);
-
-            var match = service.FilterEvents(new string[] { "Entity.Type=MyEntityType" });
-            var nonMatch = service.FilterEvents(new string[] { "Entity.Type=Not The One!" });
-
-            Assert.Single(match);
-            Assert.Empty(nonMatch);
-        }
 
         [Fact]
         public void FilterEvent_EventTypeMatch()
@@ -161,7 +136,6 @@ namespace Provider.InMemory.Tests
                 Observations = new string[] { "State.MyVal=Hello World" }
             };
 
-            service.RegisterEntity("E1", "MyEntityType");
             service.RegisterEvent(e1);
 
             var match = service.FilterEvents(new string[] { "Type=MyEventType" });

@@ -34,7 +34,7 @@ namespace Provider.InMemory.Tests
                 Entity = "E1"
             };
 
-            service.RegisterEntity("E1", "MyEntityType");
+
             service.RegisterEvent(e);
 
             var contexts = service.FilterEvents(new string[] {});
@@ -55,7 +55,6 @@ namespace Provider.InMemory.Tests
                 Observations = new string[] { "Entity.State.MyVal=Hello World" }
             };
 
-            service.RegisterEntity("E1", "MyEntityType");
             service.RegisterEvent(e);
 
             var contexts = service.FilterEvents(new string[] { });
@@ -84,7 +83,6 @@ namespace Provider.InMemory.Tests
                 Observations = new string[] { "Entity.State.MyNextVal=Hello World Again" }
             };
 
-            service.RegisterEntity("E1", "MyEntityType");
 
             service.RegisterEvent(e1);
             service.RegisterEvent(e2);
@@ -119,15 +117,56 @@ namespace Provider.InMemory.Tests
                 Observations = new string[] { "Entity.State.MyNextVal=Hello World Again" }
             };
 
-            service.RegisterEntity("E1", "MyEntityType");
 
-            service.RegisterEvent(e1);
             service.RegisterEvent(e2);
+            service.RegisterEvent(e1);
 
             var contexts = service.FilterEvents(new string[] { }).OrderBy(x => x.Event.On);
 
             Assert.False(contexts.First().State.ContainsKey("MyNextVal"));
         }
+
+        //TODO
+        //[Fact]
+        //public void RegisteringEvent_StateIsMerged_Chronologically2()
+        //{
+        //    var service = new TimeLineService();
+
+        //    var e1 = new Event()
+        //    {
+        //        On = "2001/01/01 01:01",
+        //        Type = "MyEventType",
+        //        Entity = "E1",
+        //        Observations = new string[] { "Entity.State.MyVal1=Hello World" }
+        //    };
+
+        //    var e2 = new Event()
+        //    {
+        //        On = "2001/01/01 01:03",
+        //        Type = "MyEventType",
+        //        Entity = "E1",
+        //        Observations = new string[] { "Entity.State.MyVal2=Hello World Again" }
+        //    };
+
+        //    var e3 = new Event()
+        //    {
+        //        On = "2001/01/01 01:02",
+        //        Type = "MyEventType",
+        //        Entity = "E1",
+        //        Observations = new string[] { "Entity.State.MyVal3=Hello World Again" }
+        //    };
+
+
+        //    service.RegisterEvent(e1);
+        //    service.RegisterEvent(e2);
+        //    service.RegisterEvent(e3);
+
+        //    var contexts = service.FilterEvents(new string[] { }).OrderBy(x => x.Event.On);
+
+        //    Assert.False(contexts.Last().State.ContainsKey("MyVal1"));
+        //    Assert.False(contexts.Last().State.ContainsKey("MyVal2"));
+        //    Assert.False(contexts.Last().State.ContainsKey("MyVal3"));
+        //}
 
         [Fact]
         public void RegisteringEvent_StateIsMerged_Simultaneously()
@@ -150,7 +189,6 @@ namespace Provider.InMemory.Tests
                 Observations = new string[] { "Entity.State.MyNextVal=Hello World Again" }
             };
 
-            service.RegisterEntity("E1", "MyEntityType");
 
             service.RegisterEvent(e1);
             service.RegisterEvent(e2);
@@ -185,7 +223,6 @@ namespace Provider.InMemory.Tests
                 Observations = new string[] { "Entity.State.MyVal=Hello World Again" }
             };
 
-            service.RegisterEntity("E1", "MyEntityType");
 
             service.RegisterEvent(e1);
             service.RegisterEvent(e2);

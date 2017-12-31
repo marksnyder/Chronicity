@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Example.CatsAndDogs.Models;
 
 namespace Example.CatsAndDogs.Controllers
 {
@@ -15,11 +14,5 @@ namespace Example.CatsAndDogs.Controllers
             return View();
         }
 
-      
-
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }

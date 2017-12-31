@@ -7,23 +7,6 @@ namespace Provider.InMemory.Tests
 {
     public class EntityRegistration
     {
-        [Fact]
-        public void RegisteringEntity_Stores_Type()
-        {
-            var service = new TimeLineService();
-            service.RegisterEntity("1", "TestType");
-            Assert.Equal("TestType", service.GetEntityType("1"));
-        }
-
-        [Fact]
-        public void RegisteringMultipleEntities_Stores_Types()
-        {
-            var service = new TimeLineService();
-            service.RegisterEntity("1", "TestType");
-            service.RegisterEntity("2", "TestType2");
-            Assert.Equal("TestType", service.GetEntityType("1"));
-            Assert.Equal("TestType2", service.GetEntityType("2"));
-        }
 
         [Fact]
         public void Entity_State_Tracked()
@@ -47,7 +30,6 @@ namespace Provider.InMemory.Tests
 
             var service = new TimeLineService();
 
-            service.RegisterEntity("E1", "MyEntityType");
 
             service.RegisterEvent(e1);
             service.RegisterEvent(e2);
@@ -83,7 +65,6 @@ namespace Provider.InMemory.Tests
 
             var service = new TimeLineService();
 
-            service.RegisterEntity("E1", "MyEntityType");
 
             service.RegisterEvent(e1);
             service.RegisterEvent(e2);

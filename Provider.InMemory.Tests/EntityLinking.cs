@@ -21,8 +21,6 @@ namespace Provider.InMemory.Tests
                 Observations = new string[] { "Entity.Links.Add=E2" }
             };
 
-            service.RegisterEntity("E1", "MyEntityType");
-            service.RegisterEntity("E2", "MyEntityType2");
             service.RegisterEvent(e);
 
             var contexts = service.FilterEvents(new string[] { });
@@ -50,8 +48,7 @@ namespace Provider.InMemory.Tests
                 Observations = new string[] { "Entity.Links.Add=E1" }
             };
 
-            service.RegisterEntity("E1", "MyEntityType");
-            service.RegisterEntity("E2", "MyEntityType2");
+
             service.RegisterEvent(e1);
             service.RegisterEvent(e2);
 
