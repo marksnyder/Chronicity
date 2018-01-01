@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <Folder Include="SampleData\" />
+    <Folder Include="wwwroot\lib\" />
   </ItemGroup>
 
   <ItemGroup>
