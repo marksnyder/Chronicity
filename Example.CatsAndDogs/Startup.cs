@@ -35,6 +35,8 @@ namespace Example.CatsAndDogs
         {
 
             new DataLoad.LoadIntake(System.IO.Path.Combine("./SampleData/Austin_Animal_Center_Intakes.csv"), TimelineService).Run();
+            new DataLoad.LoadOutcomes(System.IO.Path.Combine("./SampleData/Austin_Animal_Center_Outcomes.csv"), TimelineService).Run();
+
 
             if (env.IsDevelopment())
             {

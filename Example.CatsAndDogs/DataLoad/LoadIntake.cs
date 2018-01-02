@@ -42,7 +42,8 @@ namespace Example.CatsAndDogs.DataLoad
                      On = date,
                      Type = "Intake",
                      Observations = new string[] {
-                         String.Format("Entity.State.AnimalType={0}",animalType)
+                         String.Format("Entity.State.AnimalType={0}",animalType),
+                         String.Format("Entity.State.Name={0}",name)
                      }
                 });
 

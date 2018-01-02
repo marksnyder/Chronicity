@@ -1,18 +1,7 @@
 {
-  "name": "Example.CatsAndDogs",
-  "homepage": "https://github.com/marksnyder/Chronicity",
-  "authors": [
-    "marksnyder <mark@snyderis.com>"
-  ],
-  "description": "",
-  "main": "",
-  "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
-  "dependencies": {}
+  "name": "Chronicity Example",
+  "private": true,
+  "dependencies": {
+    "vis": "v4.21.0"
+  }
 }
