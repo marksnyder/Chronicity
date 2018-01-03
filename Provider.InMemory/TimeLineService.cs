@@ -20,6 +20,22 @@ namespace Chronicity.Provider.InMemory
                 .OrderByDescending(x => x.On)
                 .FirstOrDefault();
 
+            var ret = new Dictionary<string, string>();
+
+            foreach(var key in match.State.Keys)
+            {
+                ret[key] = match.State[key];
+            }
+
+            foreach(var link in match.Links)
+            {
+                var linkSate = GetEntityState(link, on);
+
+                foreach (var key in match.State.Keys)
+                {
+                    ret[string.Concat(link,".",key)]= match.State[key];
+                }
+            }
 
             return match.State;
         }

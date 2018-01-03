@@ -51,7 +51,7 @@ namespace Example.CatsAndDogs.Api
         [HttpPost]
         public IEnumerable<VisDataSet> Post([FromBody] FilterRequest datafilters)
         {
-            var result = _service.FilterEvents(datafilters.filters).Take(200);
+            var result = _service.FilterEvents(datafilters.filters).Take(500);
 
             return result.Select(MapContent);
         }

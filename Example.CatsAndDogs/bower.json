@@ -2,6 +2,8 @@
   "name": "Chronicity Example",
   "private": true,
   "dependencies": {
-    "vis": "v4.21.0"
+    "vis": "v4.21.0",
+    "handlebars": "v4.0.11",
+    "ace-builds": "v1.2.9"
   }
 }

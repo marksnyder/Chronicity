@@ -33,6 +33,7 @@ namespace Example.CatsAndDogs.DataLoad
                 var name = fields[1];
                 var date = fields[2];
                 var animalType = fields[7];
+                var outcome = fields[5];
 
                 counter++;
 
@@ -43,7 +44,8 @@ namespace Example.CatsAndDogs.DataLoad
                      Type = "Outcome",
                      Observations = new string[] {
                          String.Format("Entity.State.AnimalType={0}",animalType),
-                         String.Format("Entity.State.Name={0}",name)
+                         String.Format("Entity.State.Name={0}",name),
+                         String.Format("Entity.State.Outcome={0}",outcome)
                      }
                 });
 
