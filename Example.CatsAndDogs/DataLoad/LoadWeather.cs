@@ -38,7 +38,7 @@ namespace Example.CatsAndDogs.DataLoad
                 {
                      Entity = "Weather",
                      On = date,
-                     Type = "Intake",
+                     Type = "Reading",
                      Observations = new string[] {
                          String.Format("Entity.State.Temp={0}",temp)
                      }

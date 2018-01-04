@@ -63,7 +63,7 @@ namespace Example.CatsAndDogs.Api
 
             result.id = string.Format("{0}|{1}",context.Event.Entity,context.Event.On);
             result.start = context.Event.On;
-            result.content = string.Format("{1} - {0}", context.State["Name"], context.Event.Type );
+            result.content = context.Event.Type;
 
 
             return result;
