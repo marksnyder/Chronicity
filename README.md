@@ -1,7 +1,7 @@
 # Chronicity
 
-Chronicity seeks to provide a data store that is time and state centric. As opposed to traditional relational database systems which focus on data integrity, Chronicity focuses on maintaining the state of a data model (and it's relationship to other models) over time.
-
-This method of storage and retrieval will help data consumers solve analytical problems with less effort when time and context are key components.
+A powerful library written in .NET Core for searching and linking event/time driven datasets. Provides a rolling state mechanism and intelligent state linking.
 
 Docs at http://chronicity.io
+
+<img src="http://chronicity.io/images/logo.png">
