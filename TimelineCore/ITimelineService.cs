@@ -8,6 +8,7 @@ namespace Chronicity.Core
     {
 
         IDictionary<string, string> GetEntityState(string entityid, string on);
+        IList<string> GetEntityLinks(string entityid, string on);
         void RegisterEvent(Event e);
         IEnumerable<Context> FilterEvents(IEnumerable<string> expressions);
        

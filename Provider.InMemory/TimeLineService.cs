@@ -25,6 +25,11 @@ namespace Chronicity.Provider.InMemory
             return _StateRepository.GetEntityState(entityid, on);
         }
 
+        public IList<string> GetEntityLinks(string entityid, string on)
+        {
+            return _StateRepository.GetEntityLinks(entityid, on);
+        }
+
         public void RegisterEvent(Event e)
         {
             if (String.IsNullOrEmpty(e.Entity)) throw new Exception("You must specify an entity id");
