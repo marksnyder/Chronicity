@@ -22,6 +22,18 @@
     <script src="~/lib/ace-builds/src-min-noconflict/ace.js"></script>
     <script src="~/lib/handlebars/handlebars.js"></script>
 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111977441-2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-111977441-2');
+    </script>
+
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
     @RenderBody()
     @RenderSection("Scripts", required: false)
 </body>

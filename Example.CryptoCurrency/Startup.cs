@@ -28,7 +28,7 @@ namespace Example.CatsAndDogs
         {
             services.AddSingleton<ITimelineService>(TimelineService);
 
-            new Prices(TimelineService);
+            new CoinDesk(TimelineService);
             new GuardianNews(TimelineService, Configuration["GuardianApiKey"]);
 
             services.AddMvc();

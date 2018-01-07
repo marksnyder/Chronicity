@@ -81,7 +81,7 @@ namespace Example.CatsAndDogs.Api
         [HttpPost]
         public IEnumerable<VisDataSet> Post([FromBody] FilterRequest datafilters)
         {
-            var result = _service.FilterEvents(datafilters.filters).Take(500);
+            var result = _service.FilterEvents(datafilters.filters);
 
             return result.Select(MapContent);
         }
@@ -100,11 +100,11 @@ namespace Example.CatsAndDogs.Api
 
                 if(context.State["Increase"] == "True")
                 {
-                    result.content = string.Format("<span class=\"glyphicon glyphicon-triangle-top\" style=\"color:green\" aria-hidden=\"true\"></span>{0} {1}",context.Event.Entity, context.State["Close"]);
+                    result.content = string.Format("<span class=\"glyphicon glyphicon-triangle-top\" style=\"color:green\" aria-hidden=\"true\"></span>{0} {1}",context.Event.Entity, context.State["Price"]);
                 }
                 else
                 {
-                    result.content = string.Format("<span class=\"glyphicon glyphicon-triangle-bottom\" style=\"color:red\" aria-hidden=\"true\"></span>{0} {1}", context.Event.Entity, context.State["Close"]);
+                    result.content = string.Format("<span class=\"glyphicon glyphicon-triangle-bottom\" style=\"color:red\" aria-hidden=\"true\"></span>{0} {1}", context.Event.Entity, context.State["Price"]);
                 }
 
             }

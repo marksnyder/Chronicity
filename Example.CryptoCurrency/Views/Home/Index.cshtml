@@ -11,11 +11,10 @@
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         <li><a href="http://chronicity.io">Return To Docs</a></li>
-                        <li><a onclick="showAbout();" href="#">What Am I looking At?</a></li>
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Examples <b class="caret"></b></a><ul class="dropdown-menu">
-                                <li><a onclick="runPreset(0)" href="#">2017 News Articles</a></li>
-                                <li><a onclick="runPreset(1)" href="#">2017 News Articles With Price</a></li>
+                                <li><a onclick="runPreset(0)" href="#">2016-2017 News</a></li>
+                                <li><a onclick="runPreset(1)" href="#">2017 News + Price</a></li>
                                 <li><a onclick="runPreset(2)" href="#">2017 Price Increases</a></li>
                                 <li><a onclick="runPreset(3)" href="#">2017 Price Decreases</a></li>
                             </ul>
@@ -27,15 +26,39 @@
         <div class="col-sm-9 col-lg-10">
             <br />
             <div class="row">
-                <div class="col-xs-12">
-                    <span style="font-weight:bold;">Bitcoin Timeline</span> |
-                    <span>Visualization: <a target="visjs" href="http://visjs.org">Vis.js</a></span> |
-                    <span>News Data:  <a target="visjs" href="http://open-platform.theguardian.com/">The Guardian Open Platform</a></span>
+                <div class="col-xs-12" style="padding-bottom:5px;">
+                    <div style="background-color:#2e3336;padding:3px;padding-bottom:3px;color:white;text-align:center;">
+                        <span style="font-weight:bold;color:#36d4ec;">Bitcoin Timeline</span> |
+                        <span>Visualization: <a target="visjs" style="color:#36d4ec;" href="http://visjs.org">Vis.js</a></span> |
+                        <span>News Headlines: <a target="gopen" style="color:#36d4ec;" href="http://open-platform.theguardian.com/">The Guardian Open Platform</a></span> |
+                        <span>Pricing Data: <a target="cdesk" style="color:#36d4ec;" href="https://www.coindesk.com/price/">Coindesk API</a></span> |
+                        <span>Source Code:</span>&nbsp;
+                        <!-- Place this tag where you want the button to render. -->
+                        <a class="github-button" href="https://github.com/marksnyder/Chronicity" data-icon="octicon-star" data-size="small" data-show-count="true" aria-label="Star marksnyder/Chronicity on GitHub">Star</a>
+                        <!-- Place this tag where you want the button to render. -->
+                        <a class="github-button" href="https://github.com/marksnyder/Chronicity/archive/master.zip" data-icon="octicon-cloud-download" data-size="small" aria-label="Download marksnyder/Chronicity on GitHub">Download</a>
+                        <!-- Place this tag where you want the button to render. -->
+                        <a class="github-button" href="https://github.com/marksnyder/Chronicity/fork" data-icon="octicon-repo-forked" data-size="small" data-show-count="true" aria-label="Fork marksnyder/Chronicity on GitHub">Fork</a>
+                    </div>
                 </div>
                 <div class="col-xs-12">
                     <div id="visualization" style="height:300px;">
                         No Data To Display
                     </div>
+                </div>
+                <div class="col-xs-12" align="right" style="padding-top:5px;">
+                    <button type="button" id="zoomIn" class="btn btn-sm btn-primary">
+                        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" id="zoomOut" class="btn btn-sm btn-primary">
+                        <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" id="moveLeft" class="btn btn-sm btn-primary">
+                        <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" id="moveRight" class="btn btn-sm btn-primary">
+                        <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+                    </button>
                 </div>
 
             </div>
@@ -108,6 +131,7 @@
 
         var source = document.getElementById("entry-template").innerHTML;
         var template = Handlebars.compile(source);
+        var timeline;
 
         function doFilter() {
 
@@ -123,8 +147,9 @@
                 data: JSON.stringify(filters),
                 success: function (data) {
                     var items = new vis.DataSet(data);
-                    var timeline = new vis.Timeline(container, items, options);
+                    timeline = new vis.Timeline(container, items, options);
                     timeline.on('select', onSelect);
+                    timeline.zoomIn(1);
                 }
             });
 
@@ -152,8 +177,8 @@
         function runPreset(id) {
 
             var preset = new Array();
-            preset[0] = ["On.Between=2017/1/01,2017/10/01", "Type=Headline"];
-            preset[1] = ["On.Between=2017/1/01,2017/10/01"];
+            preset[0] = ["On.Between=2016/1/01,2017/12/31", "Type=Headline"];
+            preset[1] = ["On.Between=2017/1/01,2017/12/31"];
             preset[2] = ["On.Between=2017/1/01,2017/10/01", "Entity.State.Increase=True"];
             preset[3] = ["On.Between=2017/1/01,2017/10/01", "Entity.State.Increase=False"];
 
@@ -164,13 +189,29 @@
 
             editor.setValue(formatted, 1);
             doFilter();
+           
         }
 
         function showAbout() {
             $('#about').modal('show')
         }
 
+        function move(percentage) {
+            var range = timeline.getWindow();
+            var interval = range.end - range.start;
+
+            timeline.setWindow({
+                start: range.start.valueOf() - interval * percentage,
+                end: range.end.valueOf() - interval * percentage
+            });
+        }
+
         runPreset(0);
+
+        document.getElementById('zoomIn').onclick = function () { timeline.zoomIn(1); };
+        document.getElementById('zoomOut').onclick = function () { timeline.zoomOut(1); };
+        document.getElementById('moveLeft').onclick = function () { move(0.2); };
+        document.getElementById('moveRight').onclick = function () { move(-0.2); };
 
     </script>
 
