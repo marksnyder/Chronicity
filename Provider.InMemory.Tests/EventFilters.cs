@@ -19,11 +19,20 @@ namespace Provider.InMemory.Tests
             {
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
-                Entity = "E1",
-                Observations = new string[] { "Entity.State.MyVal=Hello World" }
+                Entities = new string[] { "E1" }
             };
 
+            var o1 = new Observation()
+            {
+                On = "2001/01/01 01:01",
+                Type = "MyObservationType",
+                Entity = "E1",
+                Expressions = new string[] { "Entity.State.MyVal=Hello World" }
+            };
+
+            service.RegisterObservation(o1);
             service.RegisterEvent(e1);
+
 
             var match = service.FilterEvents(new string[] { "Entity.State.MyVal=Hello World" });
             var nonMatch = service.FilterEvents(new string[] { "Entity.State.MyVal=Not The One!" });
@@ -42,14 +51,14 @@ namespace Provider.InMemory.Tests
             {
                 On = "2001/01/01 01:01",
                 Type = "MyEventType1",
-                Entity = "E1"
+                Entities = new [] { "E1" }
             };
 
             var e2 = new Event()
             {
                 On = "2001/01/01 01:02",
                 Type = "MyEventType2",
-                Entity = "E1"
+                Entities = new [] { "E1" }
             };
 
             service.RegisterEvent(e1);
@@ -72,14 +81,14 @@ namespace Provider.InMemory.Tests
             {
                 On = "2001/01/01 01:01",
                 Type = "MyEventType1",
-                Entity = "E1"
+                Entities = new [] { "E1" }
             };
 
             var e2 = new Event()
             {
                 On = "2001/01/01 01:02",
                 Type = "MyEventType2",
-                Entity = "E1"
+                Entities = new [] { "E1" }
             };
 
             service.RegisterEvent(e1);
@@ -102,14 +111,14 @@ namespace Provider.InMemory.Tests
             {
                 On = "2001/01/01 01:01",
                 Type = "MyEventType1",
-                Entity = "E1"
+                Entities = new [] { "E1" }
             };
 
             var e2 = new Event()
             {
                 On = "2001/01/01 01:03",
                 Type = "MyEventType2",
-                Entity = "E1"
+                Entities = new [] { "E1" }
             };
 
             service.RegisterEvent(e1);
@@ -132,8 +141,7 @@ namespace Provider.InMemory.Tests
             {
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
-                Entity = "E1",
-                Observations = new string[] { "State.MyVal=Hello World" }
+                Entities = new[] { "E1" }
             };
 
             service.RegisterEvent(e1);

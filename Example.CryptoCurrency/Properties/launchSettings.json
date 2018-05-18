@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Example.CatsAndDogs": {
+    "DataBrowser": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

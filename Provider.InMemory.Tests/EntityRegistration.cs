@@ -15,23 +15,38 @@ namespace Provider.InMemory.Tests
             {
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
+                Entities = new [] { "E1" }
+            };
+
+            var o1 = new Observation()
+            {
+                On = "2001/01/01 01:01",
                 Entity = "E1",
-                Observations = new string[] { "Entity.State.MyVal=Hello World" }
+                Expressions = new[] { "Entity.State.MyVal=Hello World" }
             };
 
             var e2 = new Event()
             {
                 On = "2001/01/01 01:02",
                 Type = "MyEventType",
-                Entity = "E1",
-                Observations = new string[] { "Entity.State.MyVal=Hello World Again" }
+                Entities = new[] { "E1" }
             };
+
+            var o2 = new Observation()
+            {
+                On = "2001/01/01 01:02",
+                Entity = "E1",
+                Expressions = new[] { "Entity.State.MyVal=Hello World Again" }
+            };
+
 
 
             var service = new TimeLineService();
 
 
+            service.RegisterObservation(o1);
             service.RegisterEvent(e1);
+            service.RegisterObservation(o2);
             service.RegisterEvent(e2);
 
             var state1 = service.GetEntityState("E1","2001 /01/01 01:01");
@@ -50,23 +65,36 @@ namespace Provider.InMemory.Tests
             {
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
+                Entities = new [] { "E1" }
+            };
+
+            var o1 = new Observation()
+            {
+                On = "2001/01/01 01:01",
                 Entity = "E1",
-                Observations = new string[] { "Entity.State.MyVal=Hello World" }
+                Expressions = new[] { "Entity.State.MyVal=Hello World" }
             };
 
             var e2 = new Event()
             {
                 On = "2001/01/01 01:03",
                 Type = "MyEventType",
+                Entities = new[] { "E1" }
+            };
+
+            var o2 = new Observation()
+            {
+                On = "2001/01/01 01:03",
                 Entity = "E1",
-                Observations = new string[] { "Entity.State.MyVal=Hello World Again" }
+                Expressions = new[] { "Entity.State.MyVal=Hello World Again" }
             };
 
 
             var service = new TimeLineService();
 
-
+            service.RegisterObservation(o1);
             service.RegisterEvent(e1);
+            service.RegisterObservation(o2);
             service.RegisterEvent(e2);
 
             var state1 = service.GetEntityState("E1", "2001 /01/01 01:02");

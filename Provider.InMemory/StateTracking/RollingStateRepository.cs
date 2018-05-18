@@ -29,77 +29,87 @@ namespace Chronicity.Provider.InMemory.StateTracking
 
         public Context GetEventContext(Event e)
         {
-            if (!_bank.TrackedState.ContainsKey(e.Entity)) return new Context()
+            var context = new Context() { Event = e, States = new List<EntityState>() };
+
+            foreach (var entity in e.Entities)
             {
-                Event = e,
-                Links = new List<string>(),
-                State = new EntityState()
-            };
+                if (_bank.TrackedState.Keys.Contains(entity))
+                {
+                    var match = _bank.TrackedState[entity].Where(x => x.On <= DateTime.Parse(e.On))
+                      .OrderByDescending(x => x.On)
+                      .FirstOrDefault();
 
-            var match = _bank.TrackedState[e.Entity].Where(x => x.On <= DateTime.Parse(e.On))
-              .OrderByDescending(x => x.On)
-              .FirstOrDefault();
 
-            var result = new Context()
-            {
+                    if (match != null) context.States.Add(match.State);
+                }
+            }
 
-                Event = e,
-                State = match.State,
-                Links = match.Links
-            };
-
-            return result;
+            return context;
         }
 
 
   
-        public List<string> GetEntityLinks(string entityid, string on)
-        {
-            if (!_bank.TrackedState.ContainsKey(entityid)) return new List<string>();
 
-            var match = _bank.TrackedState[entityid].Where(x => x.On <= DateTime.Parse(on))
-                .OrderByDescending(x => x.On)
-                .FirstOrDefault();
-
-            return match.Links;
-        }
 
         public void Track(Event e)
         {
 
+            if (!_bank.EventTypes.Contains(e.Type)) _bank.EventTypes.Add(e.Type);
+
+            var tslist = new List<TimeAndState>();
+
+            //TODO - this wont hold up if observations are added out of sequence
+            foreach(var entity in e.Entities)
+            {
+                if (_bank.TrackedState.Keys.Contains(entity))
+                {
+                    var ts = _bank.TrackedState[entity].Where(x => x.On >= DateTime.Parse(e.On)).OrderBy(x => x.On).FirstOrDefault();
+                    if (ts != null)
+                    {
+                        tslist.Add(ts);
+                    }
+                }
+            }
+
+            _bank.StatefulEvents.Add(new StatefulEvent(e,tslist));
+
+
+        }
+
+        public void Track(Observation o)
+        {
             TimeAndState tracked = null;
 
             tracked = new TimeAndState()
             {
-                On = DateTime.Parse(e.On),
-                State = new EntityState(),
-                Links = new List<string>()
+                On = DateTime.Parse(o.On),
+                State = new EntityState()
             };
 
-            if (!_bank.TrackedState.ContainsKey(e.Entity))
+            if (!_bank.TrackedState.ContainsKey(o.Entity))
             {
-                _bank.TrackedState[e.Entity] = new List<TimeAndState>();
-                _bank.TrackedState[e.Entity].Add(tracked);
+                _bank.TrackedState[o.Entity] = new List<TimeAndState>();
+                _bank.TrackedState[o.Entity].Add(tracked);
             }
             else
             {
                 TimeAndState prior;
 
-                if (_bank.LastState.ContainsKey(e.Entity) && DateTime.Parse(e.On) > _bank.LastState[e.Entity])
+                if (_bank.LastState.ContainsKey(o.Entity) && DateTime.Parse(o.On) > _bank.LastState[o.Entity])
                 {
                     //optimize and get last - NOTE - this requires tracked state is in chronilogical order
-                    prior = _bank.TrackedState[e.Entity].Last();
+                    prior = _bank.TrackedState[o.Entity].Last();
                 }
                 else
                 {
-                    prior = _bank.TrackedState[e.Entity].Where(x => x.On <= DateTime.Parse(e.On))
+                    prior = _bank.TrackedState[o.Entity].Where(x => x.On <= DateTime.Parse(o.On))
                     .OrderByDescending(x => x.On)
                     .FirstOrDefault();
                 }
 
                 if (prior != null)
                 {
-                    if (prior.On == DateTime.Parse(e.On))
+                    if (prior.On == DateTime.Parse(o.On))
                     {
                         // Event is concurrent with another event
                         tracked = prior;
@@ -112,11 +122,11 @@ namespace Chronicity.Provider.InMemory.StateTracking
                             tracked.State[key] = prior.State[key];
                         }
 
-                        _bank.TrackedState[e.Entity].Add(tracked);
+                        _bank.TrackedState[o.Entity].Add(tracked);
 
                         if (tracked.On < prior.On)
                         {
-                            _bank.TrackedState[e.Entity] = _bank.TrackedState[e.Entity].OrderBy(x => x.On).ToList(); // resync so we stay in order
+                            _bank.TrackedState[o.Entity] = _bank.TrackedState[o.Entity].OrderBy(x => x.On).ToList(); // resync so we stay in order
                             // TODO - we need to remerge future states
                         }
 
@@ -127,8 +137,8 @@ namespace Chronicity.Provider.InMemory.StateTracking
                 else
                 {
                     // Event is backdated and also   the oldest for this event
-                    _bank.TrackedState[e.Entity].Add(tracked);
-                    _bank.TrackedState[e.Entity] = _bank.TrackedState[e.Entity].OrderBy(x => x.On).ToList(); // resync so we stay in order
+                    _bank.TrackedState[o.Entity].Add(tracked);
+                    _bank.TrackedState[o.Entity] = _bank.TrackedState[o.Entity].OrderBy(x => x.On).ToList(); // resync so we stay in order
 
                     // TODO - we need to remerge future states
                 }
@@ -136,28 +146,21 @@ namespace Chronicity.Provider.InMemory.StateTracking
 
             }
 
-            if (e.Observations != null)
+            if (o.Expressions != null)
             {
-                var state = ParseStateChanges(e.Observations);
-                var link = ParseLinkChanges(e.Observations);
+                var state = ParseStateChanges(o.Expressions);
+                var link = ParseLinkChanges(o.Expressions);
 
                 foreach (var change in state)
                 {
                     tracked.State[change.Key] = change.Value;
                 }
 
-                foreach (var change in link)
-                {
-                    if (!tracked.Links.Contains(change)) tracked.Links.Add(change);
-                }
             }
 
-            _bank.StatefulEvents.Add(new StatefulEvent(e,tracked));
-
-
-            if (!_bank.LastState.ContainsKey(e.Entity) || DateTime.Parse(e.On) > _bank.LastState[e.Entity])
+            if (!_bank.LastState.ContainsKey(o.Entity) || DateTime.Parse(o.On) > _bank.LastState[o.Entity])
             {
-                _bank.LastState[e.Entity] = DateTime.Parse(e.On);
+                _bank.LastState[o.Entity] = DateTime.Parse(o.On);
             }
         }
 

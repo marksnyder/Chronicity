@@ -8,9 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Chronicity.Core;
 using Chronicity.Provider.InMemory;
-using Example.CryptoCurrency.Loaders;
 
-namespace Example.CatsAndDogs
+
+namespace DataBrowser
 {
     public class Startup
     {
@@ -28,8 +28,6 @@ namespace Example.CatsAndDogs
         {
             services.AddSingleton<ITimelineService>(TimelineService);
 
-            new CoinDesk(TimelineService);
-            new GuardianNews(TimelineService, Configuration["GuardianApiKey"]);
 
             services.AddMvc();
         }

@@ -4,10 +4,11 @@ using System.Text;
 
 namespace Chronicity.Core.Events
 {
-    public class Event
+    public class Observation
     {
         public string Type { get; set; }
         public string On { get; set; }
-        public IList<string> Entities { get; set; }
+        public string Entity { get; set; }
+        public IList<string> Expressions { get; set; }
     }
 }

@@ -8,12 +8,12 @@ namespace Chronicity.Provider.InMemory.Data
     public class StatefulEvent
     {
         public Event Event { get; }
-        public TimeAndState TimeAndState { get; }
+        public IEnumerable<TimeAndState> TimeAndStates { get; }
 
-        public StatefulEvent(Event e, TimeAndState s)
+        public StatefulEvent(Event e, IEnumerable<TimeAndState> s)
         {
             Event = e;
-            TimeAndState = s;
+            TimeAndStates = s;
         }
     }
 }

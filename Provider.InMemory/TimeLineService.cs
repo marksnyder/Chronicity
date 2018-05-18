@@ -25,16 +25,18 @@ namespace Chronicity.Provider.InMemory
             return _StateRepository.GetEntityState(entityid, on);
         }
 
-        public IList<string> GetEntityLinks(string entityid, string on)
-        {
-            return _StateRepository.GetEntityLinks(entityid, on);
-        }
 
         public void RegisterEvent(Event e)
         {
-            if (String.IsNullOrEmpty(e.Entity)) throw new Exception("You must specify an entity id");
+            if (e.Entities == null) throw new Exception("You must specify entities");
 
             _StateRepository.Track(e);
+
+        }
+
+        public void RegisterObservation(Observation o)
+        {
+            _StateRepository.Track(o);
         }
 
         public IEnumerable<Context> FilterEvents(IEnumerable<string> expressions)
@@ -46,11 +48,15 @@ namespace Chronicity.Provider.InMemory
                 events = ParseFilterEventExpressions(expression, events);
             }
 
+            foreach(var e in events)
+            {
+
+            }
+
             var contexts = events.ToList().Select(x => new Context()
             {
                  Event = x.Event,
-                  Links = x.TimeAndState.Links,
-                   State = x.TimeAndState.State
+                 States = x.TimeAndStates.Select(y => y.State).ToList()
             }); 
 
             foreach(var expression in expressions)
@@ -111,13 +117,16 @@ namespace Chronicity.Provider.InMemory
                 var e = expression.Replace("Entity.State.", "");
                 var var = e.Split('=')[0];
                 var value = e.Split('=')[1];
-                ret = ret.Where(x => x.State.ContainsKey(var) && x.State[var] == value);
+                ret = ret.Where(x => x.States.Count(y=> y.ContainsKey(var) && y[var] == value) > 0);
             }
            
             return ret;
         }
 
+        public IList<string> GetAllEventTypes()
+        {
+            return _Bank.EventTypes;
+        }
 
-        
     }
 }

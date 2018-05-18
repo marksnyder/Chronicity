@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Provider.InMemory", "Provid
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Provider.InMemory.Tests", "Provider.InMemory.Tests\Provider.InMemory.Tests.csproj", "{C85B465D-999B-4BF6-9A72-FB844B5EB20A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example.CryptoCurrency", "Example.CryptoCurrency\Example.CryptoCurrency.csproj", "{EACEEDCF-F0B1-404B-8D98-7296A84BAAA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataBrowser", "Example.CryptoCurrency\DataBrowser.csproj", "{EACEEDCF-F0B1-404B-8D98-7296A84BAAA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

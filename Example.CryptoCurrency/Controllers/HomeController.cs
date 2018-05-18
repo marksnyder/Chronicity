@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 
-namespace Example.CatsAndDogs.Controllers
+namespace DataBrowser.Controllers
 {
     public class HomeController : Controller
     {

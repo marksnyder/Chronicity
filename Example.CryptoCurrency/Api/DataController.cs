@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Chronicity.Core;
-using Example.CatsAndDogs.Models;
+using DataBrowser.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Chronicity.Core.Events;
 
-namespace Example.CatsAndDogs.Api
+namespace DataBrowser.Api
 {
     [Produces("application/json")]
     [Route("api/Data")]
@@ -40,13 +40,6 @@ namespace Example.CatsAndDogs.Api
 
             ApplyState(model, state, string.Empty);
 
-            var links = _service.GetEntityLinks(entityId, time);
-
-            foreach(var link in links)
-            {
-                var linkState = _service.GetEntityState(link, time);
-                ApplyState(model,linkState, string.Concat(link,"."));
-            }
 
 
             return model;
@@ -83,41 +76,41 @@ namespace Example.CatsAndDogs.Api
         {
             var result = _service.FilterEvents(datafilters.filters);
 
-            return result.Select(MapContent);
+            return null; //result.Select(MapContent);
         }
 
-        protected VisDataSet MapContent(Chronicity.Core.Events.Context context)
-        {
+        //protected VisDataSet MapContent(Chronicity.Core.Events.Context context)
+        //{
 
-            var result = new VisDataSet();
+        //    var result = new VisDataSet();
 
-            if(context.Event.Type == "Headline")
-            {
-                result.content = string.Format("<span class=\"glyphicon glyphicon-pencil\" style=\"color:#36d4ec\" aria-hidden=\"true\"></span>&nbsp;{0}", context.State["Title"]);
-            }
-            else if(context.Event.Type == "Price")
-            {
+        //    if(context.Event.Type == "Headline")
+        //    {
+        //        result.content = string.Format("<span class=\"glyphicon glyphicon-pencil\" style=\"color:#36d4ec\" aria-hidden=\"true\"></span>&nbsp;{0}", context.State["Title"]);
+        //    }
+        //    else if(context.Event.Type == "Price")
+        //    {
 
-                if(context.State["Increase"] == "True")
-                {
-                    result.content = string.Format("<span class=\"glyphicon glyphicon-triangle-top\" style=\"color:green\" aria-hidden=\"true\"></span>{0} {1}",context.Event.Entity, context.State["Price"]);
-                }
-                else
-                {
-                    result.content = string.Format("<span class=\"glyphicon glyphicon-triangle-bottom\" style=\"color:red\" aria-hidden=\"true\"></span>{0} {1}", context.Event.Entity, context.State["Price"]);
-                }
+        //        if(context.State["Increase"] == "True")
+        //        {
+        //            result.content = string.Format("<span class=\"glyphicon glyphicon-triangle-top\" style=\"color:green\" aria-hidden=\"true\"></span>{0} {1}",context.Event.Entity, context.State["Price"]);
+        //        }
+        //        else
+        //        {
+        //            result.content = string.Format("<span class=\"glyphicon glyphicon-triangle-bottom\" style=\"color:red\" aria-hidden=\"true\"></span>{0} {1}", context.Event.Entity, context.State["Price"]);
+        //        }
 
-            }
-            else
-            {
-                result.content = context.Event.Type;
-            }
+        //    }
+        //    else
+        //    {
+        //        result.content = context.Event.Type;
+        //    }
 
-            result.id = string.Format("{0}|{1}|{2}",context.Event.Entity,context.Event.On,context.GetHashCode());
-            result.start = context.Event.On;
+        //    result.id = string.Format("{0}|{1}|{2}",context.Event.Entity,context.Event.On,context.GetHashCode());
+        //    result.start = context.Event.On;
 
 
-            return result;
-        }
+        //    return result;
+        //}
     }
 }
