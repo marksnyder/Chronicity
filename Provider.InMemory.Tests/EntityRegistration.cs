@@ -92,10 +92,11 @@ namespace Provider.InMemory.Tests
 
             var service = new TimeLineService();
 
-            service.RegisterObservation(o1);
+
             service.RegisterEvent(e1);
-            service.RegisterObservation(o2);
+            service.RegisterObservation(o1);
             service.RegisterEvent(e2);
+            service.RegisterObservation(o2);
 
             var state1 = service.GetEntityState("E1", "2001 /01/01 01:02");
             var state2 = service.GetEntityState("E1", "2001/01/01 01:04");

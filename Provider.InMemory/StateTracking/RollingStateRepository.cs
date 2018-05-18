@@ -53,27 +53,8 @@ namespace Chronicity.Provider.InMemory.StateTracking
 
         public void Track(Event e)
         {
-
             if (!_bank.EventTypes.Contains(e.Type)) _bank.EventTypes.Add(e.Type);
-
-            var tslist = new List<TimeAndState>();
-
-            //TODO - this wont hold up if observations are added out of sequence
-            foreach(var entity in e.Entities)
-            {
-                if (_bank.TrackedState.Keys.Contains(entity))
-                {
-                    var ts = _bank.TrackedState[entity].Where(x => x.On >= DateTime.Parse(e.On)).OrderBy(x => x.On).FirstOrDefault();
-                    if (ts != null)
-                    {
-                        tslist.Add(ts);
-                    }
-                }
-            }
-
-            _bank.StatefulEvents.Add(new StatefulEvent(e,tslist));
-
-
+            _bank.Events.Add(e);
         }
 
         public void Track(Observation o)

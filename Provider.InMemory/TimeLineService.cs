@@ -41,22 +41,19 @@ namespace Chronicity.Provider.InMemory
 
         public IEnumerable<Context> FilterEvents(IEnumerable<string> expressions)
         {
-            var events = _Bank.StatefulEvents.AsEnumerable();
+            var events = _Bank.Events.AsEnumerable();
 
             foreach(var expression in expressions)
             {
                 events = ParseFilterEventExpressions(expression, events);
             }
 
-            foreach(var e in events)
-            {
 
-            }
-
+            //TODO -- need to optimize this..
             var contexts = events.ToList().Select(x => new Context()
             {
-                 Event = x.Event,
-                 States = x.TimeAndStates.Select(y => y.State).ToList()
+                 Event = x,
+                 States = x.Entities.Select(y => _StateRepository.GetEntityState(y,x.On)).ToList()
             }); 
 
             foreach(var expression in expressions)
@@ -69,17 +66,14 @@ namespace Chronicity.Provider.InMemory
         }
 
 
-
-
-
-        private IEnumerable<StatefulEvent> ParseFilterEventExpressions(string expression, IEnumerable<StatefulEvent> events)
+        private IEnumerable<Event> ParseFilterEventExpressions(string expression, IEnumerable<Event> events)
         {
             var ret = events;
 
             if (expression.StartsWith("Type"))
             {
                 var value = expression.Split('=')[1];
-                ret = ret.Where(x => x.Event.Type == value);
+                ret = ret.Where(x => x.Type == value);
             }
             else if (expression.StartsWith("On."))
             {
@@ -89,19 +83,19 @@ namespace Chronicity.Provider.InMemory
                 if (action == "After")
                 {
                     var value = DateTime.Parse(e.Split('=')[1]);
-                    ret = ret.Where(x => DateTime.Parse(x.Event.On) > value);
+                    ret = ret.Where(x => DateTime.Parse(x.On) > value);
                 }
                 else if (action == "Before")
                 {
                     var value = DateTime.Parse(e.Split('=')[1]);
-                    ret = ret.Where(x => DateTime.Parse(x.Event.On) < value);
+                    ret = ret.Where(x => DateTime.Parse(x.On) < value);
                 }
                 else if (action == "Between")
                 {
                     var value = e.Split('=')[1].Split(',');
                     var value1 = DateTime.Parse(value[0]);
                     var value2 = DateTime.Parse(value[1]);
-                    ret = ret.Where(x => DateTime.Parse(x.Event.On) > value1 && DateTime.Parse(x.Event.On) < value2);
+                    ret = ret.Where(x => DateTime.Parse(x.On) > value1 && DateTime.Parse(x.On) < value2);
                 }
             }
 

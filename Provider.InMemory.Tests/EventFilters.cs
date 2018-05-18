@@ -43,6 +43,38 @@ namespace Provider.InMemory.Tests
 
 
         [Fact]
+        public void FilterEvent_BasicStateMatch_OutOfOrder()
+        {
+            var service = new TimeLineService();
+
+            var e1 = new Event()
+            {
+                On = "2001/01/01 01:01",
+                Type = "MyEventType",
+                Entities = new string[] { "E1" }
+            };
+
+            var o1 = new Observation()
+            {
+                On = "2001/01/01 01:01",
+                Type = "MyObservationType",
+                Entity = "E1",
+                Expressions = new string[] { "Entity.State.MyVal=Hello World" }
+            };
+
+            service.RegisterEvent(e1);
+            service.RegisterObservation(o1);
+
+
+            var match = service.FilterEvents(new string[] { "Entity.State.MyVal=Hello World" });
+            var nonMatch = service.FilterEvents(new string[] { "Entity.State.MyVal=Not The One!" });
+
+            Assert.Single(match);
+            Assert.Empty(nonMatch);
+        }
+
+
+        [Fact]
         public void FilterEvent_TimeMatch_After()
         {
             var service = new TimeLineService();
