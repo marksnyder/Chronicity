@@ -84,47 +84,42 @@ namespace Provider.InMemory.Tests
 
 
 
-        //TODO
-        //[Fact]
-        //public void RegisteringObservation_StateIsMerged_Chronologically2()
-        //{
-        //    var service = new TimeLineService();
 
-        //    var e1 = new Event()
-        //    {
-        //        On = "2001/01/01 01:01",
-        //        Type = "MyEventType",
-        //        Entity = "E1",
-        //        Observations = new string[] { "Entity.State.MyVal1=Hello World" }
-        //    };
+        [Fact]
+        public void RegisteringObservation_StateIsMerged_Chronologically2()
+        {
+            var service = new TimeLineService();
 
-        //    var e2 = new Event()
-        //    {
-        //        On = "2001/01/01 01:03",
-        //        Type = "MyEventType",
-        //        Entity = "E1",
-        //        Observations = new string[] { "Entity.State.MyVal2=Hello World Again" }
-        //    };
+            var o1 = new Observation()
+            {
+                On = "2001/01/01 01:01",
+                Type = "MyEventType",
+                Entity = "E1"
+            };
 
-        //    var e3 = new Event()
-        //    {
-        //        On = "2001/01/01 01:02",
-        //        Type = "MyEventType",
-        //        Entity = "E1",
-        //        Observations = new string[] { "Entity.State.MyVal3=Hello World Again" }
-        //    };
+            var o2 = new Observation()
+            {
+                On = "2001/01/01 01:03",
+                Type = "MyEventType",
+                Entity = "E1"
+            };
+
+            var o3 = new Observation()
+            {
+                On = "2001/01/01 01:02",
+                Type = "MyEventType",
+                Entity = "E1"
+            };
 
 
-        //    service.RegisterEvent(e1);
-        //    service.RegisterEvent(e2);
-        //    service.RegisterEvent(e3);
+            service.RegisterObservation(o1);
+            service.RegisterObservation(o2);
+            service.RegisterObservation(o3);
 
-        //    var contexts = service.FilterEvents(new string[] { }).OrderBy(x => x.Event.On);
-
-        //    Assert.False(contexts.Last().State.ContainsKey("MyVal1"));
-        //    Assert.False(contexts.Last().State.ContainsKey("MyVal2"));
-        //    Assert.False(contexts.Last().State.ContainsKey("MyVal3"));
-        //}
+            Assert.False(service.GetEntityState("E1", "2001/01/01 01:03").ContainsKey("MyVal1"));
+            Assert.False(service.GetEntityState("E1", "2001/01/01 01:03").ContainsKey("MyVal2"));
+            Assert.False(service.GetEntityState("E1", "2001/01/01 01:03").ContainsKey("MyVal3"));
+        }
 
         [Fact]
         public void RegisteringObservation_StateIsMerged_Simultaneously()
@@ -155,6 +150,24 @@ namespace Provider.InMemory.Tests
             Assert.Equal("Hello World Again", service.GetEntityState("E1", "2001/01/01 01:01")["MyNextVal"]);
         }
 
+        [Fact]
+        public void RegisteringObservation_StateIsMerged_MultipleExpressions()
+        {
+            var service = new TimeLineService();
+
+            var o1 = new Observation()
+            {
+                On = "2001/01/01 01:01",
+                Type = "MyEventType",
+                Entity = "E1",
+                Expressions = new[] { "Entity.State.MyVal=Hello World", "Entity.State.MyNextVal=Hello World Again" }
+            };
+
+            service.RegisterObservation(o1);
+
+            Assert.Equal("Hello World", service.GetEntityState("E1", "2001/01/01 01:01")["MyVal"]);
+            Assert.Equal("Hello World Again", service.GetEntityState("E1", "2001/01/01 01:01")["MyNextVal"]);
+        }
 
         [Fact]
         public void RegisteringObservation_StateIsOverwritten()

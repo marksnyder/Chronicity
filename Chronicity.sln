@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Provider.InMemory", "Provid
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Provider.InMemory.Tests", "Provider.InMemory.Tests\Provider.InMemory.Tests.csproj", "{C85B465D-999B-4BF6-9A72-FB844B5EB20A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataBrowser", "Example.CryptoCurrency\DataBrowser.csproj", "{EACEEDCF-F0B1-404B-8D98-7296A84BAAA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataBrowser", "DataBrowser\DataBrowser.csproj", "{6407CEFA-742E-48FC-AFB7-B57D9BC49B7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{C85B465D-999B-4BF6-9A72-FB844B5EB20A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C85B465D-999B-4BF6-9A72-FB844B5EB20A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C85B465D-999B-4BF6-9A72-FB844B5EB20A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EACEEDCF-F0B1-404B-8D98-7296A84BAAA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EACEEDCF-F0B1-404B-8D98-7296A84BAAA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EACEEDCF-F0B1-404B-8D98-7296A84BAAA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EACEEDCF-F0B1-404B-8D98-7296A84BAAA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6407CEFA-742E-48FC-AFB7-B57D9BC49B7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6407CEFA-742E-48FC-AFB7-B57D9BC49B7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6407CEFA-742E-48FC-AFB7-B57D9BC49B7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6407CEFA-742E-48FC-AFB7-B57D9BC49B7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
