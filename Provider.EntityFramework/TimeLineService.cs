@@ -32,7 +32,7 @@ namespace Chronicity.Provider.EntityFramework
 
             _context.Events.Add(new Provider.EntityFramework.DataModels.Event()
             {
-                 EntityList = String.Join(',',e.Entities),
+                 EntityList = String.Join(",",e.Entities),
                  On = DateTime.Parse(e.On),
                  Type = e.Type
             });
@@ -65,8 +65,8 @@ namespace Chronicity.Provider.EntityFramework
             //TODO -- need to optimize this.. we shouldn't have to pull all of them back to do the filtering
             var contexts = events.ToList().Select(x => new Context()
             { 
-                Event = new Event() { Entities = x.EntityList.Split(",") , On = x.On.ToString("yyyy/MM/dd HH:mm:ss"), Type = x.Type },
-                States = x.EntityList.Split(",").Select(y => _stateRepository.GetEntityState(y, x.On.ToString("MM/dd/yyyy HH:mm:ss"))).ToList()
+                Event = new Event() { Entities = x.EntityList.Split(',') , On = x.On.ToString("yyyy/MM/dd HH:mm:ss"), Type = x.Type },
+                States = x.EntityList.Split(',').Select(y => _stateRepository.GetEntityState(y, x.On.ToString("MM/dd/yyyy HH:mm:ss"))).ToList()
             });
 
             foreach (var expression in expressions)
