@@ -1,14 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
 import Timeline from 'react-visjs-timeline';
-
-const styles = theme => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-  },
-});
 
 const options = {
   width: '100%',
@@ -44,4 +36,4 @@ EventTimeline.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(EventTimeline);
+export default (EventTimeline);

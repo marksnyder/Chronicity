@@ -1,10 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
+import RawEvents from './RawEvents.js'
+import EventTimeline from './EventTimeline.js'
 
 
 function TabContainer(props) {
@@ -15,18 +15,7 @@ function TabContainer(props) {
   );
 }
 
-TabContainer.propTypes = {
-  children: PropTypes.node.isRequired,
-};
-
-const styles = theme => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-  },
-});
-
-class ObservationPanel extends React.Component {
+class TimelineView extends React.Component {
 
   state = {
     value: 0,
@@ -41,16 +30,17 @@ class ObservationPanel extends React.Component {
     const { value } = this.state;
 
     return  <div className={classes.root}>
-        <AppBar position="static">
+        <AppBar position="static" color="default">
           <Tabs value={value} onChange={this.handleChange}>
-            <Tab label="Observations" />
-            <Tab label="Observable Events" />
+            <Tab label="Visual" />
+            <Tab label="Data" />
           </Tabs>
         </AppBar>
-        {value === 0 && <TabContainer>Observations</TabContainer>}
-        {value === 1 && <TabContainer>Observable Events</TabContainer>}
+        {value === 0 && <TabContainer><EventTimeline classes={classes}  /></TabContainer>}
+        {value === 1 && <TabContainer><RawEvents classes={classes} /></TabContainer>}
       </div>
+
   }
 }
 
-export default withStyles(styles)(ObservationPanel);
+export default (TimelineView);
