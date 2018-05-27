@@ -35,8 +35,14 @@ class EventTimeline extends React.Component {
         })
     });
 
-    return (
+    return (<div>
+        {items.length > 0 &&
         <div><Timeline options={options} items={items} /></div>
+        }
+        {items.length == 0 &&
+        <div>No Results To Display</div>
+        }
+      </div>
     );
   }
 }

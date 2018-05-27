@@ -4,7 +4,15 @@ class Chronicity {
 
 
   static filterEvents = (filters) => {
-    return fetch("http://localhost:64177/FilterEvents");
+
+    var url = 'http://localhost:64177/FilterEvents';
+    url = url + "?nocache=" + (new Date()).getTime();
+
+    filters.forEach(function(f) {
+        url = url + '&expressions=' + encodeURIComponent(f);
+    });
+
+    return fetch(url);
   };
 
 }

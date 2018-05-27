@@ -35,7 +35,7 @@ const styles = theme => ({
 class App extends React.Component {
   state = {
     view: 'timeline',
-    filters: [ 'On.After=2001/01/01 01:02', 'Type=MyEventType' ],
+    filters: [ 'On.After=2015/01/01 01:02', 'Type=newthing' ],
     events: []
   };
 
@@ -54,7 +54,7 @@ class App extends React.Component {
 
     var that = this;
 
-    fetch("http://localhost:64177/FilterEvents")
+    Chronicity.filterEvents(filters)
       .then((res) => { return res.json(); })
       .then((result) => {
           that.setState({
