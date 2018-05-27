@@ -17,9 +17,12 @@ function TabContainer(props) {
 
 class TimelineView extends React.Component {
 
-  state = {
-    value: 0,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: 0
+    };
+  }
 
   handleChange = (event, value) => {
     this.setState({ value });
@@ -36,8 +39,8 @@ class TimelineView extends React.Component {
             <Tab label="Data" />
           </Tabs>
         </AppBar>
-        {value === 0 && <TabContainer><EventTimeline classes={classes}  /></TabContainer>}
-        {value === 1 && <TabContainer><RawEvents classes={classes} /></TabContainer>}
+        {value === 0 && <TabContainer><EventTimeline events={this.props.events} classes={classes}  /></TabContainer>}
+        {value === 1 && <TabContainer><RawEvents events={this.props.events} classes={classes} /></TabContainer>}
       </div>
 
   }

@@ -4,6 +4,7 @@ import TimelineView from './components/timeline/View.js'
 import FilterView from './components/filter/View.js'
 import MenuView from './components/menu/View.js'
 import { MuiThemeProvider, createMuiTheme,withStyles } from '@material-ui/core/styles';
+import Chronicity from './clients/Chronicity.js'
 
 const theme = createMuiTheme({
   palette: {
@@ -30,26 +31,38 @@ const styles = theme => ({
     }
 });
 
-function MainView({view, classes}) {
-    switch(view) {
-        case 'timeline':
-            return  <TimelineView classes={classes} />;
-        case 'filters':
-            return <FilterView classes={classes}  />;
-        default:
-            return  <TimelineView classes={classes} />;
-    }
-}
 
 class App extends React.Component {
   state = {
-    anchor: 'left',
+    view: 'timeline',
+    filters: [ 'On.After=2001/01/01 01:02', 'Type=MyEventType' ],
+    events: []
   };
 
   changeView = (view) => {
     this.setState({
-      view: view,
+      view: view
     });
+  };
+
+  applyFilters = (filters) => {
+
+    this.setState({
+      filters: filters,
+      view: 'timeline'
+    });
+
+    var that = this;
+
+    fetch("http://localhost:64177/FilterEvents")
+      .then((res) => { return res.json(); })
+      .then((result) => {
+          that.setState({
+            events: result
+          });
+        }
+      );
+
   };
 
   render() {
@@ -58,7 +71,12 @@ class App extends React.Component {
     return (
     <MuiThemeProvider theme={theme}>
       <MenuView classes={classes} changeView={this.changeView} />
-      <MainView view={this.state.view} classes={classes} />
+      {this.state.view == 'timeline' &&
+        <TimelineView classes={classes} events={this.state.events} />
+      }
+      {this.state.view == 'filters' &&
+         <FilterView classes={classes} filters={this.state.filters} applyFilters={this.applyFilters}  />
+      }
     </MuiThemeProvider>
     );
   }

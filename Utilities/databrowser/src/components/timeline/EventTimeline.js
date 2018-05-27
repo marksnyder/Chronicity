@@ -9,7 +9,7 @@ const options = {
   showMajorLabels: true,
   showCurrentTime: true,
   zoomMin: 1000000,
-  type: 'background',
+  type: 'box',
   format: {
     minorLabels: {
       minute: 'h:mma',
@@ -18,22 +18,29 @@ const options = {
   }
 }
 
-const items = [{
-  start: new Date(2010, 7, 15),
-  end: new Date(2010, 8, 2),  // end is optional
-  content: 'Trajectory A',
-}]
 
-function EventTimeline(props) {
-  const { classes } = props;
+class EventTimeline extends React.Component {
 
-  return (
-      <div><Timeline options={options}  items={items} /></div>
-  );
+
+  render() {
+
+    const { classes } = this.props;
+
+    var items = [];
+    this.props.events.forEach(function(event) {
+        items.push({
+          start: event.on,
+          content: event.type,
+          id: event.id
+        })
+    });
+
+    return (
+        <div><Timeline options={options} items={items} /></div>
+    );
+  }
 }
 
-EventTimeline.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
+
 
 export default (EventTimeline);
