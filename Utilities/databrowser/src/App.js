@@ -24,11 +24,14 @@ const theme = createMuiTheme({
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.background.paper
   },
   flex: {
       flex: 1,
-    }
+  },
+  margin: {
+    margin: theme.spacing.unit
+  }
 });
 
 
