@@ -6,6 +6,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import Chip from '@material-ui/core/Chip';
 
 
 function RawEvents(props) {
@@ -31,7 +32,7 @@ function RawEvents(props) {
                 <TableCell>{n.on}</TableCell>
                 <TableCell>
                   {n.entities.map(e => {
-                    return <div key={e}><a href="#">{e}</a></div>
+                    return <Chip key={e} label={e} className={classes.chip} />
                   })}
                 </TableCell>
               </TableRow>

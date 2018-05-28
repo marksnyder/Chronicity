@@ -10,8 +10,8 @@ namespace Chronicity.Core
         IDictionary<string, string> GetEntityState(string entityid, string on);
         void RegisterEvent(Event e);
         void RegisterObservation(Observation o);
-        IEnumerable<Context> FilterEvents(IEnumerable<string> expressions);
-        IList<string> GetAllEventTypes();
-       
+        IEnumerable<Event> FilterEvents(IEnumerable<string> expressions);
+        IList<string> SearchEventTypes(string search);
+        IList<string> SearchEntities(string search);
     }
 }

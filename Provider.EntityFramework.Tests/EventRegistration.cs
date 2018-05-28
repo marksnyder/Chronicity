@@ -77,7 +77,7 @@ namespace Provider.EntityFramework.Tests
 
             _service.RegisterEvent(e1);
 
-            Assert.Equal("MyEventType", _service.GetAllEventTypes().First());
+            Assert.Equal("MyEventType", _service.SearchEventTypes("My").First());
         }
 
 

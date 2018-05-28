@@ -117,7 +117,7 @@ namespace Provider.EntityFramework.Tests
 
 
             Assert.Single(match);
-            Assert.Equal("MyEventType2", match.First().Event.Type);
+            Assert.Equal("MyEventType2", match.First().Type);
         }
 
 
@@ -147,7 +147,7 @@ namespace Provider.EntityFramework.Tests
 
 
             Assert.Single(match);
-            Assert.Equal("MyEventType1", match.First().Event.Type);
+            Assert.Equal("MyEventType1", match.First().Type);
         }
 
 
@@ -176,7 +176,7 @@ namespace Provider.EntityFramework.Tests
             var match = _service.FilterEvents(new string[] { "On.Between=2001/01/01 01:00,2001/01/01 01:02" });
 
             Assert.Single(match);
-            Assert.Equal("MyEventType1", match.First().Event.Type);
+            Assert.Equal("MyEventType1", match.First().Type);
         }
 
 

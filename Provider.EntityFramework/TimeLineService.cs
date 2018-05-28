@@ -53,7 +53,7 @@ namespace Chronicity.Provider.EntityFramework
             _stateRepository.Track(o);
         }
 
-        public IEnumerable<Context> FilterEvents(IEnumerable<string> expressions)
+        public IEnumerable<Event> FilterEvents(IEnumerable<string> expressions)
         {
             var events = _context.Events.AsQueryable();
 
@@ -65,7 +65,7 @@ namespace Chronicity.Provider.EntityFramework
             //TODO -- need to optimize this.. we shouldn't have to pull all of them back to do the filtering
             var contexts = events.ToList().Select(x => new Context()
             { 
-                Event = new Event() { Entities = x.EntityList.Split(',') , On = x.On.ToString("yyyy/MM/dd HH:mm:ss"), Type = x.Type },
+                Event = new Event() { Entities = x.EntityList.Split(',') , On = x.On.ToString("yyyy/MM/dd HH:mm:ss"), Type = x.Type, Id = x.Id.ToString() },
                 States = x.EntityList.Split(',').Select(y => _stateRepository.GetEntityState(y, x.On.ToString("MM/dd/yyyy HH:mm:ss"))).ToList()
             });
 
@@ -74,7 +74,7 @@ namespace Chronicity.Provider.EntityFramework
                 contexts = ParseFilterContextExpression(expression, contexts);
             }
 
-            return contexts;
+            return contexts.Select(x => x.Event);
         }
 
 
@@ -129,10 +129,22 @@ namespace Chronicity.Provider.EntityFramework
             return ret;
         }
 
-        public IList<string> GetAllEventTypes()
+        public IList<string> SearchEventTypes(string search)
         {
-            return _context.EventTypes.Select(x => x.Type).ToList();
+            return _context.EventTypes
+            .Where(x => x.Type.Contains(search))
+            .Select(x => x.Type)
+            .ToList();
         }
+
+        public IList<string> SearchEntities(string search)
+        {
+            return _context.TimeAndStates.Select(x => x.Entity)
+            .Distinct()
+            .Where(x => x.Contains(search))
+            .ToList();
+        }
+
 
     }
 }

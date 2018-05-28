@@ -39,6 +39,13 @@ namespace Chronicity.Service
             });
 
             services.AddMvc();
+
+            services.AddCors(o => o.AddPolicy("ChronicityPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,6 +72,8 @@ namespace Chronicity.Service
                 serviceScope.ServiceProvider.GetRequiredService<ChronicityContext>();
                 context.Database.EnsureCreated();
             }
+
+
         }
     }
 }

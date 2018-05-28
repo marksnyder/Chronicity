@@ -201,7 +201,7 @@ namespace Provider.EntityFramework.Tests
             _service.RegisterObservation(o1);
             _service.RegisterObservation(o2);
 
-            var contexts = _service.FilterEvents(new string[] { }).OrderByDescending(x => x.Event.On);
+            var contexts = _service.FilterEvents(new string[] { }).OrderByDescending(x => x.On);
 
             Assert.Equal("Hello World Again", _service.GetEntityState("E1", "2001/01/01 01:02")["MyNextVal"]);
         }

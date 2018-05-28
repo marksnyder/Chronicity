@@ -4,12 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Chronicity.Core;
 using Chronicity.Core.Events;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Service.Controllers
 {
     [Produces("application/json")]
+    [EnableCors("ChronicityPolicy")]
     public class TimelineController : Controller
     {
         private ITimelineService _service;
@@ -38,9 +40,21 @@ namespace Service.Controllers
         }
 
         [HttpGet, Route("/FilterEvents")]
-        public IEnumerable<Context> FilterEvents(IEnumerable<string> expressions)
+        public IEnumerable<Event> FilterEvents(IEnumerable<string> expressions)
         {
             return _service.FilterEvents(expressions);
+        }
+
+        [HttpGet, Route("/SearchEventTypes")]
+        public IList<string> SearchEventTypes(string search)
+        {
+            return _service.SearchEventTypes(search);
+        }
+
+        [HttpGet, Route("/SearchEntities")]
+        public IList<string> SearchEntities(string search)
+        {
+            return _service.SearchEntities(search);
         }
 
     }

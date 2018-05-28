@@ -4,7 +4,7 @@ class Chronicity {
 
 
   static filterEvents = (filters) => {
-    var url = 'http://localhost:64177/FilterEvents';
+    var url = 'http://ex.chronicity.io/FilterEvents';
     url = url + "?nocache=" + (new Date()).getTime();
 
     filters.forEach(function(f) {
@@ -15,14 +15,14 @@ class Chronicity {
   };
 
   static searchEntities = (search) => {
-    var url = 'http://localhost:64177/SearchEntities';
+    var url = 'http://ex.chronicity.io/SearchEntities';
     url = url + "?nocache=" + (new Date()).getTime();
     url = url + "&search=" + encodeURIComponent(search)
     return fetch(url);
   }
 
   static searchEventTypes = (search) => {
-    var url = 'http://localhost:64177/SearchEventTypes';
+    var url = 'http://ex.chronicity.io/SearchEventTypes';
     url = url + "?nocache=" + (new Date()).getTime();
     url = url + "&search=" + encodeURIComponent(search)
     return fetch(url);
