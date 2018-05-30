@@ -14,6 +14,6 @@ namespace Chronicity.Provider.EntityFramework.DataContext
         public DbSet<DataModels.Event> Events { get; set; }
         public DbSet<DataModels.EventType> EventTypes { get; set; }
         public DbSet<DataModels.TimeAndState> TimeAndStates { get; set; }
-        public DbSet<DataModels.TimeAndStateEntry> TimeAndStateEntries { get; set; }
+        public DbSet<DataModels.EntityStateKey> EntityStateKeys { get; set; }
     }
 }

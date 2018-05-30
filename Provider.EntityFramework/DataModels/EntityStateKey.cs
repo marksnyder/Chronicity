@@ -5,12 +5,11 @@ using System.Text;
 
 namespace Chronicity.Provider.EntityFramework.DataModels
 {
-    public class TimeAndStateEntry
+    public class EntityStateKey
     {
         [Key]
         public int Id { get; set; }
-        public int TimeAndStateEntryId { get; set; }
+        public string Entity { get; set; }
         public string Key { get; set; }
-        public string Value { get; set; }
     }
 }

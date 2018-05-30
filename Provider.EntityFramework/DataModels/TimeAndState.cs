@@ -11,5 +11,7 @@ namespace Chronicity.Provider.EntityFramework.DataModels
         public int Id { get; set; }
         public DateTime On { get; set; }
         public string Entity { get; set; }
+        public string Key { get; set; }
+        public string Value { get; set; }
     }
 }
