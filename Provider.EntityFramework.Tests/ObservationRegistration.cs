@@ -12,6 +12,7 @@ namespace Provider.EntityFramework.Tests
     public class ObservationRegistration
     {
         private TimeLineService _service;
+        private ChronicityContext _context;
 
         public ObservationRegistration()
         {
@@ -19,7 +20,9 @@ namespace Provider.EntityFramework.Tests
                 .UseInMemoryDatabase(databaseName: "ObservationRegistration")
                 .Options;
 
-            _service = new TimeLineService(new ChronicityContext(options));
+            _context = new ChronicityContext(options);
+
+            _service = new TimeLineService(_context);
         }
 
 
@@ -27,6 +30,8 @@ namespace Provider.EntityFramework.Tests
         [Fact]
         public void RegisteringObservation_StateIsSet()
         {
+            _context.Database.EnsureDeleted();
+
             var o = new Observation()
             {
                 On = "2001/01/01",
@@ -43,6 +48,7 @@ namespace Provider.EntityFramework.Tests
         [Fact]
         public void RegisteringObservation_StateIsMerged()
         {
+            _context.Database.EnsureDeleted();
 
             var o1 = new Observation()
             {
@@ -70,6 +76,7 @@ namespace Provider.EntityFramework.Tests
         [Fact]
         public void RegisteringObservation_StateIsMerged_Chronologically()
         {
+            _context.Database.EnsureDeleted();
 
             var o1 = new Observation()
             {
@@ -97,28 +104,32 @@ namespace Provider.EntityFramework.Tests
 
 
         [Fact]
-        public void RegisteringObservation_StateIsMerged_Chronologically2()
+        public void RegisteringObservation_StateIsMerged_Reverse_Chronologically()
         {
+            _context.Database.EnsureDeleted();
 
             var o1 = new Observation()
             {
-                On = "2001/01/01 01:01",
+                On = "2001/01/01 01:03",
                 Type = "MyEventType",
-                Entity = "E1"
+                Entity = "E1",
+                Expressions = new[] { "Entity.State.MyNextVal=3" }
             };
 
             var o2 = new Observation()
             {
-                On = "2001/01/01 01:03",
+                On = "2001/01/01 01:02",
                 Type = "MyEventType",
-                Entity = "E1"
+                Entity = "E1",
+                Expressions = new[] { "Entity.State.MyNextVal=2" }
             };
 
             var o3 = new Observation()
             {
-                On = "2001/01/01 01:02",
+                On = "2001/01/01 01:01",
                 Type = "MyEventType",
-                Entity = "E1"
+                Entity = "E1",
+                Expressions = new[] { "Entity.State.MyNextVal=1" }
             };
 
 
@@ -126,14 +137,15 @@ namespace Provider.EntityFramework.Tests
             _service.RegisterObservation(o2);
             _service.RegisterObservation(o3);
 
-            Assert.False(_service.GetEntityState("E1", "2001/01/01 01:03").ContainsKey("MyVal1"));
-            Assert.False(_service.GetEntityState("E1", "2001/01/01 01:03").ContainsKey("MyVal2"));
-            Assert.False(_service.GetEntityState("E1", "2001/01/01 01:03").ContainsKey("MyVal3"));
+            Assert.Equal("1",_service.GetEntityState("E1", "2001/01/01 01:01")["MyNextVal"]);
+            Assert.Equal("2", _service.GetEntityState("E1", "2001/01/01 01:02")["MyNextVal"]);
+            Assert.Equal("3", _service.GetEntityState("E1", "2001/01/01 01:03")["MyNextVal"]);
         }
 
         [Fact]
         public void RegisteringObservation_StateIsMerged_Simultaneously()
         {
+            _context.Database.EnsureDeleted();
 
             var o1 = new Observation()
             {
@@ -162,6 +174,7 @@ namespace Provider.EntityFramework.Tests
         [Fact]
         public void RegisteringObservation_StateIsMerged_MultipleExpressions()
         {
+            _context.Database.EnsureDeleted();
 
             var o1 = new Observation()
             {
@@ -180,6 +193,7 @@ namespace Provider.EntityFramework.Tests
         [Fact]
         public void RegisteringObservation_StateIsOverwritten()
         {
+            _context.Database.EnsureDeleted();
 
             var o1 = new Observation()
             {

@@ -44,86 +44,130 @@ namespace Provider.EntityFramework.StateTracking
             TimeAndState tracked = new TimeAndState() { On = DateTime.Parse(o.On), Entity = o.Entity };
             List<TimeAndStateEntry> trackedEntries = new List<TimeAndStateEntry>();
 
-
-            TimeAndState prior;
-
-            prior = _context.TimeAndStates.Where(x => x.Entity == o.Entity && x.On <= parsedTime ).OrderByDescending(x => x.On).FirstOrDefault();
+            var prior = _context
+                .TimeAndStates
+                .Where(x => x.Entity == o.Entity && x.On <= parsedTime )
+                .OrderByDescending(x => x.On)
+                .FirstOrDefault();
 
             if (prior != null)
             {
+                var priorEntries = _context.TimeAndStateEntries.Where(x => x.TimeAndStateEntryId == prior.Id);
+                var newEntries = GenerateEntries(o.Expressions, priorEntries);
+
                 if (prior.On == parsedTime)
                 {
-                    // Event is concurrent with another event
-                    tracked = prior;
-                    trackedEntries = _context.TimeAndStateEntries.Where(x => x.TimeAndStateEntryId == prior.Id).ToList();
+                    // Observation is concurrent with another change in state
+                    foreach(var e in newEntries)
+                    {
+                        //Only merge in new keys
+                        if (!priorEntries.Select(x => x.Key).Contains(e.Key))
+                        {
+                            e.TimeAndStateEntryId = prior.Id;
+                            _context.TimeAndStateEntries.Add(e);
+                        }
+                    }
+                    _context.SaveChanges();
                 }
                 else
                 {
-                    // Event is either in the middle or after
-                    var priorEntries = _context.TimeAndStateEntries.Where(x => x.TimeAndStateEntryId == prior.Id);
-
-                    _context.TimeAndStates.Add(tracked);
-                    _context.SaveChanges();
-
-                    foreach (var e in priorEntries)
+                    // Observation is either in the middle or after
+                    if (newEntries.Count() > 0)
                     {
-                        var trackE = new TimeAndStateEntry()
-                        {
-                            Key = e.Key,
-                            Value = e.Value,
-                            TimeAndStateEntryId = tracked.Id
-                        };
+                        var newEntry = new TimeAndState() { Entity = o.Entity, On = parsedTime };
+                        _context.TimeAndStates.Add(newEntry);
+                        _context.SaveChanges();
 
-                        trackedEntries.Add(trackE);
-                        _context.TimeAndStateEntries.Add(trackE);
+                        foreach (var e in newEntries)
+                        {
+                            e.TimeAndStateEntryId = newEntry.Id;
+                            _context.TimeAndStateEntries.Add(e);
+                        }
+
+                        // Each snapshot in state (at least right now) needs to be a full one. 
+                        // So given that we have change in state we need snapshot others as well
+
+                        foreach(var e in priorEntries)
+                        {
+                            if (!newEntries.Select(x => x.Key).Contains(e.Key))
+                            {
+                                _context.TimeAndStateEntries.Add(new TimeAndStateEntry()
+                                {
+                                    Key = e.Key,
+                                    Value = e.Value,
+                                    TimeAndStateEntryId = newEntry.Id
+                                });
+                            }
+                            _context.SaveChanges();
+                        }
+
                         _context.SaveChanges();
                     }
-
                 }
 
             }
             else
             {
-                _context.TimeAndStates.Add(tracked);
-                _context.SaveChanges();
-            }
+                // There is no prior entry - possibly the first or this was backdated
+                var items = GenerateEntries(o.Expressions, new List<TimeAndStateEntry>());
 
-
-
-            if (o.Expressions != null)
-            {
-                var state = ParseStateChanges(o.Expressions);
-
-                foreach (var change in state)
+                if (items.Count() > 0)
                 {
-                    var trackE = trackedEntries.Where(x => x.Key == change.Key).FirstOrDefault();
+                    var newEntry = new TimeAndState() { Entity = o.Entity, On = parsedTime };
+                    _context.TimeAndStates.Add(newEntry);
+                    _context.SaveChanges();
 
-                    if(trackE == null)
+                    foreach (var e in items)
                     {
-                        trackE = new TimeAndStateEntry()
-                        {
-                            Key = change.Key,
-                            TimeAndStateEntryId = tracked.Id
-                        };
-
-                        trackedEntries.Add(trackE);
-                        _context.TimeAndStateEntries.Add(trackE);
+                        e.TimeAndStateEntryId = newEntry.Id;
+                        _context.TimeAndStateEntries.Add(e);
                     }
-
-                    trackE.Value = change.Value;
+                    _context.SaveChanges();
                 }
-
-                _context.SaveChanges();
-
             }
 
         }
 
-        private Dictionary<string, string> ParseStateChanges(IEnumerable<string> observations)
+        private IList<TimeAndStateEntry> GenerateEntries(IEnumerable<string> expressions, IEnumerable<TimeAndStateEntry> priorEntries)
+        {
+            var newEntries = new List<TimeAndStateEntry>();
+
+            var observations = ParseStateObservations(expressions);
+            bool changed = false;
+
+            foreach (var key in observations.Keys)
+            {
+                var prior = priorEntries.Where(x => x.Key == key).FirstOrDefault();
+                if (prior == null || prior.Value != observations[key])
+                {
+                    changed = true;
+                    newEntries.Add(new TimeAndStateEntry()
+                    {
+                        Key = key,
+                        Value = observations[key]
+                    });
+                }
+                else
+                {
+                    newEntries.Add(new TimeAndStateEntry()
+                    {
+                        Key = key,
+                        Value = prior.Value
+                    });
+                }
+
+            }
+
+            if (!changed) return new List<TimeAndStateEntry>();
+
+            return newEntries;
+        }
+
+        private Dictionary<string, string> ParseStateObservations(IEnumerable<string> expressions)
         {
             var changes = new Dictionary<string, string>();
 
-            foreach (var observation in observations)
+            foreach (var observation in expressions)
             {
                 if (observation.StartsWith("Entity.State."))
                 {
