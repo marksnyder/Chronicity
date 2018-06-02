@@ -70,7 +70,12 @@ namespace Chronicity.Service
                 }));
                 x.OnError((exception, httpContext) =>
                 {   
-                    app.ApplicationServices.GetService<ILogger<string>>().LogError(string.Concat(exception.Message, Environment.NewLine,exception.StackTrace));
+                    app.ApplicationServices.GetService<ILogger<string>>().LogError(
+                        httpContext.Request.QueryString,
+                        Environment.NewLine,
+                        string.Concat(exception.Message, 
+                        Environment.NewLine,exception.StackTrace
+                        ));
                     return Task.CompletedTask;
                 });
             });
