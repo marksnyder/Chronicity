@@ -71,7 +71,7 @@ namespace Chronicity.Service
                 x.OnError((exception, httpContext) =>
                 {   
                     app.ApplicationServices.GetService<ILogger<string>>().LogError(
-                        httpContext.Request.QueryString,
+                        httpContext.Request.QueryString.Value,
                         Environment.NewLine,
                         string.Concat(exception.Message, 
                         Environment.NewLine,exception.StackTrace
