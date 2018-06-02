@@ -71,10 +71,11 @@ namespace Chronicity.Service
                 x.OnError((exception, httpContext) =>
                 {   
                     app.ApplicationServices.GetService<ILogger<string>>().LogError(
-                        httpContext.Request.QueryString.Value,
+                        string.Concat(httpContext.Request.QueryString.Value,
+                        Environment.NewLine, 
+                        exception.Message, 
                         Environment.NewLine,
-                        string.Concat(exception.Message, 
-                        Environment.NewLine,exception.StackTrace
+                        exception.StackTrace
                         ));
                     return Task.CompletedTask;
                 });
