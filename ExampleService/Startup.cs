@@ -49,16 +49,31 @@ namespace Chronicity.Service
                        .AllowAnyMethod()
                        .AllowAnyHeader();
             }));
+
+            services.AddLogging();
         }
+
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            var slConfig = Configuration.GetSection("SyslogSettings");
+            if (slConfig != null)
+                loggerFactory.AddSyslog(slConfig, Configuration.GetValue<string>("SystemName", "localhost"));
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseExceptionHandler().WithConventions(x => {
+                x.ContentType = "application/json";
+                x.MessageFormatter(s => JsonConvert.SerializeObject(new
+                {
+                    Message = "An error occurred while processing your request"
+                }));
+                x.OnError((exception, httpContext) =>
+                {   
+                    app.ApplicationServices.GetService<ILogger<string>>().LogError(exception,exception.Message);
+                    return Task.CompletedTask;
+                });
+            });
 
             app.UseMvc();
             app.UseSwagger();
@@ -75,25 +90,6 @@ namespace Chronicity.Service
                 serviceScope.ServiceProvider.GetRequiredService<ChronicityContext>();
                 context.Database.EnsureCreated();
             }
-
-            var slConfig = Configuration.GetSection("SyslogSettings");
-            if (slConfig != null)
-                loggerFactory.AddSyslog(slConfig, Configuration.GetValue<string>("COMPUTERNAME", "localhost"));
-
-            var logger = app.ApplicationServices.GetService<ILogger>();
-
-            app.UseExceptionHandler().WithConventions(x => {
-                x.ContentType = "application/json";
-                x.MessageFormatter(s => JsonConvert.SerializeObject(new
-                {
-                    Message = "An error occurred whilst processing your request"
-                }));
-                x.OnError((exception, httpContext) =>
-                {
-                    logger.LogError(exception,"Service Error");
-                    return Task.CompletedTask;
-                });
-            });
 
             app.Map("/error", x => x.Run(y => throw new Exception()));
         }
