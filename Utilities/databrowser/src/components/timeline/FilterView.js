@@ -28,7 +28,7 @@ class FilterView extends React.Component {
     const { value } = this.state;
 
     return <div className={classes.root}>
-      <Typography component="div" style={{ padding: 8 * 3 }}>
+      <Typography component="div">
       <Grid container spacing={24}>
         <Grid item sm={6}>
           <FilterEditor filters={this.props.filters} applyFilters={this.props.applyFilters} classes={classes}  />

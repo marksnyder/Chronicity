@@ -5,7 +5,8 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import RawEvents from './RawEvents.js'
 import EventTimeline from './EventTimeline.js'
-
+import FilterView from './FilterView.js'
+import Chronicity from '../../clients/Chronicity.js'
 
 function TabContainer(props) {
   return (
@@ -20,27 +21,51 @@ class TimelineView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0
+      tab: 0,
+      filters: [ 'On.After=2015/01/01 01:02', 'Type=newthing' ],
+      events: []
     };
   }
 
-  handleChange = (event, value) => {
-    this.setState({ value });
+  handleChange = (event, tab) => {
+    this.setState({ tab: tab });
+  };
+
+  applyFilters = (filters) => {
+
+    this.setState({
+      filters: filters,
+      tab: 0
+    });
+
+    var that = this;
+
+    Chronicity.filterEvents(filters)
+      .then((res) => { return res.json(); })
+      .then((result) => {
+          that.setState({
+            events: result
+          });
+        }
+      );
+
   };
 
   render() {
     const { classes } = this.props;
-    const { value } = this.state;
+    const { tab } = this.state;
 
     return  <div className={classes.root}>
         <AppBar position="static" color="default">
-          <Tabs value={value} onChange={this.handleChange}>
+          <Tabs value={tab} onChange={this.handleChange}>
             <Tab label="Visual" />
             <Tab label="Data" />
+            <Tab label="Filters" />
           </Tabs>
         </AppBar>
-        {value === 0 && <TabContainer><EventTimeline events={this.props.events} classes={classes}  /></TabContainer>}
-        {value === 1 && <TabContainer><RawEvents events={this.props.events} classes={classes} /></TabContainer>}
+        {tab === 0 && <TabContainer><EventTimeline events={this.state.events} classes={classes}  /></TabContainer>}
+        {tab === 1 && <TabContainer><RawEvents events={this.state.events} classes={classes} /></TabContainer>}
+        {tab === 2 && <TabContainer><FilterView classes={classes} filters={this.state.filters} applyFilters={this.applyFilters}  /></TabContainer>}
       </div>
 
   }

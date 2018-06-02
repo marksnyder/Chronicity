@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
+using Syslog.Framework.Logging;
 
 namespace Chronicity.Service
 {
@@ -49,7 +50,7 @@ namespace Chronicity.Service
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
 
             if (env.IsDevelopment())
@@ -72,6 +73,11 @@ namespace Chronicity.Service
                 serviceScope.ServiceProvider.GetRequiredService<ChronicityContext>();
                 context.Database.EnsureCreated();
             }
+
+            var slConfig = Configuration.GetSection("SyslogSettings");
+            if (slConfig != null)
+                loggerFactory.AddSyslog(slConfig, Configuration.GetValue<string>("COMPUTERNAME", "localhost"));
+
 
 
         }

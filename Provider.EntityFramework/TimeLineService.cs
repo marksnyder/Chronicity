@@ -13,11 +13,27 @@ namespace Chronicity.Provider.EntityFramework
     {
         private ChronicityContext _context;
         private RollingStateRepository _stateRepository;
+        private IList<IEventAgent> _eventAgents;
 
-        public TimeLineService(ChronicityContext context)
+        public TimeLineService(ChronicityContext context) : this(context,null)
+        {
+        }
+
+        public TimeLineService(ChronicityContext context, IList<IEventAgent> eventAgents)
         {
             _context = context;
-            _stateRepository = new RollingStateRepository(context);
+
+            if(eventAgents != null)
+            {
+                _eventAgents = eventAgents;
+            }
+            else
+            {
+                _eventAgents = new List<IEventAgent>();
+            }
+
+            _stateRepository = new RollingStateRepository(context, _eventAgents);
+
         }
 
         public IDictionary<string, string> GetEntityState(string entityid, string on)
@@ -46,6 +62,14 @@ namespace Chronicity.Provider.EntityFramework
             }
 
             _context.SaveChanges();
+
+            foreach (var agent in _eventAgents)
+            {
+                foreach (var entity in e.Entities)
+                {
+                    agent.OnNewEvent(entity, e.Type, DateTime.Parse(e.On));
+                }
+            }
         }
 
         public void RegisterObservation(Observation o)

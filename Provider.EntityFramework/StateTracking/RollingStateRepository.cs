@@ -5,16 +5,19 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Chronicity.Core;
 
 namespace Provider.EntityFramework.StateTracking
 {
     public class RollingStateRepository
     {
         private ChronicityContext _context;
+        private IEnumerable<IEventAgent> _eventAgents;
 
-        public RollingStateRepository(ChronicityContext context)
+        public RollingStateRepository(ChronicityContext context, IEnumerable<IEventAgent> eventAgents)
         {
             _context = context;
+            _eventAgents = eventAgents;
         }
 
         public EntityState GetEntityState(string entityid, string on)
@@ -47,23 +50,38 @@ namespace Provider.EntityFramework.StateTracking
 
             foreach(var key in possibleChanges.Keys)
             {
-                if(_context.EntityStateKeys.FirstOrDefault(x => x.Key == key) == null)
+                // Update entity state keys if it doesn't exist in master list
+                var keyMaster = _context.EntityStateKeys.FirstOrDefault(x => x.Key == key);
+
+                if (keyMaster == null)
                 {
-                    _context.EntityStateKeys.Add(new EntityStateKey()
+                    keyMaster = new EntityStateKey()
                     {
                         Key = key,
-                        Entity = o.Entity
-                    });
+                        Entity = o.Entity,
+                        LastChange = parsedTime
+                    };
+
+                    _context.EntityStateKeys.Add(keyMaster);
 
                     _context.SaveChanges();
                 }
+                else if(keyMaster.LastChange < parsedTime)
+                {
+                    // Update last change
+                    keyMaster.LastChange = parsedTime;
+                    _context.SaveChanges();
+                }
 
+
+                //Identify prior entity state 
                 var lastChange = _context
                     .TimeAndStates
                     .Where(x => x.Key == key && x.Entity == o.Entity && x.On < parsedTime)
                     .OrderByDescending(x => x.On)
                     .FirstOrDefault();
 
+                // Track
                 if (lastChange == null || lastChange.Value != possibleChanges[key])
                 {
                     _context.TimeAndStates.Add(new TimeAndState()
@@ -75,6 +93,31 @@ namespace Provider.EntityFramework.StateTracking
                     });
 
                     _context.SaveChanges();
+
+                    // Fire event agents
+                    if(lastChange != null && lastChange.Value != possibleChanges[key])
+                    {
+                        foreach(var agent in _eventAgents)
+                        {
+                            agent.OnEntityStateChange(o.Entity, key, lastChange.Value, possibleChanges[key], parsedTime);
+                        }
+                    }
+
+                    // If this is a back-dated observation we need to fire new state change forward ->
+                    if(keyMaster.LastChange.Value > parsedTime)
+                    {
+                        var nextChange = _context
+                           .TimeAndStates
+                           .Where(x => x.Key == key && x.Entity == o.Entity && x.On > parsedTime)
+                           .OrderBy(x => x.On)
+                           .FirstOrDefault();
+
+                        foreach (var agent in _eventAgents)
+                        {
+                            agent.OnEntityStateChange(o.Entity, key, possibleChanges[key], nextChange.Value, nextChange.On);
+                        }
+                    }
+
                 }
             }
           

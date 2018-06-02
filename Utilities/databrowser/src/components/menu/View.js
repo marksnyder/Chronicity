@@ -24,7 +24,6 @@ class MenuView extends React.Component {
         <Toolbar>
           <img src={Logo} height='50' />
           <Button color="inherit"  onClick={() => { this.props.changeView('timeline'); }} >Timeline</Button>
-          <Button color="inherit"  onClick={() => { this.props.changeView('filters'); }} >Filters</Button>
         </Toolbar>
 
       </AppBar>

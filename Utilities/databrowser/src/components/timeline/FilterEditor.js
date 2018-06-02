@@ -31,7 +31,9 @@ class FilterEditor extends React.Component {
   }
 
   runFilters = () => {
+    console.log('parsing json');
     var filters = JSON.parse(this.state.filterText);
+    console.log('parsed json');
     this.props.applyFilters(filters);
   }
 
