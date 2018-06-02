@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Chronicity.Core;
 using Chronicity.Provider.EntityFramework;
 using Chronicity.Provider.EntityFramework.DataContext;
+using GlobalExceptionHandler.WebApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 using Syslog.Framework.Logging;
 
@@ -78,8 +80,22 @@ namespace Chronicity.Service
             if (slConfig != null)
                 loggerFactory.AddSyslog(slConfig, Configuration.GetValue<string>("COMPUTERNAME", "localhost"));
 
+            var logger = app.ApplicationServices.GetService<ILogger>();
 
+            app.UseExceptionHandler().WithConventions(x => {
+                x.ContentType = "application/json";
+                x.MessageFormatter(s => JsonConvert.SerializeObject(new
+                {
+                    Message = "An error occurred whilst processing your request"
+                }));
+                x.OnError((exception, httpContext) =>
+                {
+                    logger.LogError(exception,"Service Error");
+                    return Task.CompletedTask;
+                });
+            });
 
+            app.Map("/error", x => x.Run(y => throw new Exception()));
         }
     }
 }
