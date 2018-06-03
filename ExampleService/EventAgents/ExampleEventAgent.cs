@@ -57,6 +57,13 @@ namespace Chronicity.Service.EventAgents
                         On = on.ToString("MM/dd/yyyy HH:mm:ss"),
                         Type = "Bird Departed"
                     });
+
+                    _service.RegisterObservation(new Core.Events.Observation()
+                    {
+                         Entity = entity,
+                         Expressions = new[] { "Entity.State.ActiveBird=False" },
+                         On = on.ToString("MM/dd/yyyy HH:mm:ss")
+                    });
                 }
 
                 if (Convert.ToInt32(newValue) < 40 && Convert.ToInt32(priorValue) >= 40)
@@ -67,6 +74,13 @@ namespace Chronicity.Service.EventAgents
                         Entities = new[] { entity },
                         On = on.ToString("MM/dd/yyyy HH:mm:ss"),
                         Type = "Bird Arrived"
+                    });
+
+                    _service.RegisterObservation(new Core.Events.Observation()
+                    {
+                        Entity = entity,
+                        Expressions = new[] { "Entity.State.ActiveBird=True" },
+                        On = on.ToString("MM/dd/yyyy HH:mm:ss")
                     });
                 }
 
