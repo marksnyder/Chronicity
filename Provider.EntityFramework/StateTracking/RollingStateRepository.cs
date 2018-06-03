@@ -66,7 +66,7 @@ namespace Provider.EntityFramework.StateTracking
 
                     _context.SaveChanges();
                 }
-                else if(keyMaster.LastChange < parsedTime)
+                else if(keyMaster.LastChange == null || keyMaster.LastChange < parsedTime)
                 {
                     // Update last change
                     keyMaster.LastChange = parsedTime;
