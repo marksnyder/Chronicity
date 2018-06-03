@@ -35,9 +35,9 @@ namespace Chronicity.Service
             var bp = services.BuildServiceProvider();
 
             services.AddDbContext<ChronicityContext>(options =>
-                options.UseSqlServer(Configuration["Connection"]), ServiceLifetime.Singleton);
+                options.UseSqlServer(Configuration["Connection"]));
 
-            services.AddSingleton<ITimelineService,TimeLineService>();
+            services.AddTransient<ITimelineService>(x => CreateTimeline(x));
 
 
             services.AddSwaggerGen(c =>
@@ -57,15 +57,20 @@ namespace Chronicity.Service
             services.AddLogging();
         }
 
+        private ITimelineService CreateTimeline(IServiceProvider x)
+        {
+            var context = x.GetService<ChronicityContext>();
+            var tl = new TimeLineService(context);
+            var agent = new ExampleEventAgent(tl);
+            tl.RegisterAgent(agent);
+            return tl;
+        }
+
 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            var timeline = app.ApplicationServices.GetService<ITimelineService>();
-
-            var agent = new ExampleEventAgent(timeline);
-            timeline.RegisterAgent(agent);
 
             var slConfig = Configuration.GetSection("SyslogSettings");
             if (slConfig != null)
@@ -98,13 +103,7 @@ namespace Chronicity.Service
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Timeline Service");
             });
 
-            //using (var serviceScope =
-            //app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            //{
-            //    var context =
-            //    serviceScope.ServiceProvider.GetRequiredService<ChronicityContext>();
-            //    context.Database.EnsureCreated();
-            //}
+
 
             app.Map("/error", x => x.Run(y => throw new Exception()));
         }

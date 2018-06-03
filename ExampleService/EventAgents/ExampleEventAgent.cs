@@ -61,7 +61,7 @@ namespace Chronicity.Service.EventAgents
                     _service.RegisterObservation(new Core.Events.Observation()
                     {
                          Entity = entity,
-                         Expressions = new[] { "Entity.State.ActiveBird=False" },
+                         Expressions = new[] { "Entity.State.activeBird=False" },
                          On = on.ToString("MM/dd/yyyy HH:mm:ss")
                     });
                 }
@@ -79,7 +79,7 @@ namespace Chronicity.Service.EventAgents
                     _service.RegisterObservation(new Core.Events.Observation()
                     {
                         Entity = entity,
-                        Expressions = new[] { "Entity.State.ActiveBird=True" },
+                        Expressions = new[] { "Entity.State.activeBird=True" },
                         On = on.ToString("MM/dd/yyyy HH:mm:ss")
                     });
                 }
