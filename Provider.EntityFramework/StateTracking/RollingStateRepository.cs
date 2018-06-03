@@ -51,7 +51,7 @@ namespace Provider.EntityFramework.StateTracking
             foreach(var key in possibleChanges.Keys)
             {
                 // Update entity state keys if it doesn't exist in master list
-                var keyMaster = _context.EntityStateKeys.FirstOrDefault(x => x.Key == key);
+                var keyMaster = _context.EntityStateKeys.FirstOrDefault(x => x.Key == key && x.Entity == o.Entity);
 
                 if (keyMaster == null)
                 {

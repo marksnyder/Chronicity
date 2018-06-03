@@ -233,7 +233,8 @@ namespace Provider.EntityFramework.Tests
         {
             _context.Database.EnsureDeleted();
             var agentMock = new Mock<IEventAgent>();
-            var service = new TimeLineService(_context, new List<IEventAgent>() { agentMock.Object });
+            var service = new TimeLineService(_context);
+            service.RegisterAgent(agentMock.Object);
 
             var o1 = new Observation()
             {
@@ -263,7 +264,8 @@ namespace Provider.EntityFramework.Tests
         {
             _context.Database.EnsureDeleted();
             var agentMock = new Mock<IEventAgent>();
-            var service = new TimeLineService(_context, new List<IEventAgent>() { agentMock.Object });
+            var service = new TimeLineService(_context);
+            service.RegisterAgent(agentMock.Object);
 
             var o1 = new Observation()
             {

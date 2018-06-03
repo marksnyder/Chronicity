@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Chronicity.Core;
 using Chronicity.Provider.EntityFramework;
 using Chronicity.Provider.EntityFramework.DataContext;
+using Chronicity.Service.EventAgents;
 using GlobalExceptionHandler.WebApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,10 +32,13 @@ namespace Chronicity.Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ChronicityContext>(options =>
-                options.UseSqlServer(Configuration["Connection"]));
+            var bp = services.BuildServiceProvider();
 
-            services.AddTransient<ITimelineService, TimeLineService>();
+            services.AddDbContext<ChronicityContext>(options =>
+                options.UseSqlServer(Configuration["Connection"]), ServiceLifetime.Singleton);
+
+            services.AddSingleton<ITimelineService,TimeLineService>();
+
 
             services.AddSwaggerGen(c =>
             {
@@ -58,6 +62,11 @@ namespace Chronicity.Service
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            var timeline = app.ApplicationServices.GetService<ITimelineService>();
+
+            var agent = new ExampleEventAgent(timeline);
+            timeline.RegisterAgent(agent);
+
             var slConfig = Configuration.GetSection("SyslogSettings");
             if (slConfig != null)
                 loggerFactory.AddSyslog(slConfig, Configuration.GetValue<string>("SystemName", "localhost"));
@@ -89,13 +98,13 @@ namespace Chronicity.Service
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Timeline Service");
             });
 
-            using (var serviceScope =
-            app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                var context =
-                serviceScope.ServiceProvider.GetRequiredService<ChronicityContext>();
-                context.Database.EnsureCreated();
-            }
+            //using (var serviceScope =
+            //app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            //{
+            //    var context =
+            //    serviceScope.ServiceProvider.GetRequiredService<ChronicityContext>();
+            //    context.Database.EnsureCreated();
+            //}
 
             app.Map("/error", x => x.Run(y => throw new Exception()));
         }

@@ -48,7 +48,8 @@ namespace Provider.EntityFramework.Tests
 
             var agentMock = new Mock<IEventAgent>();
 
-            var service = new TimeLineService(_context, new List<IEventAgent> () { agentMock.Object });
+            var service = new TimeLineService(_context);
+            service.RegisterAgent(agentMock.Object);
 
             var e = new Event()
             {
@@ -69,7 +70,8 @@ namespace Provider.EntityFramework.Tests
 
             var agentMock = new Mock<IEventAgent>();
 
-            var service = new TimeLineService(_context, new List<IEventAgent>() { agentMock.Object });
+            var service = new TimeLineService(_context);
+            service.RegisterAgent(agentMock.Object);
 
             var e = new Event()
             {
@@ -92,7 +94,9 @@ namespace Provider.EntityFramework.Tests
             var agentMock = new Mock<IEventAgent>();
             var agentMock2 = new Mock<IEventAgent>();
 
-            var service = new TimeLineService(_context, new List<IEventAgent>() { agentMock.Object, agentMock2.Object });
+            var service = new TimeLineService(_context);
+            service.RegisterAgent(agentMock.Object);
+            service.RegisterAgent(agentMock2.Object);
 
             var e = new Event()
             {

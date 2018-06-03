@@ -15,25 +15,18 @@ namespace Chronicity.Provider.EntityFramework
         private RollingStateRepository _stateRepository;
         private IList<IEventAgent> _eventAgents;
 
-        public TimeLineService(ChronicityContext context) : this(context,null)
-        {
-        }
 
-        public TimeLineService(ChronicityContext context, IList<IEventAgent> eventAgents)
+        public TimeLineService(ChronicityContext context)
         {
             _context = context;
-
-            if(eventAgents != null)
-            {
-                _eventAgents = eventAgents;
-            }
-            else
-            {
-                _eventAgents = new List<IEventAgent>();
-            }
-
+            _eventAgents = new List<IEventAgent>();
             _stateRepository = new RollingStateRepository(context, _eventAgents);
 
+        }
+
+        public void RegisterAgent(IEventAgent agent)
+        {
+            _eventAgents.Add(agent);
         }
 
         public IDictionary<string, string> GetEntityState(string entityid, string on)
