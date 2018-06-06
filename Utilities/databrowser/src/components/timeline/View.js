@@ -5,7 +5,7 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import RawEvents from './RawEvents.js'
 import EventTimeline from './EventTimeline.js'
-import FilterView from './FilterView.js'
+import CodeView from './CodeView.js'
 import Chronicity from '../../clients/Chronicity.js'
 
 function TabContainer(props) {
@@ -31,23 +31,12 @@ class TimelineView extends React.Component {
     this.setState({ tab: tab });
   };
 
-  applyFilters = (filters) => {
+  applyData= (data) => {
 
     this.setState({
-      filters: filters,
+      events: data,
       tab: 0
     });
-
-    var that = this;
-
-    Chronicity.filterEvents(filters)
-      .then((res) => { return res.json(); })
-      .then((result) => {
-          that.setState({
-            events: result
-          });
-        }
-      );
 
   };
 
@@ -60,12 +49,12 @@ class TimelineView extends React.Component {
           <Tabs value={tab} onChange={this.handleChange}>
             <Tab label="Visual" />
             <Tab label="Data" />
-            <Tab label="Filters" />
+            <Tab label="Code" />
           </Tabs>
         </AppBar>
         {tab === 0 && <TabContainer><EventTimeline events={this.state.events} classes={classes}  /></TabContainer>}
         {tab === 1 && <TabContainer><RawEvents events={this.state.events} classes={classes} /></TabContainer>}
-        {tab === 2 && <TabContainer><FilterView classes={classes} filters={this.state.filters} applyFilters={this.applyFilters}  /></TabContainer>}
+        {tab === 2 && <TabContainer><CodeView classes={classes} filters={this.state.filters} applyData={this.applyData}  /></TabContainer>}
       </div>
 
   }

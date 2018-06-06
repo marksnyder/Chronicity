@@ -80,18 +80,18 @@ namespace Chronicity.Provider.EntityFramework
             }
 
             //TODO -- need to optimize this.. we shouldn't have to pull all of them back to do the filtering
-            var contexts = events.ToList().Select(x => new Context()
-            { 
-                Event = new Event() { Entities = x.EntityList.Split(',') , On = x.On.ToString("yyyy/MM/dd HH:mm:ss"), Type = x.Type, Id = x.Id.ToString() },
-                States = x.EntityList.Split(',').Select(y => _stateRepository.GetEntityState(y, x.On.ToString("MM/dd/yyyy HH:mm:ss"))).ToList()
-            });
+            //var contexts = events.ToList().Select(x => new Context()
+            //{ 
+            //    Event = new Event() { Entities = x.EntityList.Split(',') , On = x.On.ToString("yyyy/MM/dd HH:mm:ss"), Type = x.Type, Id = x.Id.ToString() },
+            //    States = x.EntityList.Split(',').Select(y => _stateRepository.GetEntityState(y, x.On.ToString("MM/dd/yyyy HH:mm:ss"))).ToList()
+            //});
 
-            foreach (var expression in expressions)
-            {
-                contexts = ParseFilterContextExpression(expression, contexts);
-            }
+            //foreach (var expression in expressions)
+            //{
+            //    contexts = ParseFilterContextExpression(expression, contexts);
+            //}
 
-            return contexts.Select(x => x.Event);
+            return events.Select(x => new Event() { Entities = x.EntityList.Split(','), On = x.On.ToString("yyyy/MM/dd HH:mm:ss"), Type = x.Type, Id = x.Id.ToString() } );
         }
 
 
