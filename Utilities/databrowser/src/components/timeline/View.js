@@ -22,7 +22,6 @@ class TimelineView extends React.Component {
     super(props);
     this.state = {
       tab: 0,
-      filters: [ 'On.After=2015/01/01 01:02', 'Type=newthing' ],
       events: []
     };
   }

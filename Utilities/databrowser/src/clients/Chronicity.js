@@ -11,7 +11,10 @@ class Chronicity {
         url = url + '&expressions=' + encodeURIComponent(f);
     });
 
-    return fetch(url);
+    return fetch(url)
+      .then(function(response) {
+        return response.json();
+      });
   };
 
   static searchEntities = (search) => {

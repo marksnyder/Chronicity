@@ -19,9 +19,14 @@ class CodeEditor extends React.Component {
 
   constructor(props) {
     super(props);
+
+    var code =  window.localStorage.getItem('code')
+
+    if(code == null) code = '';
+
     this.state = {
       value: 0,
-      codeText: JSON.stringify(this.props.filters, null, 2)
+      codeText: code
     };
   }
 
@@ -29,12 +34,15 @@ class CodeEditor extends React.Component {
     this.setState({
       codeText: codeText
     });
+    window.localStorage.setItem('code',codeText);
   }
 
   runCode = () => {
-    console.log('parsing json');
-    this.evalCode.call(this);
-    console.log('parsed json');
+    try {
+      this.evalCode.call(this);
+    } catch(e) {
+      alert(e.message);
+    }
   }
 
   evalCode = (code) => {
@@ -43,6 +51,10 @@ class CodeEditor extends React.Component {
 
   getClient = () => {
     return Chronicity;
+  }
+
+  applyData = (data) => {
+    this.props.applyData(data);
   }
 
   render() {
