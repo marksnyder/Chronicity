@@ -31,6 +31,20 @@ namespace Chronicity.Service.EventAgents
                         On = on.ToString("MM/dd/yyyy HH:mm:ss"),
                         Type = "Temp Increase"
                     });
+
+                    _service.RegisterObservation(new Core.Events.Observation()
+                    {
+                        Entity = entity,
+                        Expressions = new[] { "Entity.State.tempup=True" },
+                        On = on.ToString("MM/dd/yyyy HH:mm:ss")
+                    });
+
+                    _service.RegisterObservation(new Core.Events.Observation()
+                    {
+                        Entity = entity,
+                        Expressions = new[] { "Entity.State.tempdown=False" },
+                        On = on.ToString("MM/dd/yyyy HH:mm:ss")
+                    });
                 }
 
                 if (Convert.ToInt32(newValue) < Convert.ToInt32(priorValue))
@@ -41,6 +55,20 @@ namespace Chronicity.Service.EventAgents
                         Entities = new[] { entity },
                         On = on.ToString("MM/dd/yyyy HH:mm:ss"),
                         Type = "Temp Decrease"
+                    });
+
+                    _service.RegisterObservation(new Core.Events.Observation()
+                    {
+                        Entity = entity,
+                        Expressions = new[] { "Entity.State.tempup=False" },
+                        On = on.ToString("MM/dd/yyyy HH:mm:ss")
+                    });
+
+                    _service.RegisterObservation(new Core.Events.Observation()
+                    {
+                        Entity = entity,
+                        Expressions = new[] { "Entity.State.tempdown=True" },
+                        On = on.ToString("MM/dd/yyyy HH:mm:ss")
                     });
                 }
             }
