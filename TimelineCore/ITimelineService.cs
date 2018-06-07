@@ -14,5 +14,7 @@ namespace Chronicity.Core
         IEnumerable<Event> FilterEvents(IEnumerable<string> expressions);
         IList<string> SearchEventTypes(string search);
         IList<string> SearchEntities(string search);
+        IList<Entity.StateRange> FilterState(IEnumerable<string> expressions);
+
     }
 }

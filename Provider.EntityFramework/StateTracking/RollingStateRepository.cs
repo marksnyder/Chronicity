@@ -89,7 +89,8 @@ namespace Provider.EntityFramework.StateTracking
                          Entity = o.Entity,
                          Key = key,
                          Value = possibleChanges[key],
-                         On = parsedTime
+                         On = parsedTime,
+                         PriorValue = lastChange != null ? lastChange.Value : string.Empty
                     });
 
                     _context.SaveChanges();
@@ -103,7 +104,7 @@ namespace Provider.EntityFramework.StateTracking
                         }
                     }
 
-                    // If this is a back-dated observation we need to fire new state change forward ->
+                    // If this is a back-dated observation we need to fire new state change forward  & fix prior value of the next record ->
                     if(keyMaster.LastChange.Value > parsedTime)
                     {
                         var nextChange = _context
@@ -111,6 +112,9 @@ namespace Provider.EntityFramework.StateTracking
                            .Where(x => x.Key == key && x.Entity == o.Entity && x.On > parsedTime)
                            .OrderBy(x => x.On)
                            .FirstOrDefault();
+
+                        nextChange.PriorValue = possibleChanges[key];
+                        _context.SaveChanges();
 
                         foreach (var agent in _eventAgents)
                         {

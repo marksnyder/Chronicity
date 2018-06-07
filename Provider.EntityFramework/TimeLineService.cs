@@ -6,6 +6,7 @@ using System.Text;
 using System.Linq;
 using Chronicity.Provider.EntityFramework.DataContext;
 using Provider.EntityFramework.StateTracking;
+using Chronicity.Provider.EntityFramework.DataModels;
 
 namespace Chronicity.Provider.EntityFramework
 {
@@ -35,7 +36,7 @@ namespace Chronicity.Provider.EntityFramework
         }
 
 
-        public void RegisterEvent(Event e)
+        public void RegisterEvent(Core.Events.Event e)
         {
             if (e.Entities == null) throw new Exception("You must specify entities");
 
@@ -70,7 +71,7 @@ namespace Chronicity.Provider.EntityFramework
             _stateRepository.Track(o);
         }
 
-        public IEnumerable<Event> FilterEvents(IEnumerable<string> expressions)
+        public IEnumerable<Core.Events.Event> FilterEvents(IEnumerable<string> expressions)
         {
             var events = _context.Events.AsQueryable();
 
@@ -91,7 +92,7 @@ namespace Chronicity.Provider.EntityFramework
             //    contexts = ParseFilterContextExpression(expression, contexts);
             //}
 
-            return events.Select(x => new Event() { Entities = x.EntityList.Split(','), On = x.On.ToString("yyyy/MM/dd HH:mm:ss"), Type = x.Type, Id = x.Id.ToString() } );
+            return events.Select(x => new Core.Events.Event() { Entities = x.EntityList.Split(','), On = x.On.ToString("yyyy/MM/dd HH:mm:ss"), Type = x.Type, Id = x.Id.ToString() } );
         }
 
 
@@ -129,6 +130,71 @@ namespace Chronicity.Provider.EntityFramework
             }
 
             return ret.AsQueryable();
+        }
+
+        public IList<Core.Entity.StateRange> FilterState(IEnumerable<string> expressions)
+        {
+            var stateData = _context.TimeAndStates.AsQueryable();
+
+            foreach (var expression in expressions)
+            {
+                if (expression.StartsWith("Entity.State."))
+                {
+                    var e = expression.Replace("Entity.State.", "");
+                    var var = e.Split('=')[0];
+                    var value = e.Split('=')[1];
+                    stateData = stateData.Where(x => x.Key == var && (x.Value == value || x.PriorValue == value));
+                }
+            }
+
+            var finalData = stateData.ToList();
+
+            var ret = new List<Core.Entity.StateRange>();
+
+            var entities = finalData.Select(x => x.Entity).Distinct();
+
+            foreach(var entity in entities)
+            {
+                foreach (var key in finalData.Where(x => x.Entity == entity).Select(x => x.Key).Distinct())
+                {
+                    var ordered = finalData.Where(x => x.Entity == entity && x.Key == key).OrderBy(x => x.On);
+
+                    Core.Entity.StateRange c = null;
+                    foreach (var o in ordered)
+                    {
+                        if (c == null)
+                        {
+
+                            c = new Core.Entity.StateRange()
+                            {
+                                Entity = entity,
+                                Key = key,
+                                Value = o.Value,
+                                Start = o.On
+                            };
+
+                            ret.Add(c);
+                        }
+                        else
+                        {
+                            c.End = o.On;
+
+                            c = new Core.Entity.StateRange()
+                            {
+                                Entity = entity,
+                                Key = key,
+                                Value = o.Value,
+                                Start = o.On
+                            };
+
+                            ret.Add(c);
+
+                        }
+                    }
+                }
+            }
+
+            return ret;
         }
 
         private IEnumerable<Context> ParseFilterContextExpression(string expression, IEnumerable<Context> contexts)
