@@ -46,7 +46,7 @@ namespace Service.Controllers
             return _service.FilterEvents(expressions);
         }
 
-        [HttpGet, Route("/FilterEvents")]
+        [HttpGet, Route("/FilterState")]
         public IEnumerable<StateRange> FilterState(IEnumerable<string> expressions)
         {
             return _service.FilterState(expressions);
