@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Chronicity.Core;
+using Chronicity.Core.Entity;
 using Chronicity.Core.Events;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -43,6 +44,12 @@ namespace Service.Controllers
         public IEnumerable<Event> FilterEvents(IEnumerable<string> expressions)
         {
             return _service.FilterEvents(expressions);
+        }
+
+        [HttpGet, Route("/FilterEvents")]
+        public IEnumerable<StateRange> FilterState(IEnumerable<string> expressions)
+        {
+            return _service.FilterState(expressions);
         }
 
         [HttpGet, Route("/SearchEventTypes")]
