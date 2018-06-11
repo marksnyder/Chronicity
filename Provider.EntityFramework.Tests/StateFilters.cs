@@ -54,5 +54,45 @@ namespace Chronicity.Provider.EntityFramework.Tests
             Assert.Equal(new DateTime(2001, 1, 1), result.Start);
             Assert.Equal(new DateTime(2001, 1, 2), result.End);
         }
+
+        [Fact]
+        public void FilterByKey_Returns_Only_Match_Results()
+        {
+            _context.Database.EnsureDeleted();
+            var service = new TimeLineService(_context);
+
+            var o = new Observation()
+            {
+                On = "2001/01/01",
+                Entity = "E1",
+                Expressions = new[] { "Entity.State.MyVal=Hello World" }
+            };
+
+            var o2 = new Observation()
+            {
+                On = "2001/01/02",
+                Entity = "E1",
+                Expressions = new[] { "Entity.State.MyVal=More" }
+            };
+
+            var o3 = new Observation()
+            {
+                On = "2001/01/03",
+                Entity = "E1",
+                Expressions = new[] { "Entity.State.MyVal=More More" }
+            };
+
+            service.RegisterObservation(o);
+            service.RegisterObservation(o2);
+
+            var result = service.FilterState(new[] { "Entity.State.MyVal=Hello World" });
+
+            Assert.Equal("E1", result.First().Entity);
+            Assert.Equal(new DateTime(2001, 1, 1), result.First().Start);
+            Assert.Equal(new DateTime(2001, 1, 2), result.First().End);
+
+            Assert.Equal(1, result.Count);
+        }
+
     }
 }

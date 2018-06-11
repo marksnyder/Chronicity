@@ -179,15 +179,7 @@ namespace Chronicity.Provider.EntityFramework
                         {
                             c.End = o.On;
 
-                            c = new Core.Entity.StateRange()
-                            {
-                                Entity = entity,
-                                Key = key,
-                                Value = o.Value,
-                                Start = o.On
-                            };
-
-                            ret.Add(c);
+                            c = null;
 
                         }
                     }
