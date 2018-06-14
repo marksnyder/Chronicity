@@ -35,6 +35,20 @@ class EventTimeline extends React.Component {
         })
     });
 
+    this.props.stateChanges.forEach(function(stateChange) {
+
+        if(stateChange.end != null)
+        {
+          items.push({
+            start: stateChange.start,
+            end: stateChange.end,
+            content: stateChange.key,
+            id: stateChange.entity + stateChange.key + stateChange.start + stateChange.end,
+            type: 'background'
+          });
+        }
+    });
+
     return (<div>
         {items.length > 0 &&
         <div><Timeline options={options} items={items} /></div>

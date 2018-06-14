@@ -22,7 +22,8 @@ class TimelineView extends React.Component {
     super(props);
     this.state = {
       tab: 0,
-      events: []
+      events: [],
+      stateChanges: []
     };
   }
 
@@ -30,13 +31,35 @@ class TimelineView extends React.Component {
     this.setState({ tab: tab });
   };
 
-  applyData= (data) => {
+  addStateChanges = (data) => {
+    var updated = this.state.stateChanges.slice();
+    var merged = updated.concat(data);
 
     this.setState({
-      events: data,
-      tab: 0
+      stateChanges: merged
     });
+  }
 
+  addEvents = (data) => {
+
+    var updated = this.state.events.slice();
+    var merged = updated.concat(data);
+
+    this.setState({
+      events: merged
+    });
+  };
+
+  clearEvents = () => {
+    this.setState({
+      events: []
+    });
+  };
+
+  clearStateChanges = () => {
+    this.setState({
+      stateChanges: []
+    });
   };
 
   render() {
@@ -51,9 +74,26 @@ class TimelineView extends React.Component {
             <Tab label="Code" />
           </Tabs>
         </AppBar>
-        {tab === 0 && <TabContainer><EventTimeline events={this.state.events} classes={classes}  /></TabContainer>}
-        {tab === 1 && <TabContainer><RawEvents events={this.state.events} classes={classes} /></TabContainer>}
-        {tab === 2 && <TabContainer><CodeView classes={classes} filters={this.state.filters} applyData={this.applyData}  /></TabContainer>}
+        {tab === 0 && <TabContainer>
+          <EventTimeline
+            events={this.state.events}
+            stateChanges={this.state.stateChanges}
+            classes={classes}  />
+        </TabContainer>}
+        {tab === 1 && <TabContainer>
+          <RawEvents
+            events={this.state.events}
+            stateChanges={this.state.stateChanges} 
+            classes={classes} />
+        </TabContainer>}
+        {tab === 2 && <TabContainer>
+          <CodeView classes={classes}
+            addEvents={this.addEvents}
+            clearEvents={this.clearEvents}
+            addStateChanges={this.addStateChanges}
+            clearStateChanges={this.clearStateChanges}
+        />
+      </TabContainer>}
       </div>
 
   }

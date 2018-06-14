@@ -31,7 +31,12 @@ class CodeView extends React.Component {
       <Typography component="div">
       <Grid container spacing={24}>
         <Grid item sm={6}>
-          <CodeEditor applyData={this.props.applyData} classes={classes}  />
+          <CodeEditor
+            addEvents={this.props.addEvents}
+            clearEvents={this.props.clearEvents}
+            addStateChanges={this.props.addStateChanges}
+            clearStateChanges={this.props.clearStateChanges}
+            classes={classes}  />
         </Grid>
         <Grid item sm={3}>
           <EventTypeList classes={classes} />

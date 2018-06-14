@@ -53,8 +53,20 @@ class CodeEditor extends React.Component {
     return Chronicity;
   }
 
-  applyData = (data) => {
-    this.props.applyData(data);
+  addEvents = (data) => {
+    this.props.addEvents(data);
+  }
+
+  clearEvents = () => {
+    this.props.clearEvents();
+  }
+
+  addStateChanges = (data) => {
+    this.props.addStateChanges(data);
+  }
+
+  clearStateChanges = () => {
+    this.props.clearStateChanges();
   }
 
   render() {

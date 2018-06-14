@@ -3,11 +3,11 @@
 class Chronicity {
 
 
-  static filterEvents = (filters) => {
+  static filterEvents = (expressions) => {
     var url = 'http://ex.chronicity.io/FilterEvents';
     url = url + "?nocache=" + (new Date()).getTime();
 
-    filters.forEach(function(f) {
+    expressions.forEach(function(f) {
         url = url + '&expressions=' + encodeURIComponent(f);
     });
 
@@ -29,6 +29,20 @@ class Chronicity {
     url = url + "?nocache=" + (new Date()).getTime();
     url = url + "&search=" + encodeURIComponent(search)
     return fetch(url);
+  }
+
+  static filterState = (expressions) => {
+      var url = 'http://ex.chronicity.io/FilterState';
+      url = url + "?nocache=" + (new Date()).getTime();
+
+      expressions.forEach(function(f) {
+          url = url + '&expressions=' + encodeURIComponent(f);
+      });
+
+      return fetch(url)
+        .then(function(response) {
+          return response.json();
+        });
   }
 
 }
