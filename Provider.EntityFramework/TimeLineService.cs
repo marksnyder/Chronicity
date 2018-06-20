@@ -140,6 +140,8 @@ namespace Chronicity.Provider.EntityFramework
 
             DateTime? afterLimit = null;
             DateTime? beforeLimit = null;
+            string valueLimit = null;
+            string keyLimit = null; 
 
             foreach (var expression in expressions)
             {
@@ -149,6 +151,8 @@ namespace Chronicity.Provider.EntityFramework
                     var var = e.Split('=')[0];
                     var value = e.Split('=')[1];
                     stateData = stateData.Where(x => x.state.Key == var && (x.state.Value == value || x.state.PriorValue == value));
+                    valueLimit = value;
+                    keyLimit = var;
                 }
 
                 if (expression.StartsWith("On.After"))
@@ -245,6 +249,12 @@ namespace Chronicity.Provider.EntityFramework
                 {
                     u.End = beforeLimit.Value;
                 }
+            }
+
+            if(keyLimit != null && valueLimit != null)
+            {
+                ret = ret.Where(x => x.Key == keyLimit && x.Value == valueLimit).ToList();
+
             }
 
             return ret;
