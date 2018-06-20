@@ -61,8 +61,8 @@ class CodeEditor extends React.Component {
     this.props.clearEvents();
   }
 
-  addStateChanges = (data) => {
-    this.props.addStateChanges(data);
+  addStateChanges = (data, group) => {
+    this.props.addStateChanges(data, group);
   }
 
   clearStateChanges = () => {

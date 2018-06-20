@@ -134,7 +134,12 @@ namespace Chronicity.Provider.EntityFramework
 
         public IList<Core.Entity.StateRange> FilterState(IEnumerable<string> expressions)
         {
-            var stateData = _context.TimeAndStates.AsQueryable();
+            var stateData = _context.TimeAndStates
+                .Join(_context.EntityStateKeys, state=> state.Key, key=> key.Key, (state,key) => new {state,key });
+
+
+            DateTime? afterLimit = null;
+            DateTime? beforeLimit = null;
 
             foreach (var expression in expressions)
             {
@@ -143,7 +148,25 @@ namespace Chronicity.Provider.EntityFramework
                     var e = expression.Replace("Entity.State.", "");
                     var var = e.Split('=')[0];
                     var value = e.Split('=')[1];
-                    stateData = stateData.Where(x => x.Key == var && (x.Value == value || x.PriorValue == value));
+                    stateData = stateData.Where(x => x.state.Key == var && (x.state.Value == value || x.state.PriorValue == value));
+                }
+
+                if (expression.StartsWith("On.After"))
+                {
+                    var e = expression.Replace("On.After", "");
+                    var var = e.Split('=')[0];
+                    var value = DateTime.Parse(e.Split('=')[1]);
+                    stateData = stateData.Where(x => x.state.On > value || ( x.key.LastChange < value && x.state.On == x.key.LastChange ));
+                    afterLimit = value;
+                }
+
+                if (expression.StartsWith("On.Before"))
+                {
+                    var e = expression.Replace("On.Before", "");
+                    var var = e.Split('=')[0];
+                    var value = DateTime.Parse(e.Split('=')[1]);
+                    stateData = stateData.Where(x => x.state.On < value);
+                    beforeLimit = value;
                 }
             }
 
@@ -151,38 +174,76 @@ namespace Chronicity.Provider.EntityFramework
 
             var ret = new List<Core.Entity.StateRange>();
 
-            var entities = finalData.Select(x => x.Entity).Distinct();
+            var entities = finalData.Select(x => x.state.Entity).Distinct();
 
             foreach(var entity in entities)
             {
-                foreach (var key in finalData.Where(x => x.Entity == entity).Select(x => x.Key).Distinct())
+                foreach (var key in finalData.Where(x => x.state.Entity == entity).Select(x => x.state.Key).Distinct())
                 {
-                    var ordered = finalData.Where(x => x.Entity == entity && x.Key == key).OrderBy(x => x.On);
+                    var ordered = finalData.Where(x => x.state.Entity == entity && x.state.Key == key).OrderBy(x => x.state.On);
 
                     Core.Entity.StateRange c = null;
+                    bool isFirst = true;
                     foreach (var o in ordered)
                     {
+                        if(isFirst && afterLimit != null && o.state.On > afterLimit && o.state.PriorValue != null)
+                        {
+                            ret.Add(new Core.Entity.StateRange()
+                            {
+                                Entity = entity,
+                                Key = key,
+                                Value = o.state.PriorValue,
+                                Start = afterLimit.Value,
+                                End = o.state.On.AddSeconds(-1)
+                            });
+                        }
+
                         if (c == null)
                         {
-
                             c = new Core.Entity.StateRange()
                             {
                                 Entity = entity,
                                 Key = key,
-                                Value = o.Value,
-                                Start = o.On
+                                Value = o.state.Value,
+                                Start = o.state.On
                             };
 
                             ret.Add(c);
                         }
                         else
                         {
-                            c.End = o.On;
+                            c.End = o.state.On.AddSeconds(-1);
 
-                            c = null;
+                            c = new Core.Entity.StateRange()
+                            {
+                                Entity = entity,
+                                Key = key,
+                                Value = o.state.Value,
+                                Start = o.state.On
+                            };
+
+                            ret.Add(c);
 
                         }
+
+                        isFirst = false;
                     }
+                }
+            }
+
+            if (afterLimit != null && ret.Count() > 0)
+            {
+                foreach (var u in ret.Where(x => x.Start < afterLimit.Value))
+                {
+                    u.Start = afterLimit.Value;
+                }
+            }
+
+            if (beforeLimit != null && ret.Count() > 0)
+            {
+                foreach (var u in ret.Where(x => x.End > beforeLimit.Value || x.End == null))
+                {
+                    u.End = beforeLimit.Value;
                 }
             }
 

@@ -3,3 +3,12 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+
+.vis-item.vis-background.timeline-tempup {
+  background-color: #ff000036;
+}
+
+.vis-item.vis-background.timeline-tempdown {
+  background-color: #00dfff36;
+}

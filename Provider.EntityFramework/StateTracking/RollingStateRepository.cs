@@ -86,11 +86,11 @@ namespace Provider.EntityFramework.StateTracking
                 {
                     _context.TimeAndStates.Add(new TimeAndState()
                     {
-                         Entity = o.Entity,
-                         Key = key,
-                         Value = possibleChanges[key],
-                         On = parsedTime,
-                         PriorValue = lastChange != null ? lastChange.Value : string.Empty
+                        Entity = o.Entity,
+                        Key = key,
+                        Value = possibleChanges[key],
+                        On = parsedTime,
+                        PriorValue = lastChange != null ? lastChange.Value : null
                     });
 
                     _context.SaveChanges();

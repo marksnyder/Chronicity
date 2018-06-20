@@ -31,12 +31,18 @@ class TimelineView extends React.Component {
     this.setState({ tab: tab });
   };
 
-  addStateChanges = (data) => {
-    var updated = this.state.stateChanges.slice();
-    var merged = updated.concat(data);
+  addStateChanges = (data,group) => {
+
+    var allItems = this.state.stateChanges;
+
+    if(allItems[group] == undefined) allItems[group] = [];
+
+    var groupItems =  allItems[group].slice();
+    var mergedGroupItems = groupItems.concat(data);
+    allItems[group] = mergedGroupItems;
 
     this.setState({
-      stateChanges: merged
+      stateChanges: allItems
     });
   }
 
@@ -83,7 +89,7 @@ class TimelineView extends React.Component {
         {tab === 1 && <TabContainer>
           <RawEvents
             events={this.state.events}
-            stateChanges={this.state.stateChanges} 
+            stateChanges={this.state.stateChanges}
             classes={classes} />
         </TabContainer>}
         {tab === 2 && <TabContainer>
