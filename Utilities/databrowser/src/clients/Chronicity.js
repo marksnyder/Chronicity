@@ -17,6 +17,18 @@ class Chronicity {
       });
   };
 
+  static getEntityState = (entityid,on) =>
+  {
+    var url = 'http://ex.chronicity.io/GetEntityState';
+    url = url + "?nocache=" + (new Date()).getTime();
+    url = url + "&on=" + encodeURIComponent(on)
+    url = url + "&entityid=" + encodeURIComponent(entityid)
+    return fetch(url)
+      .then(function(response) {
+        return response.json();
+      });
+  }
+
   static searchEntities = (search) => {
     var url = 'http://ex.chronicity.io/SearchEntities';
     url = url + "?nocache=" + (new Date()).getTime();

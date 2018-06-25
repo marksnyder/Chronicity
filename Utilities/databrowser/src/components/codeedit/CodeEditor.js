@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 import brace from 'brace';
 import AceEditor from 'react-ace';
 import 'brace/mode/javascript';
-import 'brace/theme/github';
+import 'brace/theme/tomorrow';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -20,7 +20,7 @@ class CodeEditor extends React.Component {
   constructor(props) {
     super(props);
 
-    var code =  window.localStorage.getItem('code')
+    var code =  'var client = this.getClient(); \n var that = this; \n this.clearEvents(); \n this.clearStateChanges(); \n client.filterEvents([\'On.After=6/01/2018 11:00\', \'Type=Bird Arrived\']).then(function(data){ \n that.addEvents(data); \n })'
 
     if(code == null) code = '';
 
@@ -87,7 +87,7 @@ class CodeEditor extends React.Component {
       <Paper className={classes.paper}>
         <AceEditor
           mode="javascript"
-          theme="github"
+          theme="tomorrow"
           name="filterEditor"
           fontSize={14}
           showPrintMargin={true}
@@ -95,6 +95,7 @@ class CodeEditor extends React.Component {
           highlightActiveLine={true}
           value={this.state.codeText}
           onChange={this.changeCodeText}
+          width="100%"
         />
       </Paper>
     </div>

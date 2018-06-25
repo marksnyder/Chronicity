@@ -29,22 +29,12 @@ class CodeView extends React.Component {
 
     return <div className={classes.root}>
       <Typography component="div">
-      <Grid container spacing={24}>
-        <Grid item sm={6}>
-          <CodeEditor
-            addEvents={this.props.addEvents}
-            clearEvents={this.props.clearEvents}
-            addStateChanges={this.props.addStateChanges}
-            clearStateChanges={this.props.clearStateChanges}
-            classes={classes}  />
-        </Grid>
-        <Grid item sm={3}>
-          <EventTypeList classes={classes} />
-        </Grid>
-        <Grid item sm={3}>
-          <EntityList classes={classes} />
-        </Grid>
-      </Grid>
+        <CodeEditor
+          addEvents={this.props.addEvents}
+          clearEvents={this.props.clearEvents}
+          addStateChanges={this.props.addStateChanges}
+          clearStateChanges={this.props.clearStateChanges}
+          classes={classes}  />
     </Typography>
     </div>
   }

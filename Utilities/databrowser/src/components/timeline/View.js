@@ -3,10 +3,10 @@ import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
-import RawEvents from './RawEvents.js'
-import EventTimeline from './EventTimeline.js'
-import CodeView from './CodeView.js'
+import Timeline from './Timeline.js'
+import StateView from './StateView.js'
 import Chronicity from '../../clients/Chronicity.js'
+import moment from 'moment';
 
 function TabContainer(props) {
   return (
@@ -21,85 +21,72 @@ class TimelineView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      tab: 0,
-      events: [],
-      stateChanges: []
+      stateViewerData: null,
+      focus: null
     };
   }
 
-  handleChange = (event, tab) => {
-    this.setState({ tab: tab });
-  };
-
-  addStateChanges = (data,group) => {
-
-    var allItems = this.state.stateChanges;
-
-    if(allItems[group] == undefined) allItems[group] = [];
-
-    var groupItems =  allItems[group].slice();
-    var mergedGroupItems = groupItems.concat(data);
-    allItems[group] = mergedGroupItems;
+  closeStateViewer = () => {
 
     this.setState({
-      stateChanges: allItems
+      stateViewerData: null
     });
+  };
+
+  openStateViewer = (data) => {
+    data.items = [];
+
+    this.setState({
+      stateViewerData: data
+    });
+
+    var that = this;
+
+     data.entities.forEach(function(e) {
+      Chronicity.getEntityState(e,data.on)
+      .then(function(data){
+          that.addStateViewerItems(e,data);
+      });
+    });
+
+  };
+
+  addStateViewerItems(entity,items)
+  {
+    var data = this.state.stateViewerData;
+
+    Object.keys(items).forEach(function(key) {
+      data.items.push({
+        entity: entity,
+        key: key,
+        value: items[key]
+      });
+    });
+
+    this.setState({
+      stateViewerData: data
+    });
+
   }
 
-  addEvents = (data) => {
 
-    var updated = this.state.events.slice();
-    var merged = updated.concat(data);
-
-    this.setState({
-      events: merged
-    });
-  };
-
-  clearEvents = () => {
-    this.setState({
-      events: []
-    });
-  };
-
-  clearStateChanges = () => {
-    this.setState({
-      stateChanges: []
-    });
-  };
 
   render() {
     const { classes } = this.props;
     const { tab } = this.state;
 
     return  <div className={classes.root}>
-        <AppBar position="static" color="default">
-          <Tabs value={tab} onChange={this.handleChange}>
-            <Tab label="Visual" />
-            <Tab label="Data" />
-            <Tab label="Code" />
-          </Tabs>
-        </AppBar>
-        {tab === 0 && <TabContainer>
-          <EventTimeline
-            events={this.state.events}
-            stateChanges={this.state.stateChanges}
+        <StateView
+          data={this.state.stateViewerData}
+          onClose={this.closeStateViewer}
+          classes={classes}  />
+          <Timeline
+            events={this.props.events}
+            stateChanges={this.props.stateChanges}
+            viewState={this.openStateViewer}
+            start={moment().startOf('hour')}
+            end={moment().subtract(3, 'days')}
             classes={classes}  />
-        </TabContainer>}
-        {tab === 1 && <TabContainer>
-          <RawEvents
-            events={this.state.events}
-            stateChanges={this.state.stateChanges}
-            classes={classes} />
-        </TabContainer>}
-        {tab === 2 && <TabContainer>
-          <CodeView classes={classes}
-            addEvents={this.addEvents}
-            clearEvents={this.clearEvents}
-            addStateChanges={this.addStateChanges}
-            clearStateChanges={this.clearStateChanges}
-        />
-      </TabContainer>}
       </div>
 
   }
