@@ -10,6 +10,8 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TimelineGroup from './TimelineGroup.js'
 import { Sticky, StickyContainer } from 'react-sticky';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
 
 function sortEvents(a,b) {
   if (moment(a.on).isBefore(moment(b.on)))
@@ -21,8 +23,6 @@ function sortEvents(a,b) {
 
 
 var headerStyle = {
-  'background': '#35dcef',
-  'text-align': 'center',
   'z-index': '100'
 };
 
@@ -111,9 +111,13 @@ class Timeline extends React.Component {
             <Sticky>
               {({ style }) => (
                 <div style={Object.assign(style,headerStyle)}>
-                  <Typography variant="display1">
-                    {n.description}
-                  </Typography>
+                  <AppBar position="static" color="secondary">
+                    <Toolbar>
+                      <Typography variant="title" color="inherit">
+                        {n.description}
+                      </Typography>
+                    </Toolbar>
+                  </AppBar>
                 </div>
               )}
             </Sticky>

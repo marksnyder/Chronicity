@@ -54,7 +54,7 @@ class TimelineEvents extends React.Component {
               onClick={() => this.props.viewState(n)}
             >
             <ListItemIcon>
-             <Avatar className={classes.orangeAvatar}>N</Avatar>
+             <Avatar style={n.iconStyle}>{n.initials}</Avatar>
             </ListItemIcon>
             <ListItemText primary={n.type} />
             </ListItem>);

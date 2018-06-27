@@ -20,7 +20,26 @@ class CodeEditor extends React.Component {
   constructor(props) {
     super(props);
 
-    var code =  'var client = this.getClient(); \n var that = this; \n this.clearEvents(); \n this.clearStateChanges(); \n client.filterEvents([\'On.After=6/01/2018 11:00\', \'Type=Bird Arrived\']).then(function(data){ \n that.addEvents(data); \n })'
+    //var code =  window.localStorage.getItem('code');
+
+    var code  =`
+      var client = this.getClient();
+      var that = this;
+
+      this.clearEvents();
+      this.clearStateChanges();
+
+      client.filterEvents([
+          'On.After=6/01/2018 11:00', 'Type=Bird Arrived'])
+          .then(function(data){
+              that.addEvents(data, { "background-color": "#E57373" }, "A");
+      });
+
+      client.filterEvents([
+          'On.After=6/01/2018 11:00', 'Type=Bird Departed'])
+          .then(function(data){
+              that.addEvents(data, { "background-color": "#BA68C8" }, "D");
+      });`
 
     if(code == null) code = '';
 
@@ -53,8 +72,8 @@ class CodeEditor extends React.Component {
     return Chronicity;
   }
 
-  addEvents = (data) => {
-    this.props.addEvents(data);
+  addEvents = (data,iconStyle,initials) => {
+    this.props.addEvents(data,iconStyle,initials);
   }
 
   clearEvents = () => {

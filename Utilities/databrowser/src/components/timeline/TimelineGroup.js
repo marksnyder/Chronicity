@@ -34,7 +34,6 @@ class TimelineGroup extends React.Component {
     var ticks = [];
     var eventIndex = 0;
 
-
     while(current > end)
     {
 

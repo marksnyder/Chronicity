@@ -14,7 +14,7 @@ const theme = createMuiTheme({
       // contrastText: will be calculated to contast with palette.primary.main
     },
     secondary: {
-      main: '#35dcef'
+      main: '#3498db'
     },
     // error: will use the default color
   },
@@ -63,7 +63,12 @@ class App extends React.Component {
 
   };
 
-  addEvents = (data) => {
+  addEvents = (data,iconStyle,initials) => {
+
+    data.forEach(function(e){
+      e.iconStyle = iconStyle;
+      e.initials = initials;
+    })
 
     var updated = this.state.events.slice();
     var merged = updated.concat(data);
