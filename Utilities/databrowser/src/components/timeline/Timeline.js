@@ -8,8 +8,8 @@ import Avatar from '@material-ui/core/Avatar';
 import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import TimelineTick from './TimelineTick.js'
-
+import TimelineGroup from './TimelineGroup.js'
+import { Sticky, StickyContainer } from 'react-sticky';
 
 function sortEvents(a,b) {
   if (moment(a.on).isBefore(moment(b.on)))
@@ -18,6 +18,14 @@ function sortEvents(a,b) {
     return -1;
   return 0;
 }
+
+
+var headerStyle = {
+  'background': '#35dcef',
+  'text-align': 'center',
+  'z-index': '100'
+};
+
 
 class Timeline extends React.Component {
 
@@ -52,34 +60,24 @@ class Timeline extends React.Component {
     var end = moment(events[events.length -1].on).startOf('hour');
     var start = moment(events[0].on).endOf('hour').add(1,'m');
     var current = moment(events[0].on).endOf('hour').add(1,'m');
-    var ticks = [];
+
+    var groups = [];
+
     var eventIndex = 0;
 
     while(current > end)
     {
        var desc =  '';
 
-      // Format tick desc based on type of tick
-       if(current.hour() == 0 && current.minute() == 0)
-       {
-         desc = current.format('MMMM Do');
-       } else if(current.minute() == 0)
-       {
-         desc = current.format('h:mm a');
-       } else
-       {
-         desc = current.format('h:mm');
-       }
-
        // Initialize new tick
-       var tick = {
-         description: desc,
+       var group = {
+         description:  current.format('MMMM Do YY'),
          id: current.valueOf(),
          events: []
        };
 
        // Build the next tick time
-       const next = current.clone().subtract(10, 'minutes');
+       const next = current.clone().subtract(1, 'days');
 
        // Cycle through th enext events and add (assumes events are sorted by time desc)
        var loopEvents = true;
@@ -88,35 +86,40 @@ class Timeline extends React.Component {
        {
          var nextEventTime = moment(events[eventIndex].on);
 
-         console.log(current.format("dddd, MMMM Do YYYY, H:mm:ss a"));
-         console.log(nextEventTime.format("dddd, MMMM Do YYYY, H:mm:ss a"));
-         console.log(next.format("dddd, MMMM Do YYYY, H:mm:ss a"));
-
          if(current.isSameOrAfter(nextEventTime) && next.isBefore(nextEventTime))
          {
-           console.log('MATCH');
-            tick.events.push(events[eventIndex]);
+            group.events.push(events[eventIndex]);
             eventIndex ++;
          }
          else {
-           console.log('NO MATCH');
            loopEvents = false;
          }
        }
 
        // Add and move on
-       ticks.push(tick);
+       groups.push(group);
 
        current = next;
     }
 
+    if(group.length == 0) return (<div></div>);
 
     return (<div>
-      {ticks.map(n => {
-        return ( <TimelineTick
-          viewState={this.props.viewState}
-          events={n.events}
-          description={n.description} />
+      {groups.map(n => {
+        return (<div>
+          <StickyContainer  className="container" key={n.id}>
+            <Sticky>
+              {({ style }) => (
+                <div style={Object.assign(style,headerStyle)}>
+                  <Typography variant="display1">
+                    {n.description}
+                  </Typography>
+                </div>
+              )}
+            </Sticky>
+          <TimelineGroup viewState={this.props.viewState} group={n}  />
+          </StickyContainer>
+        </div>
         );
       })}
       </div>

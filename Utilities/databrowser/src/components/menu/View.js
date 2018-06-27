@@ -57,7 +57,7 @@ class MenuView extends React.Component {
     const { value } = this.state;
 
     return  <div className={classes.root}>
-      <AppBar style={{ position: 'fixed', top: 0 }}  >
+      <AppBar position="static">
         <Toolbar>
           <IconButton onClick={this.toggleDrawer(true)} className={classes.menuButton} color="inherit" aria-label="Menu">
             <MenuIcon />

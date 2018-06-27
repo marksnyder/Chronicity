@@ -19,7 +19,6 @@ class TimelineTick extends React.Component {
           <div>{this.props.description}</div>
         </Grid>
         <Grid xs={6} sm={1}>
-
         </Grid>
         <Grid item xs={12} sm={10}>
           <TimelineEvents
