@@ -4,6 +4,22 @@ import TimelineEvents from './TimelineEvents.js'
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
+
+const styles = {
+    'timeTickContainer' :
+    {
+      'background-color': '#2e3336'
+    },
+    'timeTickTime' :
+    {
+      'color' : 'white',
+      'padding-left' : '5px'
+    },
+    'tick' :
+    {
+    }
+  };
+
 class TimelineTick extends React.Component {
 
   constructor(props) {
@@ -15,10 +31,10 @@ class TimelineTick extends React.Component {
     const { classes } = this.props;
     //const stateKeys = ['nuthoing'];// Object.keys(this.props.stateChanges);
 
-    return (<div className='tick'>
+    return (<div style={styles.tick}>
       <Grid container>
-        <Grid xs={2} sm={2}>
-          <Typography>{this.props.description}</Typography>
+        <Grid xs={2} sm={2} style={styles.timeTickContainer}>
+          <Typography style={styles.timeTickTime}>{this.props.description}</Typography>
         </Grid>
         <Grid xs={1} sm={1}>
           <div style={{
@@ -48,4 +64,4 @@ class TimelineTick extends React.Component {
 
 
 
-export default  (TimelineTick);
+export default  withStyles(styles)(TimelineTick);
