@@ -76,7 +76,7 @@ namespace Chronicity.Service.EventAgents
             //// PROXA
             if (key == "proxa")
             {
-                if (Convert.ToInt32(newValue) > 40 && Convert.ToInt32(priorValue) <= 40)
+                if (Convert.ToInt32(newValue) > 10 && Convert.ToInt32(priorValue) <= 10)
                 {
                     // Bird departed
                     _service.RegisterEvent(new Core.Events.Event()
@@ -94,7 +94,7 @@ namespace Chronicity.Service.EventAgents
                     });
                 }
 
-                if (Convert.ToInt32(newValue) < 40 && Convert.ToInt32(priorValue) >= 40)
+                if (Convert.ToInt32(newValue) < 10 && Convert.ToInt32(priorValue) >= 10)
                 {
                     // Bird arrived
                     _service.RegisterEvent(new Core.Events.Event()
