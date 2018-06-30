@@ -5,7 +5,7 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Timeline from './Timeline.js'
 import StateView from './StateView.js'
-import Chronicity from '../../clients/Chronicity.js'
+import Chronicity from '../../helpers/Chronicity.js'
 import moment from 'moment';
 
 function TabContainer(props) {

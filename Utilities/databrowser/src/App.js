@@ -4,6 +4,9 @@ import TimelineView from './components/timeline/View.js'
 import MenuView from './components/menu/View.js'
 import CodeView from './components/codeedit/View.js'
 import { MuiThemeProvider, createMuiTheme,withStyles } from '@material-ui/core/styles';
+import CodeRunner from './helpers/CodeRunner.js'
+import Chronicity from './helpers/Chronicity.js'
+import DataUtilities from './helpers/DataUtilities.js'
 
 const theme = createMuiTheme({
   palette: {
@@ -38,8 +41,10 @@ class App extends React.Component {
   state = {
     view: 'code',
     events: [],
-    stateChanges: []
+    stateChanges: [],
+    codeText: CodeRunner.getCode()
   };
+
 
   changeView = (view) => {
     this.setState({
@@ -47,34 +52,15 @@ class App extends React.Component {
     });
   };
 
-  addStateChanges = (data,group) => {
-
-    var allItems = this.state.stateChanges;
-
-    if(allItems[group] == undefined) allItems[group] = [];
-
-    var groupItems =  allItems[group].slice();
-    var mergedGroupItems = groupItems.concat(data);
-    allItems[group] = mergedGroupItems;
-
+  addStateChanges = (data,group,color) => {
     this.setState({
-      stateChanges: allItems
+      stateChanges: DataUtilities.mergeStateChanges(this.state.stateChanges,data,group,color)
     });
-
   };
 
   addEvents = (data,iconStyle,initials) => {
-
-    data.forEach(function(e){
-      e.iconStyle = iconStyle;
-      e.initials = initials;
-    })
-
-    var updated = this.state.events.slice();
-    var merged = updated.concat(data);
-
     this.setState({
-      events: merged
+      events: DataUtilities.mergeEvents(this.state.events,data,iconStyle,initials)
     });
   };
 
@@ -90,6 +76,18 @@ class App extends React.Component {
     });
   };
 
+  getClient = () => {
+    return Chronicity;
+  };
+
+  runNewCode = (code) => {
+      CodeRunner.setCode(code);
+      CodeRunner.runCode(this);
+  }
+
+  componentDidMount = () => {
+      CodeRunner.runCode(this);
+  }
 
   render() {
     const { classes } = this.props;
@@ -100,14 +98,19 @@ class App extends React.Component {
       {this.state.view == 'timeline' &&
         <TimelineView
           classes={classes}
-          events={this.state.events} />
+          events={this.state.events}
+          stateChanges={this.state.stateChanges}
+        />
       }
       {this.state.view == 'code' &&
         <CodeView classes={classes}
           addEvents={this.addEvents}
           clearEvents={this.clearEvents}
           addStateChanges={this.addStateChanges}
-          clearStateChanges={this.clearStateChanges} />
+          clearStateChanges={this.clearStateChanges}
+          codeText={this.state.codeText}
+          runNewCode={this.runNewCode}
+         />
       }
     </MuiThemeProvider>
     );
