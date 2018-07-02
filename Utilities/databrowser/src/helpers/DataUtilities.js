@@ -71,18 +71,14 @@ class DataUtilities {
     return DataUtilities.groupBy(events,stateChanges,start,end,'MMMM Do YYYY','days',1, false).reverse();
   }
 
-  static groupByHour = (events,stateChanges) => {
+  static groupByHour = (events,stateChanges,start,end) => {
     events = events.sort(sortEvents);
-    var start = moment(events[0].on).startOf('hour');
-    var end = moment(events[events.length -1].on).endOf('hour');
-    return DataUtilities.groupBy(events,stateChanges,start,end,'h:mm a','hours',1, false).reverse();
+    return DataUtilities.groupBy(events,stateChanges,start,end,'h:mm a','hours',1, true).reverse();
   }
 
-  static groupBy10Minutes = (events,stateChanges) => {
+  static groupBy10Minutes = (events,stateChanges,start,end) => {
     events = events.sort(sortEvents);
-    var start = moment(events[0].on);
-    var end = moment(events[events.length -1].on);
-    return DataUtilities.groupBy(events,stateChanges,start,end,'h:mm a','minutes',10, false).reverse();
+    return DataUtilities.groupBy(events,stateChanges,start,end,'h:mm a','minutes',10, true).reverse();
   }
 
   static groupBy = (events, stateChanges, start, end, descFormat, incrementType, increment, emptyGroups) => {
@@ -92,14 +88,16 @@ class DataUtilities {
 
     while(current.isSameOrBefore(end))
     {
+       var endOfGroup = current.clone().add(increment, incrementType).subtract(1,'seconds');
+
        var group = {
          description:  current.format(descFormat),
          id: current.valueOf() + incrementType,
          events: [],
-         stateChanges: {}
+         stateChanges: {},
+         start: current.format(),
+         end: endOfGroup.format()
        };
-
-       var endOfGroup = current.clone().add(increment, incrementType).subtract(1,'seconds');
 
        var e = DataUtilities.findApplicableEvents(current,endOfGroup,events);
        if(e.length > 0)  {

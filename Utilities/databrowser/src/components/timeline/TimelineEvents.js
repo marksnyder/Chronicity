@@ -45,7 +45,7 @@ class TimelineEvents extends React.Component {
 
     return (<div>
         <List>
-          {this.props.events.map(n => {
+          {this.props.events.reverse().map(n => {
             return (<ListItem
               key={n.id}
               role={undefined}
