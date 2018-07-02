@@ -29,7 +29,7 @@ namespace Service.Controllers
         }
 
         [HttpGet, Route("/RegisterEvent")]
-        public void RegisterEvent(Event e)
+        public void RegisterEvent(NewEvent e)
         {
             _service.RegisterEvent(e);
         }

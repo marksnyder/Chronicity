@@ -10,29 +10,37 @@ class CodeRunner {
 
     CodeRunner.setCode(`
 
-    var client = this.getClient();
-    var that = this;
+      var client = this.getClient();
+      var that = this;
 
-    this.clearEvents();
-    this.clearStateChanges();
+      this.clearEvents();
+      this.clearStateChanges();
 
-    client.filterEvents([
-        'On.After=6/01/2018 11:00', 'Type=Bird Arrived'])
-        .then(function(data){
-            that.addEvents(data, { "backgroundColor": "#E57373" }, "A");
-    });
+      client.filterEvents([
+          'On.After=6/01/2018 11:00', 'Type=Bird Arrived'])
+          .then(function(data){
+              that.addEvents(data, { "backgroundColor": "#E57373" }, "A");
+      });
 
-    client.filterEvents([
-        'On.After=6/01/2018 11:00', 'Type=Bird Departed'])
-        .then(function(data){
-            that.addEvents(data, { "backgroundColor": "#BA68C8" }, "D");
-    });
+      client.filterEvents([
+          'On.After=6/01/2018 11:00', 'Type=Bird Departed'])
+          .then(function(data){
+              that.addEvents(data, { "backgroundColor": "#BA68C8" }, "D");
+      });
 
-    client.filterState([
-        'On.After=6/01/2018 11:00', 'Entity.State.tempup=True'])
-        .then(function(data){
-            that.addStateChanges(data, 'temp','red');
-    });`);
+      client.filterState([
+          'On.After=6/01/2018 11:00', 'Entity.State.tempup=True'])
+          .then(function(data){
+              that.addStateChanges(data, 'temp','red');
+      });
+
+          client.filterState([
+          'On.After=6/01/2018 11:00', 'Entity.State.tempdown=True'])
+          .then(function(data){
+              that.addStateChanges(data, 'temp','blue');
+      });
+
+    `);
     }
 
     return window.localStorage.getItem('code');

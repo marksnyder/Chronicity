@@ -7,6 +7,7 @@ using System.Linq;
 using Chronicity.Provider.EntityFramework.DataContext;
 using Provider.EntityFramework.StateTracking;
 using Chronicity.Provider.EntityFramework.DataModels;
+using Chronicity.Core.Agent;
 
 namespace Chronicity.Provider.EntityFramework
 {
@@ -14,20 +15,42 @@ namespace Chronicity.Provider.EntityFramework
     {
         private ChronicityContext _context;
         private RollingStateRepository _stateRepository;
-        private IList<IEventAgent> _eventAgents;
+        private IList<IStateChangeAgent> _eventAgents;
 
 
         public TimeLineService(ChronicityContext context)
         {
             _context = context;
-            _eventAgents = new List<IEventAgent>();
-            _stateRepository = new RollingStateRepository(context, _eventAgents);
+            _eventAgents = new List<IStateChangeAgent>();
+            _stateRepository = new RollingStateRepository(context);
 
         }
 
-        public void RegisterAgent(IEventAgent agent)
+        public void RegisterAgent(IStateChangeAgent agent)
         {
             _eventAgents.Add(agent);
+        }
+
+        public void ReprocessAgents(IEnumerable<IStateChangeAgent> agents, string key)
+        {
+            var changes = _context.TimeAndStates.Where(x => x.Key == key).OrderBy(x => x.On).ToList();
+
+            foreach(var c in changes)
+            {
+                foreach(var agent in agents)
+                {
+                    var result = agent.OnChange(c.Entity, c.Key, c.PriorValue, c.Value, c.On.ToString("MM/dd/yyyy HH:mm:ss.fffffff"));
+
+                    if (result.NewObservations != null)
+                    {
+                        foreach (var ob in result.NewObservations) { this.RegisterObservation(ob); }
+                    }
+                    if(result.NewEvents != null)
+                    {
+                        foreach (var ev in result.NewEvents) { this.RegisterEvent(ev); }
+                    }
+                }
+            }
         }
 
         public IDictionary<string, string> GetEntityState(string entityid, string on)
@@ -35,8 +58,7 @@ namespace Chronicity.Provider.EntityFramework
             return _stateRepository.GetEntityState(entityid, on);
         }
 
-
-        public void RegisterEvent(Core.Events.Event e)
+        public void RegisterEvent(Core.Events.NewEvent e)
         {
             if (e.Entities == null) throw new Exception("You must specify entities");
 
@@ -61,14 +83,28 @@ namespace Chronicity.Provider.EntityFramework
             {
                 foreach (var entity in e.Entities)
                 {
-                    agent.OnNewEvent(entity, e.Type, DateTime.Parse(e.On));
+                    //agent.OnNewEvent(entity, e.Type, DateTime.Parse(e.On));
                 }
             }
         }
 
         public void RegisterObservation(Observation o)
         {
-            _stateRepository.Track(o);
+            var changes = _stateRepository.Track(o);
+
+            foreach (var c in changes)
+            {
+                foreach (var agent in _eventAgents)
+                {
+                    var result = agent.OnChange(c.Entity, c.Key, c.OldValue, c.NewValue, c.On);
+
+                    if (result != null)
+                    {
+                        foreach (var ob in result.NewObservations) { this.RegisterObservation(ob); }
+                        foreach (var ev in result.NewEvents) { this.RegisterEvent(ev); }
+                    }
+                }
+            }
         }
 
         public IEnumerable<Core.Events.Event> FilterEvents(IEnumerable<string> expressions)

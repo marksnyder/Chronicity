@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Chronicity.Core;
 using Chronicity.Provider.EntityFramework;
 using Chronicity.Provider.EntityFramework.DataContext;
-using Chronicity.Service.EventAgents;
+using ExampleCommon;
 using GlobalExceptionHandler.WebApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -61,8 +61,8 @@ namespace Chronicity.Service
         {
             var context = x.GetService<ChronicityContext>();
             var tl = new TimeLineService(context);
-            var agent = new ExampleEventAgent(tl);
-            tl.RegisterAgent(agent);
+            tl.RegisterAgent(new BirdArrivalAgent());
+            tl.RegisterAgent(new BirdDepartureAgent());
             return tl;
         }
 

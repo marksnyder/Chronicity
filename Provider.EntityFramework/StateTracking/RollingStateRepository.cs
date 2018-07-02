@@ -12,12 +12,10 @@ namespace Provider.EntityFramework.StateTracking
     public class RollingStateRepository
     {
         private ChronicityContext _context;
-        private IEnumerable<IEventAgent> _eventAgents;
 
-        public RollingStateRepository(ChronicityContext context, IEnumerable<IEventAgent> eventAgents)
+        public RollingStateRepository(ChronicityContext context)
         {
             _context = context;
-            _eventAgents = eventAgents;
         }
 
         public EntityState GetEntityState(string entityid, string on)
@@ -42,8 +40,10 @@ namespace Provider.EntityFramework.StateTracking
             return state;
         }
 
-        public void Track(Observation o)
+        public IList<StateChange> Track(Observation o)
         {
+            var result = new List<StateChange>();
+
             DateTime parsedTime = DateTime.Parse(o.On);
 
             var possibleChanges = ParseStateObservations(o.Expressions);
@@ -98,10 +98,16 @@ namespace Provider.EntityFramework.StateTracking
                     // Fire event agents
                     if(lastChange != null && lastChange.Value != possibleChanges[key])
                     {
-                        foreach(var agent in _eventAgents)
+
+                        result.Add(new StateChange()
                         {
-                            agent.OnEntityStateChange(o.Entity, key, lastChange.Value, possibleChanges[key], parsedTime);
-                        }
+                            Entity = o.Entity,
+                            Key = key,
+                            OldValue = lastChange.Value,
+                            NewValue = possibleChanges[key],
+                            On = o.On
+                        });
+
                     }
 
                     // If this is a back-dated observation we need to fire new state change forward  & fix prior value of the next record ->
@@ -116,16 +122,20 @@ namespace Provider.EntityFramework.StateTracking
                         nextChange.PriorValue = possibleChanges[key];
                         _context.SaveChanges();
 
-                        foreach (var agent in _eventAgents)
+                        result.Add(new StateChange()
                         {
-                            agent.OnEntityStateChange(o.Entity, key, possibleChanges[key], nextChange.Value, nextChange.On);
-                        }
+                            Entity = o.Entity,
+                            Key = key,
+                            OldValue = possibleChanges[key],
+                            NewValue = nextChange.Value,
+                            On = nextChange.On.ToString("MM/dd/yyyy HH:mm:ss.fffffff")
+                        });
                     }
 
                 }
             }
-          
 
+            return result;
         }
 
 

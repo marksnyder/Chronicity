@@ -42,7 +42,7 @@ class Timeline10Minutes extends React.Component {
            style: {
              'width': '10px',
              'height' : '100%',
-             'backgroundColor': 'orange',
+             'backgroundColor': 'white',
              'float' : 'left',
              'borderLeft' : 'solid 1px white'
            }
@@ -54,7 +54,7 @@ class Timeline10Minutes extends React.Component {
            style: {
              'width': '10px',
              'height' : '100%',
-             'backgroundColor': 'yellow',
+             'background': 'repeating-linear-gradient(45deg,' + changes[1].color + ' 5px,' + changes[0].color + ' 5px)',
              'float' : 'left',
              'borderLeft' : 'solid 1px white'
            }

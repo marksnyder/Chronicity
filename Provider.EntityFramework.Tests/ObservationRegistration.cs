@@ -232,7 +232,7 @@ namespace Provider.EntityFramework.Tests
         public void RegisteringObservation_Fires_EventAgent()
         {
             _context.Database.EnsureDeleted();
-            var agentMock = new Mock<IEventAgent>();
+            var agentMock = new Mock<IStateChangeAgent>();
             var service = new TimeLineService(_context);
             service.RegisterAgent(agentMock.Object);
 
@@ -256,14 +256,14 @@ namespace Provider.EntityFramework.Tests
             service.RegisterObservation(o2);
 
 
-            agentMock.Verify(x => x.OnEntityStateChange("E1", "MyVal", "Hello World", "Hello World Again", new DateTime(2001,1,2)));
+            agentMock.Verify(x => x.OnChange("E1", "MyVal", "Hello World", "Hello World Again", "2001/01/02"));
         }
 
         [Fact]
         public void RegisteringObservation_Fires_EventAgent_Out_Of_Order()
         {
             _context.Database.EnsureDeleted();
-            var agentMock = new Mock<IEventAgent>();
+            var agentMock = new Mock<IStateChangeAgent>();
             var service = new TimeLineService(_context);
             service.RegisterAgent(agentMock.Object);
 
@@ -287,7 +287,7 @@ namespace Provider.EntityFramework.Tests
             service.RegisterObservation(o1);
 
 
-            agentMock.Verify(x => x.OnEntityStateChange("E1", "MyVal", "Hello World", "Hello World Again", new DateTime(2001, 1, 2)));
+            agentMock.Verify(x => x.OnChange("E1", "MyVal", "Hello World", "Hello World Again", "01/02/2001 00:00:00.0000000"));
         }
     }
 }

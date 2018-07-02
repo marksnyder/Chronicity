@@ -32,7 +32,7 @@ namespace Provider.EntityFramework.Tests
         {
             _context.Database.EnsureDeleted();
 
-            var e1 = new Event()
+            var e1 = new NewEvent()
             {
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
@@ -64,7 +64,7 @@ namespace Provider.EntityFramework.Tests
         {
             _context.Database.EnsureDeleted();
 
-            var e1 = new Event()
+            var e1 = new NewEvent()
             {
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
@@ -96,14 +96,14 @@ namespace Provider.EntityFramework.Tests
         {
             _context.Database.EnsureDeleted();
 
-            var e1 = new Event()
+            var e1 = new NewEvent()
             {
                 On = "2001/01/01 01:01",
                 Type = "MyEventType1",
                 Entities = new [] { "E1" }
             };
 
-            var e2 = new Event()
+            var e2 = new NewEvent()
             {
                 On = "2001/01/01 01:02",
                 Type = "MyEventType2",
@@ -126,14 +126,14 @@ namespace Provider.EntityFramework.Tests
         {
             _context.Database.EnsureDeleted();
 
-            var e1 = new Event()
+            var e1 = new NewEvent()
             {
                 On = "2001/01/01 01:01",
                 Type = "MyEventType1",
                 Entities = new [] { "E1" }
             };
 
-            var e2 = new Event()
+            var e2 = new NewEvent()
             {
                 On = "2001/01/01 01:02",
                 Type = "MyEventType2",
@@ -156,14 +156,14 @@ namespace Provider.EntityFramework.Tests
         {
             _context.Database.EnsureDeleted();
 
-            var e1 = new Event()
+            var e1 = new NewEvent()
             {
                 On = "2001/01/01 01:01",
                 Type = "MyEventType1",
                 Entities = new [] { "E1" }
             };
 
-            var e2 = new Event()
+            var e2 = new NewEvent()
             {
                 On = "2001/01/01 01:03",
                 Type = "MyEventType2",
@@ -186,7 +186,7 @@ namespace Provider.EntityFramework.Tests
         {
             _context.Database.EnsureDeleted();
 
-            var e1 = new Event()
+            var e1 = new NewEvent()
             {
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",

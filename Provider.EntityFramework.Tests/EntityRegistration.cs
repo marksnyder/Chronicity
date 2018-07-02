@@ -24,7 +24,7 @@ namespace Provider.EntityFramework.Tests
         [Fact]
         public void Entity_State_Tracked()
         {
-            var e1 = new Event()
+            var e1 = new NewEvent()
             {
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
@@ -38,7 +38,7 @@ namespace Provider.EntityFramework.Tests
                 Expressions = new[] { "Entity.State.MyVal=Hello World" }
             };
 
-            var e2 = new Event()
+            var e2 = new NewEvent()
             {
                 On = "2001/01/01 01:02",
                 Type = "MyEventType",
@@ -71,7 +71,7 @@ namespace Provider.EntityFramework.Tests
         [Fact]
         public void Entity_State_Tracked_BetweenEvents()
         {
-            var e1 = new Event()
+            var e1 = new NewEvent()
             {
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
@@ -85,7 +85,7 @@ namespace Provider.EntityFramework.Tests
                 Expressions = new[] { "Entity.State.MyVal=Hello World" }
             };
 
-            var e2 = new Event()
+            var e2 = new NewEvent()
             {
                 On = "2001/01/01 01:03",
                 Type = "MyEventType",
