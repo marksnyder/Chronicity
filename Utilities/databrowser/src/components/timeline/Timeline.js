@@ -16,7 +16,8 @@ import DataUtilities from '../../helpers/DataUtilities.js'
 
 
 var headerStyle = {
-  'zIndex': '100'
+  'zIndex': '100',
+  'opacity': '.9'
 };
 
 

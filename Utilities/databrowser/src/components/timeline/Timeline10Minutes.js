@@ -17,6 +17,7 @@ const styles = {
     },
     'tick' :
     {
+      'backgroundColor' : '#eee'
     }
   };
 

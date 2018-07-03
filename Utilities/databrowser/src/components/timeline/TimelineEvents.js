@@ -31,6 +31,12 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
   },
+  itemStyle : {
+    backgroundColor: 'white',
+    margin: '20px',
+    boxShadow : '0 1px 4px 0 rgba(0, 0, 0, 0.14)',
+    borderRadius : '6px'
+  }
 };
 
 class TimelineEvents extends React.Component {
@@ -52,6 +58,7 @@ class TimelineEvents extends React.Component {
               dense
               button
               onClick={() => this.props.viewState(n)}
+              style={styles.itemStyle}
             >
             <ListItemIcon>
              <Avatar style={n.iconStyle}>{n.initials}</Avatar>
