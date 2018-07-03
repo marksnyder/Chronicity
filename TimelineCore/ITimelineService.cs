@@ -6,8 +6,8 @@ namespace Chronicity.Core
 {
     public interface ITimelineService
     {
-        void RegisterAgent(IStateChangeAgent agent);
-        void ReprocessAgents(IEnumerable<IStateChangeAgent> agents, string key);
+        void RegisterAgent(IStateChangeReaction agent);
+        void ReprocessAgents(IEnumerable<IStateChangeReaction> agents, string key);
 
         IDictionary<string, string> GetEntityState(string entityid, string on);
         void RegisterEvent(NewEvent e);

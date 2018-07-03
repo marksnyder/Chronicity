@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace ExampleCommon
 {
-    public class BirdArrivalAgent : IStateChangeAgent
+    public class BirdArrivalAgent : IStateChangeReaction
     {
-        public StateChangeResult OnChange(string entity, string key, string priorValue, string newValue, string on)
+        public Reaction OnChange(string entity, string key, string priorValue, string newValue, string on)
         {
-            var result = new StateChangeResult(); 
+            var result = new Reaction(); 
 
             if (key == "proxa" && priorValue != string.Empty)
             {

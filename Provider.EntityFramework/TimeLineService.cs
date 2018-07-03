@@ -15,23 +15,23 @@ namespace Chronicity.Provider.EntityFramework
     {
         private ChronicityContext _context;
         private RollingStateRepository _stateRepository;
-        private IList<IStateChangeAgent> _eventAgents;
+        private IList<IStateChangeReaction> _eventAgents;
 
 
         public TimeLineService(ChronicityContext context)
         {
             _context = context;
-            _eventAgents = new List<IStateChangeAgent>();
+            _eventAgents = new List<IStateChangeReaction>();
             _stateRepository = new RollingStateRepository(context);
 
         }
 
-        public void RegisterAgent(IStateChangeAgent agent)
+        public void RegisterAgent(IStateChangeReaction agent)
         {
             _eventAgents.Add(agent);
         }
 
-        public void ReprocessAgents(IEnumerable<IStateChangeAgent> agents, string key)
+        public void ReprocessAgents(IEnumerable<IStateChangeReaction> agents, string key)
         {
             var changes = _context.TimeAndStates.Where(x => x.Key == key).OrderBy(x => x.On).ToList();
 
@@ -100,8 +100,14 @@ namespace Chronicity.Provider.EntityFramework
 
                     if (result != null)
                     {
-                        foreach (var ob in result.NewObservations) { this.RegisterObservation(ob); }
-                        foreach (var ev in result.NewEvents) { this.RegisterEvent(ev); }
+                        if (result.NewObservations != null)
+                        {
+                            foreach (var ob in result.NewObservations) { this.RegisterObservation(ob); }
+                        }
+                        if (result.NewEvents != null)
+                        {
+                            foreach (var ev in result.NewEvents) { this.RegisterEvent(ev); }
+                        }
                     }
                 }
             }

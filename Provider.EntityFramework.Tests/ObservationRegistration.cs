@@ -232,7 +232,7 @@ namespace Provider.EntityFramework.Tests
         public void RegisteringObservation_Fires_EventAgent()
         {
             _context.Database.EnsureDeleted();
-            var agentMock = new Mock<IStateChangeAgent>();
+            var agentMock = new Mock<IStateChangeReaction>();
             var service = new TimeLineService(_context);
             service.RegisterAgent(agentMock.Object);
 
@@ -263,7 +263,7 @@ namespace Provider.EntityFramework.Tests
         public void RegisteringObservation_Fires_EventAgent_Out_Of_Order()
         {
             _context.Database.EnsureDeleted();
-            var agentMock = new Mock<IStateChangeAgent>();
+            var agentMock = new Mock<IStateChangeReaction>();
             var service = new TimeLineService(_context);
             service.RegisterAgent(agentMock.Object);
 

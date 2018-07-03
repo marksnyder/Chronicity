@@ -28,7 +28,7 @@ namespace ExampleTools
 
             services.AddTransient<TimeLineService>();
 
-            var list = new List<IStateChangeAgent>()
+            var list = new List<IStateChangeReaction>()
             {
                 new BirdDepartureAgent(),
                 new BirdArrivalAgent()

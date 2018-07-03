@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Chronicity.Core.Agent
 {
-    public class StateChangeResult
+    public class Reaction
     {
         public IList<NewEvent> NewEvents { get; set; }
         public IList<Observation> NewObservations { get; set; }
