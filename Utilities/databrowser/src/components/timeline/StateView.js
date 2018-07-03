@@ -18,7 +18,6 @@ class StateView extends React.Component {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Entity</TableCell>
             <TableCell>Key</TableCell>
             <TableCell>Value</TableCell>
           </TableRow>
@@ -27,10 +26,7 @@ class StateView extends React.Component {
           {this.props.items.map(n => {
           return (
             <TableRow key={n.key + n.entity}>
-              <TableCell component="th" scope="row">
-                {n.entity}
-              </TableCell>
-              <TableCell>{n.key}</TableCell>
+              <TableCell component="th" scope="row">{n.key}</TableCell>
               <TableCell>{n.value}</TableCell>
             </TableRow>
           );

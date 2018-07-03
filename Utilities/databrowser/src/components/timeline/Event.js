@@ -47,7 +47,8 @@ const styles = {
 
   card: {
    minWidth: 275,
-   margin: '20px'
+   margin: '20px',
+   borderRadius: '5px'
    },
    bullet: {
      display: 'inline-block',
@@ -116,9 +117,7 @@ class Event extends React.Component {
     return (<Card className={classes.card}  key={this.props.event.id}>
          <CardHeader
             avatar={
-              <Avatar aria-label="Recipe" className={classes.avatar}>
-                R
-              </Avatar>
+              <Avatar style={this.props.event.iconStyle}>{this.props.event.initials}</Avatar>
             }
             action={
               <IconButton onClick={() => this.openStateViewer(this.props.event)}>
