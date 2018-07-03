@@ -88,7 +88,6 @@ class Timeline10Minutes extends React.Component {
         </Grid>
         <Grid item xs={6} sm={6}>
           <TimelineEvents
-            viewState={this.props.viewState}
             events={this.props.events} />
         </Grid>
       </Grid>
