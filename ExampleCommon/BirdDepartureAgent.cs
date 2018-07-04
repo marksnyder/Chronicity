@@ -16,7 +16,7 @@ namespace ExampleCommon
 
             if (key == "proxa" && priorValue != string.Empty)
             {
-                if(Convert.ToInt32(newValue) >= 7 && Convert.ToInt32(priorValue) < 7)
+                if(Convert.ToInt32(newValue) >= 30 && Convert.ToInt32(priorValue) < 30)
                 {
                     result.NewEvents = new List<NewEvent>() { new NewEvent() {
                          Entities = new string [] { entity },
