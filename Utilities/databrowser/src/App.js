@@ -39,7 +39,7 @@ const styles = theme => ({
 
 class App extends React.Component {
   state = {
-    view: 'code',
+    view: 'timeline',
     events: [],
     stateChanges: [],
     codeText: CodeRunner.getCode()

@@ -3,6 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Timeline10Minutes from './Timeline10Minutes.js'
 import Grid from '@material-ui/core/Grid';
 import DataUtilities from '../../helpers/DataUtilities.js'
+import moment from 'moment';
 
 class TimelineHour extends React.Component {
 
@@ -14,7 +15,14 @@ class TimelineHour extends React.Component {
 
     const { classes } = this.props;
 
-    var groups = DataUtilities.groupBy10Minutes(this.props.group.events,this.props.group.stateChanges,this.props.group.start,this.props.group.end);
+    var end = this.props.group.end;
+
+    if(moment(end).isAfter(moment()))
+    {
+      end = moment();
+    }
+
+    var groups = DataUtilities.groupBy10Minutes(this.props.group.events,this.props.group.stateChanges,this.props.group.start,end);
 
     return (<div>
       {groups.map(n => {

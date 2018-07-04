@@ -15,10 +15,13 @@ import Toolbar from '@material-ui/core/Toolbar';
 import DataUtilities from '../../helpers/DataUtilities.js'
 
 
-var headerStyle = {
-  'zIndex': '100',
-  'opacity': '.9'
-};
+
+const styles = theme => ({
+  stickyHeader: {
+      'zIndex': '100',
+      'opacity': '.9'
+  }
+});
 
 
 class Timeline extends React.Component {
@@ -57,7 +60,7 @@ class Timeline extends React.Component {
           <StickyContainer  className="container">
             <Sticky>
               {({ style }) => (
-                <div style={Object.assign(style,headerStyle)}>
+                <div style={style} className={classes.stickyHeader}>
                   <AppBar position="static" color="secondary">
                     <Toolbar>
                       <Typography variant="title" color="inherit">
@@ -80,4 +83,4 @@ class Timeline extends React.Component {
 
 
 
-export default (Timeline);
+export default withStyles(styles)(Timeline);

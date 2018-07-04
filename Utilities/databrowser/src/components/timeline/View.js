@@ -6,6 +6,8 @@ import Typography from '@material-ui/core/Typography';
 import Timeline from './Timeline.js'
 import Chronicity from '../../helpers/Chronicity.js'
 import moment from 'moment';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { withStyles } from '@material-ui/core/styles';
 
 function TabContainer(props) {
   return (
@@ -14,6 +16,12 @@ function TabContainer(props) {
     </Typography>
   );
 }
+
+const styles = theme => ({
+  progress: {
+    margin: theme.spacing.unit * 2,
+  },
+});
 
 class TimelineView extends React.Component {
 
@@ -25,9 +33,16 @@ class TimelineView extends React.Component {
   render() {
     const { classes } = this.props;
 
+    if(this.props.events == null || this.props.events.length < 1)
+    {
+      return (<div className={classes.root} style={{ textAlign: 'center' }}>
+        <CircularProgress className={classes.progress} size={100} color="secondary" />
+      </div>);
+    }
+
     return  <div className={classes.root}>
           <Timeline
-            events={this.props.events.reverse()}
+            events={this.props.events}
             stateChanges={this.props.stateChanges}
             viewState={this.openStateViewer}
             start={moment().startOf('hour')}
@@ -38,4 +53,4 @@ class TimelineView extends React.Component {
   }
 }
 
-export default (TimelineView);
+export default withStyles(styles)(TimelineView);
