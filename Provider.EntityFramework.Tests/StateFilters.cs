@@ -84,6 +84,7 @@ namespace Chronicity.Provider.EntityFramework.Tests
 
             service.RegisterObservation(o);
             service.RegisterObservation(o2);
+            service.RegisterObservation(o3);
 
             var result = service.FilterState(new[] { "Entity.State.MyVal=Hello World" });
 
@@ -94,6 +95,134 @@ namespace Chronicity.Provider.EntityFramework.Tests
             Assert.Equal(1, result.Count);
         }
 
+        [Fact]
+        public void FilterByKey_LessThan_Returns_Only_Match_Results()
+        {
+            _context.Database.EnsureDeleted();
+            var service = new TimeLineService(_context);
+
+            var o = new Observation()
+            {
+                On = "2001/01/01",
+                Entity = "E1",
+                Expressions = new[] { "Entity.State.MyVal=1" }
+            };
+
+            var o2 = new Observation()
+            {
+                On = "2001/01/02",
+                Entity = "E1",
+                Expressions = new[] { "Entity.State.MyVal=10" }
+            };
+
+
+            service.RegisterObservation(o);
+            service.RegisterObservation(o2);
+
+            var result = service.FilterState(new[] { "Entity.State.MyVal < 10" });
+
+            Assert.Equal("E1", result.First().Entity);
+            Assert.Equal(new DateTime(2001, 1, 1), result.First().Start);
+            Assert.Equal(new DateTime(2001, 1, 2).AddSeconds(-1), result.First().End);
+
+            Assert.Equal(1, result.Count);
+        }
+
+        public void FilterByKey_LessThanEqual_Returns_Only_Match_Results()
+        {
+            _context.Database.EnsureDeleted();
+            var service = new TimeLineService(_context);
+
+            var o = new Observation()
+            {
+                On = "2001/01/01",
+                Entity = "E1",
+                Expressions = new[] { "Entity.State.MyVal=10" }
+            };
+
+            var o2 = new Observation()
+            {
+                On = "2001/01/02",
+                Entity = "E1",
+                Expressions = new[] { "Entity.State.MyVal=11" }
+            };
+
+
+            service.RegisterObservation(o);
+            service.RegisterObservation(o2);
+
+            var result = service.FilterState(new[] { "Entity.State.MyVal <= 10" });
+
+            Assert.Equal("E1", result.First().Entity);
+            Assert.Equal(new DateTime(2001, 1, 1), result.First().Start);
+            Assert.Equal(new DateTime(2001, 1, 2).AddSeconds(-1), result.First().End);
+
+            Assert.Equal(1, result.Count);
+        }
+
+        [Fact]
+        public void FilterByKey_GreaterThan_Returns_Only_Match_Results()
+        {
+            _context.Database.EnsureDeleted();
+            var service = new TimeLineService(_context);
+
+            var o = new Observation()
+            {
+                On = "2001/01/01",
+                Entity = "E1",
+                Expressions = new[] { "Entity.State.MyVal=1" }
+            };
+
+            var o2 = new Observation()
+            {
+                On = "2001/01/02",
+                Entity = "E1",
+                Expressions = new[] { "Entity.State.MyVal=11" }
+            };
+
+
+            service.RegisterObservation(o);
+            service.RegisterObservation(o2);
+
+            var result = service.FilterState(new[] { "Entity.State.MyVal > 10" });
+
+            Assert.Equal("E1", result.First().Entity);
+            Assert.Equal(new DateTime(2001, 1, 2), result.First().Start);
+
+            Assert.Equal(1, result.Count);
+        }
+
+        [Fact]
+        public void FilterByKey_GreaterEqualThan_Returns_Only_Match_Results()
+        {
+            _context.Database.EnsureDeleted();
+            var service = new TimeLineService(_context);
+
+            var o = new Observation()
+            {
+                On = "2001/01/01",
+                Entity = "E1",
+                Expressions = new[] { "Entity.State.MyVal=1" }
+            };
+
+            var o2 = new Observation()
+            {
+                On = "2001/01/02",
+                Entity = "E1",
+                Expressions = new[] { "Entity.State.MyVal=10" }
+            };
+
+
+            service.RegisterObservation(o);
+            service.RegisterObservation(o2);
+
+            var result = service.FilterState(new[] { "Entity.State.MyVal >= 10" });
+
+            Assert.Equal("E1", result.First().Entity);
+            Assert.Equal(new DateTime(2001, 1, 2), result.First().Start);
+
+            Assert.Equal(1, result.Count);
+        }
 
 
         [Fact]

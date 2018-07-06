@@ -181,20 +181,65 @@ namespace Chronicity.Provider.EntityFramework
 
 
             DateTime? afterLimit = null;
-            DateTime? beforeLimit = null;
-            string valueLimit = null;
-            string keyLimit = null; 
+            //DateTime? beforeLimit = null;
+            //string valueLimit = null;
+            //string keyLimit = null;
+
+            var postFilters = new List<Func<Core.Entity.StateRange, bool>>();
+            var postUpdates = new List<Action<Core.Entity.StateRange>>();
 
             foreach (var expression in expressions)
             {
                 if (expression.StartsWith("Entity.State."))
                 {
                     var e = expression.Replace("Entity.State.", "");
-                    var var = e.Split('=')[0];
-                    var value = e.Split('=')[1];
-                    stateData = stateData.Where(x => x.state.Key == var && (x.state.Value == value || x.state.PriorValue == value));
-                    valueLimit = value;
-                    keyLimit = var;
+
+                    string comparer = "";
+
+                    if (e.Contains("=")) comparer = "=";
+                    if (e.Contains("<")) comparer = "<";
+                    if (e.Contains(">")) comparer = ">";
+                    if (e.Contains(">=")) comparer = ">=";
+                    if (e.Contains("<=")) comparer = "<=";
+
+                    var var = e.Split(new string[] { comparer }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+                    var value = e.Split(new string[] { comparer }, StringSplitOptions.RemoveEmptyEntries)[1];
+
+                    if(comparer == "=")
+                    {
+                        stateData = stateData.Where(x => x.state.Key == var && (x.state.Value == value || x.state.PriorValue == value));
+                        postFilters.Add(x => x.Key == var && x.Value == value);
+                    }
+
+                    if(comparer == "<")
+                    {
+                        int intVal = Convert.ToInt32(value);
+                        stateData = stateData.Where(x => x.state.Key == var && (x.state.NumericValue < intVal || x.state.NumericPriorValue < intVal));
+                        postFilters.Add(x => x.Key == var && Convert.ToDecimal(x.Value) < Convert.ToDecimal(value));
+                    }
+
+                    if (comparer == "<=")
+                    {
+                        int intVal = Convert.ToInt32(value);
+                        stateData = stateData.Where(x => x.state.Key == var && (x.state.NumericValue <= intVal || x.state.NumericPriorValue <= intVal));
+                        postFilters.Add(x => x.Key == var && Convert.ToDecimal(x.Value) <= Convert.ToDecimal(value));
+                    }
+
+                    if (comparer == ">")
+                    {
+                        int intVal = Convert.ToInt32(value);
+                        stateData = stateData.Where(x => x.state.Key == var && (x.state.NumericValue > intVal || x.state.NumericPriorValue > intVal));
+                        postFilters.Add(x => x.Key == var && Convert.ToDecimal(x.Value) > Convert.ToDecimal(value));
+                    }
+
+
+                    if (comparer == ">=")
+                    {
+                        int intVal = Convert.ToInt32(value);
+                        stateData = stateData.Where(x => x.state.Key == var && (x.state.NumericValue >= intVal || x.state.NumericPriorValue >= intVal));
+                        postFilters.Add(x => x.Key == var && Convert.ToDecimal(x.Value) >= Convert.ToDecimal(value));
+                    }
+
                 }
 
                 if (expression.StartsWith("On.After"))
@@ -204,6 +249,12 @@ namespace Chronicity.Provider.EntityFramework
                     var value = DateTime.Parse(e.Split('=')[1]);
                     stateData = stateData.Where(x => x.state.On > value || ( x.key.LastChange < value && x.state.On == x.key.LastChange ));
                     afterLimit = value;
+
+                    postUpdates.Add((x) =>
+                    {
+                        if (x.Start < value) { x.Start = value; }
+                    }
+);
                 }
 
                 if (expression.StartsWith("On.Before"))
@@ -212,7 +263,13 @@ namespace Chronicity.Provider.EntityFramework
                     var var = e.Split('=')[0];
                     var value = DateTime.Parse(e.Split('=')[1]);
                     stateData = stateData.Where(x => x.state.On < value);
-                    beforeLimit = value;
+
+                    postUpdates.Add((x) =>
+                        {
+                            if (x.End > value || x.End == null) { x.End = value; }
+                        }
+                    );
+
                 }
             }
 
@@ -277,26 +334,17 @@ namespace Chronicity.Provider.EntityFramework
                 }
             }
 
-            if (afterLimit != null && ret.Count() > 0)
+            foreach(var filter in postFilters)
             {
-                foreach (var u in ret.Where(x => x.Start < afterLimit.Value))
-                {
-                    u.Start = afterLimit.Value;
-                }
+                ret = ret.Where(filter).ToList();
             }
 
-            if (beforeLimit != null && ret.Count() > 0)
+            foreach(var update in postUpdates)
             {
-                foreach (var u in ret.Where(x => x.End > beforeLimit.Value || x.End == null))
+                foreach(var r in ret)
                 {
-                    u.End = beforeLimit.Value;
+                    update.Invoke(r);
                 }
-            }
-
-            if(keyLimit != null && valueLimit != null)
-            {
-                ret = ret.Where(x => x.Key == keyLimit && x.Value == valueLimit).ToList();
-
             }
 
             return ret;

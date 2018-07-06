@@ -82,21 +82,24 @@ namespace Provider.EntityFramework.StateTracking
                     .FirstOrDefault();
 
                 // Track
-                if (lastChange == null || lastChange.Value != possibleChanges[key])
+                if (lastChange == null || lastChange.Value != possibleChanges[key].StringValue)
                 {
                     _context.TimeAndStates.Add(new TimeAndState()
                     {
                         Entity = o.Entity,
                         Key = key,
-                        Value = possibleChanges[key],
+                        Value = possibleChanges[key].StringValue,
+                        NumericValue = possibleChanges[key].NumericValue,
                         On = parsedTime,
-                        PriorValue = lastChange != null ? lastChange.Value : null
+                        PriorValue = lastChange != null ? lastChange.Value : null,
+                        NumericPriorValue = lastChange != null ? lastChange.NumericValue : null
+                        
                     });
 
                     _context.SaveChanges();
 
                     // Fire event agents
-                    if(lastChange != null && lastChange.Value != possibleChanges[key])
+                    if(lastChange != null && lastChange.Value != possibleChanges[key].StringValue)
                     {
 
                         result.Add(new StateChange()
@@ -104,7 +107,7 @@ namespace Provider.EntityFramework.StateTracking
                             Entity = o.Entity,
                             Key = key,
                             OldValue = lastChange.Value,
-                            NewValue = possibleChanges[key],
+                            NewValue = possibleChanges[key].StringValue,
                             On = o.On
                         });
 
@@ -119,14 +122,15 @@ namespace Provider.EntityFramework.StateTracking
                            .OrderBy(x => x.On)
                            .FirstOrDefault();
 
-                        nextChange.PriorValue = possibleChanges[key];
+                        nextChange.PriorValue = possibleChanges[key].StringValue;
+                        nextChange.NumericPriorValue = possibleChanges[key].NumericValue;
                         _context.SaveChanges();
 
                         result.Add(new StateChange()
                         {
                             Entity = o.Entity,
                             Key = key,
-                            OldValue = possibleChanges[key],
+                            OldValue = possibleChanges[key].StringValue,
                             NewValue = nextChange.Value,
                             On = nextChange.On.ToString("MM/dd/yyyy HH:mm:ss.fffffff")
                         });
@@ -139,9 +143,9 @@ namespace Provider.EntityFramework.StateTracking
         }
 
 
-        private Dictionary<string, string> ParseStateObservations(IEnumerable<string> expressions)
+        private Dictionary<string, ChangeValue> ParseStateObservations(IEnumerable<string> expressions)
         {
-            var changes = new Dictionary<string, string>();
+            var changes = new Dictionary<string, ChangeValue>();
 
             foreach (var observation in expressions)
             {
@@ -150,12 +154,28 @@ namespace Provider.EntityFramework.StateTracking
                     var expression = observation.Replace("Entity.State.", "");
                     var var = expression.Split('=')[0];
                     var value = expression.Split('=')[1];
-                    changes[var] = value;
+
+                    if (!changes.ContainsKey(var)) changes.Add(var, new ChangeValue());
+
+                    changes[var].StringValue = value;
+
+                    decimal numericVal;
+                    if(Decimal.TryParse(value, out numericVal))
+                    {
+                        changes[var].NumericValue = numericVal;
+                    }
+
                 }
             }
 
             return changes;
 
+        }
+
+        public class ChangeValue
+        {
+            public string StringValue { get; set; }
+            public decimal? NumericValue { get; set; }
         }
     }
 }

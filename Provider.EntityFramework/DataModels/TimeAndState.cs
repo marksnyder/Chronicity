@@ -12,7 +12,9 @@ namespace Chronicity.Provider.EntityFramework.DataModels
         public DateTime On { get; set; }
         public string Entity { get; set; }
         public string Key { get; set; }
+        public decimal? NumericValue { get; set; }
         public string Value { get; set; }
         public string PriorValue { get; set; }
+        public decimal? NumericPriorValue { get; set; }
     }
 }
