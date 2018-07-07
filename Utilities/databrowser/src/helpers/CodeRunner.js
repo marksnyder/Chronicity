@@ -21,49 +21,84 @@ class CodeRunner {
       this.myEvents = [];
       this.myStateChanges = [];
 
-
       var arrivals = chronicity.filterEvents([
-          'On.After=7/3/2018 11:00', 'Type=Bird Arrived'])
+          'On.After=7/3/2018 11:00',
+          'Type=Bird Arrived'
+        ])
           .then((data) => {
-              this.myEvents = helper.mergeEvents(this.myEvents,data,{ "backgroundColor": "#E57373" },"A");
+              this.myEvents = helper.mergeEvents(
+                this.myEvents,
+                data,
+                { "backgroundColor": "#E57373" },
+                "A"
+              );
       });
 
       var departures = chronicity.filterEvents([
-          'On.After=7/3/2018 11:00', 'Type=Bird Departed'])
+          'On.After=7/3/2018 11:00',
+          'Type=Bird Departed'
+        ])
           .then((data) => {
-              this.myEvents = helper.mergeEvents(this.myEvents,data,{ "backgroundColor": "#BA68C8" },"D");
+              this.myEvents = helper.mergeEvents(
+                this.myEvents,
+                data,
+                { "backgroundColor": "#BA68C8" },
+                "D");
       });
 
       var boiling = chronicity.filterState([
-          'On.After=7/3/2018 11:00', 'Entity.State.temp >= 90'])
+          'On.After=7/3/2018 11:00',
+          'Entity.State.temp >= 90'
+        ])
           .then((data) => {
-              this.myStateChanges = helper.mergeStateChanges(this.myStateChanges,data,'temp','#ffeb3b');
+              this.myStateChanges = helper.mergeStateChanges(
+                this.myStateChanges,
+                data,
+                'temp',
+                '#ffeb3b');
       });
 
       var hot = chronicity.filterState([
-          'On.After=7/3/2018 11:00', 'Entity.State.temp >= 80', 'Entity.State.temp < 90' ])
+          'On.After=7/3/2018 11:00',
+          'Entity.State.temp >= 80',
+          'Entity.State.temp < 90'
+         ])
           .then((data) => {
-              this.myStateChanges = helper.mergeStateChanges(this.myStateChanges,data,'temp','#bf360c');
+              this.myStateChanges = helper.mergeStateChanges(
+                this.myStateChanges,
+                data,
+                'temp',
+                '#bf360c');
       });
 
       var cool = chronicity.filterState([
-          'On.After=7/3/2018 11:00', 'Entity.State.temp >= 70', 'Entity.State.temp < 80' ])
+          'On.After=7/3/2018 11:00',
+          'Entity.State.temp >= 70',
+          'Entity.State.temp < 80'
+        ])
           .then((data) => {
-              this.myStateChanges = helper.mergeStateChanges(this.myStateChanges,data,'temp','#7e57c2');
+              this.myStateChanges = helper.mergeStateChanges(
+                this.myStateChanges,
+                data,
+                'temp',
+                '#7e57c2');
       });
 
       var cold = chronicity.filterState([
-          'On.After=7/3/2018 11:00', 'Entity.State.temp < 70' ])
+          'On.After=7/3/2018 11:00',
+          'Entity.State.temp < 70' ])
           .then((data) => {
-              this.myStateChanges = helper.mergeStateChanges(this.myStateChanges,data,'temp','#42a5f5');
+              this.myStateChanges = helper.mergeStateChanges(
+                this.myStateChanges,
+                data,
+                'temp',
+                '#42a5f5');
       });
 
 
      Promise.all([arrivals, departures, boiling, hot, cool, cold]).then(() => {
-         this.setStateChanges(this.myStateChanges);
-         this.setEvents(this.myEvents);
-         alert('Success! Loaded ' + this.myEvents.length + ' events ' );
-         console.log(this);
+         this.changeView('timeline');
+         this.setStream(this.myEvents,this.myStateChanges);
      }).catch(reason => {
        alert(reason.message);
        console.log(reason);

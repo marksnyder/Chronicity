@@ -57,15 +57,10 @@ class App extends React.Component {
     });
   };
 
-  setStateChanges = (data) => {
+  setStream = (events,stateChanges) => {
     this.setState({
-      stateChanges: data
-    });
-  };
-
-  setEvents = (data) => {
-    this.setState({
-      events: data
+      stateChanges: stateChanges,
+      events: events
     });
   };
 
