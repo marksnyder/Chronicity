@@ -11,6 +11,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import SaveIcon from '@material-ui/icons/Save';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 
@@ -18,20 +19,15 @@ class CodeView extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      codeText: this.props.codeText
-    };
-    this.changeCode = this.changeCode.bind(this);
   }
 
-  changeCode = (code) => {
-    this.setState({
-      codeText: code
-    });
+
+  saveCode = () => {
+    this.props.saveCode();
   }
 
   runCode = () => {
-    this.props.runNewCode(this.state.codeText);
+    this.props.runCode();
   };
 
   render() {
@@ -42,10 +38,13 @@ class CodeView extends React.Component {
         <AppBar color="secondary" position="static">
             <Toolbar>
               <Typography variant="subheading" color="inherit" className={classes.flex}>
-              Filter Query
+              Code?
             </Typography>
               <IconButton size="small" aria-label="Play/pause">
-                <PlayArrowIcon onClick={() => this.runCode()} className={classes.playIcon} />
+                <SaveIcon onClick={this.props.saveCode} className={classes.saveIcon} />
+              </IconButton>
+              <IconButton size="small" aria-label="Play/pause">
+                <PlayArrowIcon onClick={this.props.runCode} className={classes.playIcon} />
               </IconButton>
             </Toolbar>
           </AppBar>
@@ -58,9 +57,10 @@ class CodeView extends React.Component {
               showPrintMargin={true}
               showGutter={true}
               highlightActiveLine={true}
-              value={this.state.codeText}
-              onChange={this.changeCode}
+              value={this.props.initialCode}
+              onChange={this.props.setCode}
               width="100%"
+              height="5000px"
             />
           </Paper>
         </div>);

@@ -38,13 +38,18 @@ const styles = theme => ({
 
 
 class App extends React.Component {
-  state = {
-    view: 'timeline',
-    events: [],
-    stateChanges: [],
-    codeText: CodeRunner.getCode()
-  };
 
+
+  constructor(props) {
+    super(props);
+    this.runner = new CodeRunner();
+    this.runner.loadCode();
+    this.state = {
+      view: 'code',
+      events: [],
+      stateChanges: []
+    };
+  }
 
   changeView = (view) => {
     this.setState({
@@ -52,27 +57,15 @@ class App extends React.Component {
     });
   };
 
-  addStateChanges = (data,group,color) => {
+  setStateChanges = (data) => {
     this.setState({
-      stateChanges: DataUtilities.mergeStateChanges(this.state.stateChanges,data,group,color)
+      stateChanges: data
     });
   };
 
-  addEvents = (data,iconStyle,initials) => {
+  setEvents = (data) => {
     this.setState({
-      events: DataUtilities.mergeEvents(this.state.events,data,iconStyle,initials)
-    });
-  };
-
-  clearEvents = () => {
-    this.setState({
-      events: []
-    });
-  };
-
-  clearStateChanges = () => {
-    this.setState({
-      stateChanges: []
+      events: data
     });
   };
 
@@ -80,17 +73,29 @@ class App extends React.Component {
     return Chronicity;
   };
 
-  runNewCode = (code) => {
-      CodeRunner.setCode(code);
-      CodeRunner.runCode(this);
+  getUtilities = () => {
+    return DataUtilities;
   }
 
-  componentDidMount = () => {
-      CodeRunner.runCode(this);
+  runCode = () => {
+      this.runner.runCode(this);
+  }
+
+  saveCode = () => {
+      this.runner.saveCode();
+  }
+
+  setCode = (code) => {
+      this.runner.setCode(code);
+  }
+
+  getCode = () => {
+    return this.runner.getCode();
   }
 
   render() {
     const { classes } = this.props;
+    const initialCode = this.getCode();
 
     return (
     <MuiThemeProvider theme={theme}>
@@ -108,8 +113,10 @@ class App extends React.Component {
           clearEvents={this.clearEvents}
           addStateChanges={this.addStateChanges}
           clearStateChanges={this.clearStateChanges}
-          codeText={this.state.codeText}
-          runNewCode={this.runNewCode}
+          initialCode={initialCode}
+          runCode={this.runCode}
+          saveCode={this.saveCode}
+          setCode={this.setCode}
          />
       }
     </MuiThemeProvider>

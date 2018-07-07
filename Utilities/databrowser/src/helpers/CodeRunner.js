@@ -3,77 +3,102 @@
 class CodeRunner {
 
 
-  static getCode = () => {
-    var c = window.localStorage.getItem('code');
+ getCode = () => {
+    return this.myCode;
+  };
 
-    if(c == null || c == '') {
 
-    CodeRunner.setCode(`
+ loadCode = () => {
+   this.myCode = window.localStorage.getItem('mycode');
 
-      var client = this.getClient();
-      var that = this;
+   if(this.myCode == null || this.myCode == '') {
 
-      this.clearEvents();
-      this.clearStateChanges();
+     this.myCode = `
 
-      client.filterEvents([
-          'On.After=6/29/2018 11:00', 'Type=Bird Arrived'])
-          .then(function(data){
-              that.addEvents(data, { "backgroundColor": "#E57373" }, "A");
+     var chronicity = this.getClient();
+      var helper = this.getUtilities();
+
+      this.myEvents = [];
+      this.myStateChanges = [];
+
+
+      var arrivals = chronicity.filterEvents([
+          'On.After=7/3/2018 11:00', 'Type=Bird Arrived'])
+          .then((data) => {
+              this.myEvents = helper.mergeEvents(this.myEvents,data,{ "backgroundColor": "#E57373" },"A");
       });
 
-      client.filterEvents([
-          'On.After=6/29/2018 11:00', 'Type=Bird Departed'])
-          .then(function(data){
-              that.addEvents(data, { "backgroundColor": "#BA68C8" }, "D");
+      var departures = chronicity.filterEvents([
+          'On.After=7/3/2018 11:00', 'Type=Bird Departed'])
+          .then((data) => {
+              this.myEvents = helper.mergeEvents(this.myEvents,data,{ "backgroundColor": "#BA68C8" },"D");
       });
 
-      client.filterState([
-          'On.After=6/29/2018 11:00', 'Entity.State.temp >= 90'])
-          .then(function(data){
-              that.addStateChanges(data, 'temp','#ffeb3b');
+      var boiling = chronicity.filterState([
+          'On.After=7/3/2018 11:00', 'Entity.State.temp >= 90'])
+          .then((data) => {
+              this.myStateChanges = helper.mergeStateChanges(this.myStateChanges,data,'temp','#ffeb3b');
       });
 
-      client.filterState([
-          'On.After=6/29/2018 11:00', 'Entity.State.temp >= 80', 'Entity.State.temp < 90' ])
-          .then(function(data){
-              that.addStateChanges(data, 'temp','#bf360c');
+      var hot = chronicity.filterState([
+          'On.After=7/3/2018 11:00', 'Entity.State.temp >= 80', 'Entity.State.temp < 90' ])
+          .then((data) => {
+              this.myStateChanges = helper.mergeStateChanges(this.myStateChanges,data,'temp','#bf360c');
       });
 
-      client.filterState([
-          'On.After=6/29/2018 11:00', 'Entity.State.temp >= 70', 'Entity.State.temp < 80' ])
-          .then(function(data){
-              that.addStateChanges(data, 'temp','#7e57c2');
+      var cool = chronicity.filterState([
+          'On.After=7/3/2018 11:00', 'Entity.State.temp >= 70', 'Entity.State.temp < 80' ])
+          .then((data) => {
+              this.myStateChanges = helper.mergeStateChanges(this.myStateChanges,data,'temp','#7e57c2');
       });
 
-      client.filterState([
-          'On.After=6/29/2018 11:00', 'Entity.State.temp < 70' ])
-          .then(function(data){
-              that.addStateChanges(data, 'temp','#42a5f5');
+      var cold = chronicity.filterState([
+          'On.After=7/3/2018 11:00', 'Entity.State.temp < 70' ])
+          .then((data) => {
+              this.myStateChanges = helper.mergeStateChanges(this.myStateChanges,data,'temp','#42a5f5');
       });
 
 
-    `);
+     Promise.all([arrivals, departures, boiling, hot, cool, cold]).then(() => {
+         this.setStateChanges(this.myStateChanges);
+         this.setEvents(this.myEvents);
+         alert('Success! Loaded ' + this.myEvents.length + ' events ' );
+         console.log(this);
+     }).catch(reason => {
+       alert(reason.message);
+       console.log(reason);
+     });
+
+     `;
+
     }
 
-    return window.localStorage.getItem('code');
+  }
 
-  };
+ saveCode = () => {
+    window.localStorage.setItem('mycode',this.myCode);
+  }
 
-  static setCode = (code) => {
-    window.localStorage.setItem('code',code);
-  };
+ setCode = (code) => {
+     this.myCode = code;
+  }
 
-  static runCode = (target) => {
+ runCode = (target, code) => {
     try {
-      CodeRunner.evalCode.call(target);
+      this.evalCode.call(target);
     } catch(e) {
       alert(e.message);
+      console.log(e);
     }
   };
 
-  static evalCode = () => {
-      eval(CodeRunner.getCode());
+ evalCode = () => {
+    try {
+      eval(this.myCode);
+    } catch(e) {
+      alert(e.message);
+      console.log(e);
+    }
   };
 
 }
