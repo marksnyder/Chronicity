@@ -4,7 +4,7 @@ class CodeRunner {
 
 
   static getCode = () => {
-    var c = null; //window.localStorage.getItem('code');
+    var c = window.localStorage.getItem('code');
 
     if(c == null || c == '') {
 
@@ -17,28 +17,41 @@ class CodeRunner {
       this.clearStateChanges();
 
       client.filterEvents([
-          'On.After=6/01/2018 11:00', 'Type=Bird Arrived'])
+          'On.After=6/29/2018 11:00', 'Type=Bird Arrived'])
           .then(function(data){
               that.addEvents(data, { "backgroundColor": "#E57373" }, "A");
       });
 
       client.filterEvents([
-          'On.After=6/01/2018 11:00', 'Type=Bird Departed'])
+          'On.After=6/29/2018 11:00', 'Type=Bird Departed'])
           .then(function(data){
               that.addEvents(data, { "backgroundColor": "#BA68C8" }, "D");
       });
 
       client.filterState([
-          'On.After=6/01/2018 11:00', 'Entity.State.tempup=True'])
+          'On.After=6/29/2018 11:00', 'Entity.State.temp >= 90'])
           .then(function(data){
-              that.addStateChanges(data, 'temp','red');
+              that.addStateChanges(data, 'temp','#ffeb3b');
       });
 
-          client.filterState([
-          'On.After=6/01/2018 11:00', 'Entity.State.tempdown=True'])
+      client.filterState([
+          'On.After=6/29/2018 11:00', 'Entity.State.temp >= 80', 'Entity.State.temp < 90' ])
           .then(function(data){
-              that.addStateChanges(data, 'temp','blue');
+              that.addStateChanges(data, 'temp','#bf360c');
       });
+
+      client.filterState([
+          'On.After=6/29/2018 11:00', 'Entity.State.temp >= 70', 'Entity.State.temp < 80' ])
+          .then(function(data){
+              that.addStateChanges(data, 'temp','#7e57c2');
+      });
+
+      client.filterState([
+          'On.After=6/29/2018 11:00', 'Entity.State.temp < 70' ])
+          .then(function(data){
+              that.addStateChanges(data, 'temp','#42a5f5');
+      });
+
 
     `);
     }

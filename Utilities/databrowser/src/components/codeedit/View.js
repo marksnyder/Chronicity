@@ -21,12 +21,13 @@ class CodeView extends React.Component {
     this.state = {
       codeText: this.props.codeText
     };
+    this.changeCode = this.changeCode.bind(this);
   }
 
   changeCode = (code) => {
-    this.state = {
-      code: this.state.codeText
-    };
+    this.setState({
+      codeText: code
+    });
   }
 
   runCode = () => {
@@ -44,7 +45,7 @@ class CodeView extends React.Component {
               Filter Query
             </Typography>
               <IconButton size="small" aria-label="Play/pause">
-                <PlayArrowIcon onClick={this.runCode} className={classes.playIcon} />
+                <PlayArrowIcon onClick={() => this.runCode()} className={classes.playIcon} />
               </IconButton>
             </Toolbar>
           </AppBar>
