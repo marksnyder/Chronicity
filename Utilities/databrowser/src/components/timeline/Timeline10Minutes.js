@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import TimelineEvents from './TimelineEvents.js'
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-
+import Tooltip from '@material-ui/core/Tooltip';
 
 const styles = {
     'timeTickContainer' :
@@ -36,43 +36,28 @@ class Timeline10Minutes extends React.Component {
 
     stateKeys.forEach(function(k) {
        var changes = this.props.stateChanges[k];
+       var background = 'white';
+       var desc = k + ': N/A';
 
-       if(changes.length == 0)
+       if(changes.length > 1)
        {
-         stateItems.push({ id: k ,
-           style: {
-             'width': '10px',
-             'height' : '100%',
-             'backgroundColor': 'white',
-             'float' : 'left',
-             'borderLeft' : 'solid 1px white'
-           }
-          });
+         background = 'repeating-linear-gradient(to bottom,' + changes[0].color + ',' + changes[0].color + ' 50%,' + changes[changes.length -1].color  +' 50%,' + changes[ changes.length -1].color + ' 20px)';
+         var desc = k + ': ' + changes[0].value + ' - ' +  changes[changes.length -1].value;
        }
-       else if(changes.length > 1)
+       else if(changes.length == 1)
        {
-         stateItems.push({ id: k ,
-           style: {
-             'width': '10px',
-             'height' : '100%',
-             'background': 'repeating-linear-gradient(45deg,' + changes[1].color + ' 5px,' + changes[0].color + ' 5px)',
-             'float' : 'left',
-             'borderLeft' : 'solid 1px white'
-           }
-          });
+         background = changes[0].color;
+         var desc = k + ': ' + changes[0].value;
        }
-       else
-       {
-         stateItems.push({ id: k ,
-           style: {
-             'width': '10px',
-             'height' : '100%',
-             'backgroundColor': changes[0].color,
-             'float' : 'left',
-             'borderLeft' : 'solid 1px white'
-           }
-          });
-       }
+
+       stateItems.push({ id: k , desc: desc ,
+         style: {
+           'width': '10px',
+           'height' : '100%',
+           'background': background,
+           'float' : 'left',
+           'borderLeft' : 'solid 1px white' }
+         });
 
     }, this);
 
@@ -83,7 +68,9 @@ class Timeline10Minutes extends React.Component {
         </Grid>
         <Grid item xs={1} sm={1}>
             {stateItems.map(n => {
-              return (<div key={n.id} style={n.style}></div>)
+              return (<Tooltip id="tooltip-right-start" title={n.desc} placement="right-start">
+                <div key={n.id} style={n.style}></div>
+              </Tooltip>)
             })}
         </Grid>
         <Grid item xs={6} sm={6}>

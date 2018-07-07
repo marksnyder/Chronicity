@@ -84,9 +84,11 @@ class Timeline extends React.Component {
         );
       })}
        {this.state.loaded < this.state.groups.length &&
-         <Button onClick={this.loadMore} variant="contained" color="secondary" className={classes.button}>
+         <div style={{ padding: '10px' }}>
+         <Button onClick={() => this.loadMore()} fullWidth={true} variant="outlined" size="large" color="secondary" className={classes.button}>
                 Load More...
          </Button>
+       </div>
        }
       </div>
     );
