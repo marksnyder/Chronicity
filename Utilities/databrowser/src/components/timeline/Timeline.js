@@ -15,7 +15,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import DataUtilities from '../../helpers/DataUtilities.js'
 
 
-
 const styles = theme => ({
   stickyHeader: {
       'zIndex': '100',
@@ -28,6 +27,16 @@ class Timeline extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      groups: DataUtilities.groupByDay(this.props.events, this.props.stateChanges),
+      loaded: 1
+    };
+  }
+
+  loadMore = () => {
+    this.setState({
+      loaded: this.state.loaded + 1
+    });
   }
 
   clickItem = (props) => {
@@ -50,12 +59,10 @@ class Timeline extends React.Component {
   render() {
 
     const { classes } = this.props;
-    if(this.props.events.length == 0) return (<div></div>);
-    var groups = DataUtilities.groupByDay(this.props.events, this.props.stateChanges);
-    if(groups.length == 0) return (<div></div>);
+    const loadedGroups = this.state.groups.slice(0,this.state.loaded);
 
     return (<div>
-      {groups.map(n => {
+      {loadedGroups.map(n => {
         return (<div key={n.id}>
           <StickyContainer  className="container">
             <Sticky>
@@ -76,6 +83,11 @@ class Timeline extends React.Component {
         </div>
         );
       })}
+       {this.state.loaded < this.state.groups.length &&
+         <Button onClick={this.loadMore} variant="contained" color="secondary" className={classes.button}>
+                Load More...
+         </Button>
+       }
       </div>
     );
   }
