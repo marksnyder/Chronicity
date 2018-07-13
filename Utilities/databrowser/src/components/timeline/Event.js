@@ -125,7 +125,7 @@ class Event extends React.Component {
               </IconButton>
             }
             title={this.props.event.type}
-            subheader={this.props.event.description}
+            subheader={this.props.event.on}
           />
 
           {this.state.items != null &&
