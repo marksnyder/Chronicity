@@ -1,7 +1,8 @@
 ﻿using Chronicity.Provider.EntityFramework;
 using System;
 using Xunit;
-using Chronicity.Core.Events;
+using Chronicity.Core.Reaction;
+using Chronicity.Core.Timeline;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -234,7 +235,7 @@ namespace Provider.EntityFramework.Tests
             _context.Database.EnsureDeleted();
             var agentMock = new Mock<IStateChangeReaction>();
             var service = new TimeLineService(_context);
-            service.RegisterAgent(agentMock.Object);
+            service.RegisterReaction(agentMock.Object);
 
             var o1 = new Observation()
             {
@@ -265,7 +266,7 @@ namespace Provider.EntityFramework.Tests
             _context.Database.EnsureDeleted();
             var agentMock = new Mock<IStateChangeReaction>();
             var service = new TimeLineService(_context);
-            service.RegisterAgent(agentMock.Object);
+            service.RegisterReaction(agentMock.Object);
 
             var o1 = new Observation()
             {

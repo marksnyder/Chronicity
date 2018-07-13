@@ -1,5 +1,6 @@
 ﻿using Chronicity.Core;
-using Chronicity.Core.Events;
+using Chronicity.Core.Reaction;
+using Chronicity.Core.Timeline;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,7 +8,6 @@ using System.Linq;
 using Chronicity.Provider.EntityFramework.DataContext;
 using Provider.EntityFramework.StateTracking;
 using Chronicity.Provider.EntityFramework.DataModels;
-using Chronicity.Core.Agent;
 
 namespace Chronicity.Provider.EntityFramework
 {
@@ -26,29 +26,26 @@ namespace Chronicity.Provider.EntityFramework
 
         }
 
-        public void RegisterAgent(IStateChangeReaction agent)
+        public void RegisterReaction(IStateChangeReaction reaction)
         {
-            _eventAgents.Add(agent);
+            _eventAgents.Add(reaction);
         }
 
-        public void ReprocessAgents(IEnumerable<IStateChangeReaction> agents, string key)
+        public void RunReaction(IStateChangeReaction reaction)
         {
-            var changes = _context.TimeAndStates.Where(x => x.Key == key).OrderBy(x => x.On).ToList();
+            var changes = _context.TimeAndStates.ToList();
 
-            foreach(var c in changes)
+            foreach (var c in changes)
             {
-                foreach(var agent in agents)
-                {
-                    var result = agent.OnChange(c.Entity, c.Key, c.PriorValue, c.Value, c.On.ToString("MM/dd/yyyy HH:mm:ss.fffffff"));
+                var result = reaction.OnChange(c.Entity, c.Key, c.PriorValue, c.Value, c.On.ToString("MM/dd/yyyy HH:mm:ss.fffffff"));
 
-                    if (result.NewObservations != null)
-                    {
-                        foreach (var ob in result.NewObservations) { this.RegisterObservation(ob); }
-                    }
-                    if(result.NewEvents != null)
-                    {
-                        foreach (var ev in result.NewEvents) { this.RegisterEvent(ev); }
-                    }
+                if (result.NewObservations != null)
+                {
+                    foreach (var ob in result.NewObservations) { this.RegisterObservation(ob); }
+                }
+                if (result.NewEvents != null)
+                {
+                    foreach (var ev in result.NewEvents) { this.RegisterEvent(ev); }
                 }
             }
         }
@@ -58,7 +55,7 @@ namespace Chronicity.Provider.EntityFramework
             return _stateRepository.GetEntityState(entityid, on);
         }
 
-        public void RegisterEvent(Core.Events.NewEvent e)
+        public void RegisterEvent(NewEvent e)
         {
             if (e.Entities == null) throw new Exception("You must specify entities");
 
@@ -113,7 +110,7 @@ namespace Chronicity.Provider.EntityFramework
             }
         }
 
-        public IEnumerable<Core.Events.Event> FilterEvents(IEnumerable<string> expressions)
+        public IEnumerable<ExistingEvent> FilterEvents(IEnumerable<string> expressions)
         {
             var events = _context.Events.AsQueryable();
 
@@ -134,7 +131,7 @@ namespace Chronicity.Provider.EntityFramework
             //    contexts = ParseFilterContextExpression(expression, contexts);
             //}
 
-            return events.Select(x => new Core.Events.Event() { Entities = x.EntityList.Split(','), On = x.On.ToString("MM/dd/yyyy HH:mm:ss.fffffff"), Type = x.Type, Id = x.Id.ToString() } );
+            return events.Select(x => new ExistingEvent() { Entities = x.EntityList.Split(','), On = x.On.ToString("MM/dd/yyyy HH:mm:ss.fffffff"), Type = x.Type, Id = x.Id.ToString() } );
         }
 
 
@@ -174,7 +171,7 @@ namespace Chronicity.Provider.EntityFramework
             return ret.AsQueryable();
         }
 
-        public IList<Core.Entity.StateRange> FilterState(IEnumerable<string> expressions)
+        public IList<StateRange> FilterState(IEnumerable<string> expressions)
         {
             var stateData = _context.TimeAndStates
                 .Join(_context.EntityStateKeys, state=> state.Key, key=> key.Key, (state,key) => new {state,key });
@@ -185,8 +182,8 @@ namespace Chronicity.Provider.EntityFramework
             //string valueLimit = null;
             //string keyLimit = null;
 
-            var postFilters = new List<Func<Core.Entity.StateRange, bool>>();
-            var postUpdates = new List<Action<Core.Entity.StateRange>>();
+            var postFilters = new List<Func<StateRange, bool>>();
+            var postUpdates = new List<Action<StateRange>>();
 
             foreach (var expression in expressions)
             {
@@ -275,7 +272,7 @@ namespace Chronicity.Provider.EntityFramework
 
             var finalData = stateData.ToList();
 
-            var ret = new List<Core.Entity.StateRange>();
+            var ret = new List<StateRange>();
 
             var entities = finalData.Select(x => x.state.Entity).Distinct();
 
@@ -285,13 +282,13 @@ namespace Chronicity.Provider.EntityFramework
                 {
                     var ordered = finalData.Where(x => x.state.Entity == entity && x.state.Key == key).OrderBy(x => x.state.On);
 
-                    Core.Entity.StateRange c = null;
+                    StateRange c = null;
                     bool isFirst = true;
                     foreach (var o in ordered)
                     {
                         if(isFirst && afterLimit != null && o.state.On > afterLimit && o.state.PriorValue != null)
                         {
-                            ret.Add(new Core.Entity.StateRange()
+                            ret.Add(new StateRange()
                             {
                                 Entity = entity,
                                 Key = key,
@@ -303,7 +300,7 @@ namespace Chronicity.Provider.EntityFramework
 
                         if (c == null)
                         {
-                            c = new Core.Entity.StateRange()
+                            c = new StateRange()
                             {
                                 Entity = entity,
                                 Key = key,
@@ -317,7 +314,7 @@ namespace Chronicity.Provider.EntityFramework
                         {
                             c.End = o.state.On.AddSeconds(-1);
 
-                            c = new Core.Entity.StateRange()
+                            c = new StateRange()
                             {
                                 Entity = entity,
                                 Key = key,
@@ -381,6 +378,64 @@ namespace Chronicity.Provider.EntityFramework
             .ToList();
         }
 
+        public IList<Cluster> SearchClusters(IEnumerable<string> filterExpressions, IEnumerable<string> clusterExpressions)
+        {
+            var events = this.FilterEvents(filterExpressions);
+            return CreateClusters(clusterExpressions.First(), clusterExpressions.Skip(1), events);
+        }
+
+        public IList<Cluster> CreateClusters(string expression, IEnumerable<string> childExpressions, IEnumerable<ExistingEvent> events)
+        {
+            var clusters = new List<Cluster>();
+
+
+            if(expression.ToLower().StartsWith("timespan"))
+            {
+
+                string comparer = "";
+                if (expression.Contains("<=")) comparer = "<=";
+
+                var value = expression.Split(new string[] { comparer }, StringSplitOptions.RemoveEmptyEntries)[1];
+                var t = TimeSpan.Parse(value);
+
+                var current = new Cluster() { Events = new List<ExistingEvent>() };
+                clusters.Add(current);
+                DateTime? lastTime = null;
+                
+                foreach(var e in events)
+                {
+                    if(lastTime == null || DateTime.Parse(e.On).Subtract(lastTime.Value) <= t)
+                    {
+                        current.Events.Add(e);
+                        lastTime = DateTime.Parse(e.On);
+                    }
+                    else
+                    {
+                        current = new Cluster() { Events = new List<ExistingEvent>() };
+                        current.Events.Add(e);
+                        lastTime = DateTime.Parse(e.On);
+                        clusters.Add(current);
+                    }
+                }
+
+                foreach(var c in clusters)
+                {
+                    c.Start = DateTime.Parse(c.Events.First().On);
+                    c.End = DateTime.Parse(c.Events.Last().On);
+                }
+            }
+
+            if (childExpressions.Count() == 0) return clusters;
+
+            var results = new List<Cluster>();
+
+            foreach (var cluster in clusters)
+            {
+                results.AddRange(CreateClusters(childExpressions.First(), childExpressions.Skip(1), cluster.Events));
+            }
+
+            return results;
+        }
 
     }
 }

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Chronicity.Core;
-using Chronicity.Core.Entity;
-using Chronicity.Core.Events;
+using Chronicity.Core.Reaction;
+using Chronicity.Core.Timeline;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +41,7 @@ namespace Service.Controllers
         }
 
         [HttpGet, Route("/FilterEvents")]
-        public IEnumerable<Event> FilterEvents(IEnumerable<string> expressions)
+        public IEnumerable<ExistingEvent> FilterEvents(IEnumerable<string> expressions)
         {
             return _service.FilterEvents(expressions);
         }

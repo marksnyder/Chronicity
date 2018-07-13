@@ -1,11 +1,11 @@
-﻿using Chronicity.Core.Events;
+﻿using Chronicity.Core.Timeline;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Chronicity.Core.Agent
+namespace Chronicity.Core.Reaction
 {
-    public class Reaction
+    public class ReactionResult
     {
         public IList<NewEvent> NewEvents { get; set; }
         public IList<Observation> NewObservations { get; set; }

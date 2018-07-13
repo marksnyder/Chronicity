@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Chronicity.Core.Events
+namespace Chronicity.Core.Timeline
 {
     public class EntityState : Dictionary<string,string>
     {

@@ -1,6 +1,6 @@
 ﻿using Chronicity.Core;
-using Chronicity.Core.Agent;
-using Chronicity.Core.Events;
+using Chronicity.Core.Reaction;
+using Chronicity.Core.Timeline;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +10,9 @@ namespace ExampleCommon
 {
     public class BirdArrivalAgent : IStateChangeReaction
     {
-        public Reaction OnChange(string entity, string key, string priorValue, string newValue, string on)
+        public ReactionResult OnChange(string entity, string key, string priorValue, string newValue, string on)
         {
-            var result = new Reaction(); 
+            var result = new ReactionResult(); 
 
             if (key == "proxa" && priorValue != string.Empty)
             {

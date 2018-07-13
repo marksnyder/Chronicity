@@ -1,4 +1,4 @@
-using Chronicity.Core.Events;
+using Chronicity.Core.Timeline;
 using Chronicity.Provider.EntityFramework;
 using Chronicity.Provider.EntityFramework.DataContext;
 using Microsoft.EntityFrameworkCore;

@@ -1,7 +1,7 @@
 ﻿using Chronicity.Provider.EntityFramework;
 using System;
 using Xunit;
-using Chronicity.Core.Events;
+using Chronicity.Core.Timeline;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;

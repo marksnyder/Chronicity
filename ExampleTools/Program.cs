@@ -1,4 +1,5 @@
 ﻿using Chronicity.Core;
+using Chronicity.Core.Reaction;
 using Chronicity.Provider.EntityFramework;
 using Chronicity.Provider.EntityFramework.DataContext;
 using ExampleCommon;
@@ -28,14 +29,9 @@ namespace ExampleTools
 
             services.AddTransient<TimeLineService>();
 
-            var list = new List<IStateChangeReaction>()
-            {
-                new BirdDepartureAgent(),
-                new BirdArrivalAgent()
-            };
-
             var service = services.BuildServiceProvider().GetService<TimeLineService>();
-            service.ReprocessAgents(list, "proxa");
+            service.RegisterReaction(new BirdArrivalAgent());
+            service.RegisterReaction(new BirdDepartureAgent());
 
         }
 

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Chronicity.Core.Events
+namespace Chronicity.Core.Timeline
 {
     public class Context
     {
-        public Event Event { get; set; }
+        public ExistingEvent Event { get; set; }
         public IList<EntityState> States { get; set; }
     }
 }

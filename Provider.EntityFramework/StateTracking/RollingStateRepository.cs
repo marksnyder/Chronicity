@@ -1,4 +1,5 @@
-﻿using Chronicity.Core.Events;
+﻿using Chronicity.Core.Reaction;
+using Chronicity.Core.Timeline;
 using Chronicity.Provider.EntityFramework.DataContext;
 using Chronicity.Provider.EntityFramework.DataModels;
 using System;

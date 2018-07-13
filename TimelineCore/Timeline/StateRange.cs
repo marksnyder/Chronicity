@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Chronicity.Core.Entity
+namespace Chronicity.Core.Timeline
 {
     public class StateRange
     {
