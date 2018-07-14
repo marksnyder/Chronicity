@@ -1,11 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import moment from 'moment';
-import Chip from '@material-ui/core/Chip';
 import Typography from '@material-ui/core/Typography';
-import Avatar from '@material-ui/core/Avatar';
-import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TimelineDay from './TimelineDay.js'
@@ -41,13 +35,13 @@ class Timeline extends React.Component {
 
   clickItem = (props) => {
 
-    if(props.item != undefined)
+    if(props.item !== undefined)
     {
       var match = this.props.events.find(function(e) {
-        return e.id == props.item;
+        return e.id === props.item;
       });
 
-      if(match != undefined)
+      if(match !== undefined)
       {
         this.props.viewState(match);
       }

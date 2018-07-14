@@ -64,5 +64,11 @@ namespace Service.Controllers
             return _service.SearchEntities(search);
         }
 
+        [HttpGet, Route("/SearchEntities")]
+        public IList<Cluster> SearchClusters(IEnumerable<string> filterExpressions, IEnumerable<string> clusterExpressions)
+        {
+            return _service.SearchClusters(filterExpressions, clusterExpressions);
+        }
+
     }
 }

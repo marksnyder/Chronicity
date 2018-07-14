@@ -131,7 +131,7 @@ namespace Chronicity.Provider.EntityFramework
             //    contexts = ParseFilterContextExpression(expression, contexts);
             //}
 
-            return events.Select(x => new ExistingEvent() { Entities = x.EntityList.Split(','), On = x.On.ToString("MM/dd/yyyy HH:mm:ss.fffffff"), Type = x.Type, Id = x.Id.ToString() } );
+            return events.Select(x => new ExistingEvent() { Entities = x.EntityList.Split(','), On = x.On.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"), Type = x.Type, Id = x.Id.ToString() } );
         }
 
 

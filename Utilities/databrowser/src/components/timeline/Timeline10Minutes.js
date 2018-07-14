@@ -3,7 +3,6 @@ import { withStyles } from '@material-ui/core/styles';
 import TimelineEvents from './TimelineEvents.js'
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import Tooltip from '@material-ui/core/Tooltip';
 
 const styles = {
     'timeTickContainer' :
@@ -23,13 +22,8 @@ const styles = {
 
 class Timeline10Minutes extends React.Component {
 
-  constructor(props) {
-    super(props);
-  }
-
   render() {
 
-    const { classes } = this.props;
     var stateKeys = Object.keys(this.props.stateChanges);
 
     var stateItems = [];
@@ -42,12 +36,12 @@ class Timeline10Minutes extends React.Component {
        if(changes.length > 1)
        {
          background = 'repeating-linear-gradient(to bottom,' + changes[0].color + ',' + changes[0].color + ' 50%,' + changes[changes.length -1].color  +' 50%,' + changes[ changes.length -1].color + ' 20px)';
-         var desc = k + ': ' + changes[0].value + ' - ' +  changes[changes.length -1].value;
+         desc = k + ': ' + changes[0].value + ' - ' +  changes[changes.length -1].value;
        }
-       else if(changes.length == 1)
+       else if(changes.length === 1)
        {
          background = changes[0].color;
-         var desc = k + ': ' + changes[0].value;
+         desc = k + ': ' + changes[0].value;
        }
 
        stateItems.push({ id: k , desc: desc ,
@@ -68,9 +62,7 @@ class Timeline10Minutes extends React.Component {
         </Grid>
         <Grid item xs={1} sm={1}>
             {stateItems.map(n => {
-              return (<Tooltip id="tooltip-right-start" title={n.desc} placement="right-start">
-                <div key={n.id} style={n.style}></div>
-              </Tooltip>)
+              return (<div key={n.id} style={n.style}></div>)
             })}
         </Grid>
         <Grid item xs={6} sm={6}>

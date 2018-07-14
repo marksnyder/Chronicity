@@ -1,12 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import TimelineView from './components/timeline/View.js'
 import MenuView from './components/menu/View.js'
-import CodeView from './components/codeedit/View.js'
 import { MuiThemeProvider, createMuiTheme,withStyles } from '@material-ui/core/styles';
-import CodeRunner from './helpers/CodeRunner.js'
-import Chronicity from './helpers/Chronicity.js'
-import DataUtilities from './helpers/DataUtilities.js'
+import BirdActivity from './examples/BirdActivity.js'
 
 const theme = createMuiTheme({
   palette: {
@@ -42,10 +38,7 @@ class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.runner = new CodeRunner();
-    this.runner.loadCode();
     this.state = {
-      view: 'code',
       events: [],
       stateChanges: []
     };
@@ -64,56 +57,21 @@ class App extends React.Component {
     });
   };
 
-  getClient = () => {
-    return Chronicity;
-  };
-
-  getUtilities = () => {
-    return DataUtilities;
+  componentDidMount = () => {
+    var ex = new BirdActivity();
+    ex.runExample(this);
   }
 
-  runCode = () => {
-      this.runner.runCode(this);
-  }
-
-  saveCode = () => {
-      this.runner.saveCode();
-  }
-
-  setCode = (code) => {
-      this.runner.setCode(code);
-  }
-
-  getCode = () => {
-    return this.runner.getCode();
-  }
 
   render() {
-    const { classes } = this.props;
-    const initialCode = this.getCode();
 
     return (
     <MuiThemeProvider theme={theme}>
-      <MenuView classes={classes} changeView={this.changeView} />
-      {this.state.view == 'timeline' &&
-        <TimelineView
-          classes={classes}
-          events={this.state.events}
-          stateChanges={this.state.stateChanges}
-        />
-      }
-      {this.state.view == 'code' &&
-        <CodeView classes={classes}
-          addEvents={this.addEvents}
-          clearEvents={this.clearEvents}
-          addStateChanges={this.addStateChanges}
-          clearStateChanges={this.clearStateChanges}
-          initialCode={initialCode}
-          runCode={this.runCode}
-          saveCode={this.saveCode}
-          setCode={this.setCode}
-         />
-      }
+      <MenuView changeView={this.changeView} />
+      <TimelineView
+        events={this.state.events}
+        stateChanges={this.state.stateChanges}
+      />
     </MuiThemeProvider>
     );
   }
