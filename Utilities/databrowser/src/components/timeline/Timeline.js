@@ -22,7 +22,7 @@ class Timeline extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      groups: DataUtilities.groupByDay(this.props.events, this.props.stateChanges),
+      groups: DataUtilities.groupByDay(this.props.markers, this.props.trackerChanges),
       loaded: 1
     };
   }
@@ -37,7 +37,7 @@ class Timeline extends React.Component {
 
     if(props.item !== undefined)
     {
-      var match = this.props.events.find(function(e) {
+      var match = this.props.markers.find(function(e) {
         return e.id === props.item;
       });
 

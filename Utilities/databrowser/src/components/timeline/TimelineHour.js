@@ -15,14 +15,14 @@ class TimelineHour extends React.Component {
       end = moment();
     }
 
-    var groups = DataUtilities.groupBy10Minutes(this.props.group.events,this.props.group.stateChanges,this.props.group.start,end);
+    var groups = DataUtilities.groupBy10Minutes(this.props.group.markers, this.props.group.trackerChanges,this.props.group.start,end);
 
     return (<div>
       {groups.map(n => {
         return (<Timeline10Minutes key={n.id}
           viewState={this.props.viewState}
-          events={n.events}
-          stateChanges={n.stateChanges}
+          markers={n.markers}
+          trackerChanges={n.trackerChanges}
           description={n.description} />
         );
       })}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import TimelineEvents from './TimelineEvents.js'
+import TimelineMarkers from './TimelineMarkers.js'
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
@@ -24,12 +24,12 @@ class Timeline10Minutes extends React.Component {
 
   render() {
 
-    var stateKeys = Object.keys(this.props.stateChanges);
+    var stateKeys = Object.keys(this.props.trackerChanges);
 
     var stateItems = [];
 
     stateKeys.forEach(function(k) {
-       var changes = this.props.stateChanges[k];
+       var changes = this.props.trackerChanges[k];
        var background = 'white';
        var desc = k + ': N/A';
 
@@ -66,8 +66,8 @@ class Timeline10Minutes extends React.Component {
             })}
         </Grid>
         <Grid item xs={6} sm={6}>
-          <TimelineEvents
-            events={this.props.events} />
+          <TimelineMarkers
+            markers={this.props.markers} />
         </Grid>
       </Grid>
     </div>);

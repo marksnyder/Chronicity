@@ -3,7 +3,7 @@ import { extendMoment } from 'moment-range';
 
 const moment = extendMoment(Moment);
 
-function sortEvents(a,b) {
+function sortMarkers(a,b) {
   if (moment(a.on).isBefore(moment(b.on)))
     return -1;
   if (moment(a.on).isAfter(moment(b.on)))
@@ -13,12 +13,12 @@ function sortEvents(a,b) {
 
 class DataUtilities {
 
-  static mergeStateChanges = (all,changes, groupKey, color) => {
+  static mergeTrackerChanges = (all,changes, groupKey, color) => {
 
     if(!all.hasOwnProperty(groupKey)) all[groupKey] = [];
 
     changes.forEach(function(e){
-      e.color = color
+      e.color = color;
     });
 
     var group =  all[groupKey].slice();
@@ -29,19 +29,19 @@ class DataUtilities {
 
   };
 
-  static mergeEvents = (all,changes,iconStyle,initials) => {
+  static mergeMarkers = (all,markers,callback) => {
 
-    changes.forEach(function(e){
-      e.iconStyle = iconStyle;
-      e.initials = initials;
-    })
+    var newList = [];
+    markers.forEach(function(e){
+      var data = callback(e);
+      newList.push(data);
+    });
 
-    return all.concat(changes);
-
+    return all.concat(newList);
   };
 
 
-  static findApplicableStateChanges(start,end,changes)
+  static findApplicableTrackerChanges(start,end,changes)
   {
     var result = [];
     changes.forEach(function(c) {
@@ -52,10 +52,10 @@ class DataUtilities {
     return result;
   }
 
-  static findApplicableEvents(start,end,events)
+  static findApplicableMarkers(start,end,markers)
   {
     var result = [];
-    events.forEach(function(e) {
+    markers.forEach(function(e) {
       if(moment(e.on).isBetween(start,end,null,'[]')) {
         result.push(e);
       }
@@ -64,24 +64,24 @@ class DataUtilities {
   }
 
 
-  static groupByDay = (events,stateChanges) => {
-    events = events.sort(sortEvents);
-    var start = moment(events[0].on).startOf('day');
-    var end = moment(events[events.length -1].on).endOf('day');
-    return DataUtilities.groupBy(events,stateChanges,start,end,'MMMM Do YYYY','days',1, false).reverse();
+  static groupByDay = (markers,trackerChanges) => {
+    markers = markers.sort(sortMarkers);
+    var start = moment(markers[0].on).startOf('day');
+    var end = moment(markers[markers.length -1].on).endOf('day');
+    return DataUtilities.groupBy(markers,trackerChanges,start,end,'MMMM Do YYYY','days',1, false).reverse();
   }
 
-  static groupByHour = (events,stateChanges,start,end) => {
-    events = events.sort(sortEvents);
-    return DataUtilities.groupBy(events,stateChanges,start,end,'h:mm a','hours',1, true).reverse();
+  static groupByHour = (markers,trackerChanges,start,end) => {
+    markers = markers.sort(sortMarkers);
+    return DataUtilities.groupBy(markers,trackerChanges,start,end,'h:mm a','hours',1, true).reverse();
   }
 
-  static groupBy10Minutes = (events,stateChanges,start,end) => {
-    events = events.sort(sortEvents);
-    return DataUtilities.groupBy(events,stateChanges,start,end,'h:mm a','minutes',10, true).reverse();
+  static groupBy10Minutes = (markers,trackerChanges,start,end) => {
+    markers = markers.sort(sortMarkers);
+    return DataUtilities.groupBy(markers,trackerChanges,start,end,'h:mm a','minutes',10, true).reverse();
   }
 
-  static groupBy = (events, stateChanges, start, end, descFormat, incrementType, increment, emptyGroups) => {
+  static groupBy = (markers, trackerChanges, start, end, descFormat, incrementType, increment, emptyGroups) => {
 
     var groups = [];
     var current = moment(moment(start).format());
@@ -93,25 +93,25 @@ class DataUtilities {
        var group = {
          description:  current.format(descFormat),
          id: current.valueOf() + incrementType,
-         events: [],
-         stateChanges: {},
+         markers: [],
+         trackerChanges: {},
          start: current.format(),
          end: endOfGroup.format()
        };
 
-       var e = DataUtilities.findApplicableEvents(current,endOfGroup,events);
+       var e = DataUtilities.findApplicableMarkers(current,endOfGroup,markers);
        if(e.length > 0)  {
-         group.events = group.events.concat(e);
+         group.markers = group.markers.concat(e);
        }
 
 
-       var stateKeys = Object.keys(stateChanges);
+       var trackerKeys = Object.keys(trackerChanges);
 
-       stateKeys.forEach(function(k) {
-            group.stateChanges[k] = DataUtilities.findApplicableStateChanges(current,endOfGroup,stateChanges[k])
+       trackerKeys.forEach(function(k) {
+            group.trackerChanges[k] = DataUtilities.findApplicableTrackerChanges(current,endOfGroup,trackerChanges[k])
        });
 
-       if(group.events.length > 0 || emptyGroups) groups.push(group);
+       if(group.markers.length > 0 || emptyGroups) groups.push(group);
        current.add(increment, incrementType);
     }
 

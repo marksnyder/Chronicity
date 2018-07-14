@@ -6,7 +6,7 @@ class TimelineGroup extends React.Component {
 
   render() {
 
-    var groups = DataUtilities.groupByHour(this.props.group.events,this.props.group.stateChanges,this.props.group.start,this.props.group.end);
+    var groups = DataUtilities.groupByHour(this.props.group.markers, this.props.group.trackerChanges,this.props.group.start,this.props.group.end);
 
     return (<div>
       {groups.map(n => {

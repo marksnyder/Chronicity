@@ -19,7 +19,7 @@ class TimelineView extends React.Component {
     var start = moment().startOf('hour');
     var end = moment().subtract(3, 'days');
 
-    if(this.props.events == null || this.props.events.length < 1)
+    if(this.props.markers == null || this.props.markers.length < 1)
     {
       return (<div className={classes.root} style={{ textAlign: 'center' }}>
         <CircularProgress className={classes.progress} size={100} color="secondary" />
@@ -28,8 +28,8 @@ class TimelineView extends React.Component {
 
     return  <div className={classes.root}>
           <Timeline
-            events={this.props.events}
-            stateChanges={this.props.stateChanges}
+            markers={this.props.markers}
+            trackerChanges={this.props.trackerChanges}
             viewState={this.openStateViewer}
             start={start}
             end={end}   />

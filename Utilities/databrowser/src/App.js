@@ -39,8 +39,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      events: [],
-      stateChanges: []
+      markers: [],
+      trackerChanges: []
     };
   }
 
@@ -50,10 +50,10 @@ class App extends React.Component {
     });
   };
 
-  setStream = (events,stateChanges) => {
+  setStream = (markers,trackerChanges) => {
     this.setState({
-      stateChanges: stateChanges,
-      events: events
+      trackerChanges: trackerChanges,
+      markers: markers
     });
   };
 
@@ -69,8 +69,8 @@ class App extends React.Component {
     <MuiThemeProvider theme={theme}>
       <MenuView changeView={this.changeView} />
       <TimelineView
-        events={this.state.events}
-        stateChanges={this.state.stateChanges}
+        markers={this.state.markers}
+        trackerChanges={this.state.trackerChanges}
       />
     </MuiThemeProvider>
     );

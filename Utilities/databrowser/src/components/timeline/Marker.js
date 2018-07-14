@@ -55,7 +55,7 @@ const styles = {
    },
 };
 
-class Event extends React.Component {
+class Marker extends React.Component {
 
   constructor(props) {
     super(props);
@@ -105,18 +105,18 @@ class Event extends React.Component {
 
     const { classes } = this.props;
 
-    return (<Card className={classes.card}  key={this.props.event.id}>
+    return (<Card className={classes.card}  key={this.props.marker.id}>
          <CardHeader
             avatar={
-              <Avatar style={this.props.event.iconStyle}>{this.props.event.initials}</Avatar>
+              <Avatar style={this.props.marker.iconStyle}>{this.props.marker.iconContent}</Avatar>
             }
             action={
-              <IconButton onClick={() => this.openStateViewer(this.props.event)}>
+              <IconButton onClick={() => this.openStateViewer(this.props.marker)}>
                 <MoreVertIcon />
               </IconButton>
             }
-            title={this.props.event.type}
-            subheader={this.props.event.on}
+            title={this.props.marker.title}
+            subheader={this.props.marker.subtitle}
           />
 
           {this.state.items != null &&
@@ -129,4 +129,4 @@ class Event extends React.Component {
   }
 }
 
-export default  withStyles(styles)(Event);
+export default  withStyles(styles)(Marker);
