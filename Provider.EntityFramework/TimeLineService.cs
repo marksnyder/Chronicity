@@ -421,8 +421,10 @@ namespace Chronicity.Provider.EntityFramework
                 foreach(var c in clusters)
                 {
                     c.Start = c.Events.First().On;
-                    c.End = c.Events.Last().On;        
+                    c.End = c.Events.Last().On;
+                    c.Entities = c.Events.SelectMany(x => x.Entities).Distinct();
                 }
+
             }
 
             if (childExpressions.Count() == 0) return clusters;

@@ -1,6 +1,7 @@
 import Chronicity from '../helpers/Chronicity.js'
 import DataUtilities from '../helpers/DataUtilities.js'
 import P from 'bluebird';
+import moment from 'moment';
 
 class BirdActivity {
 
@@ -11,22 +12,39 @@ class BirdActivity {
        this.myStateChanges = [];
        this.calls = []
 
+       var begin =  (item) => {
+             return  {
+                 title: 'Bird Session Begin',
+                 subtitle: 'Started ' + moment(item.start).format('mm:ss'),
+                 iconStyle: { "backgroundColor": "#BA68C8" },
+                 iconContent: "S",
+                 on: item.start,
+                 id: item.id,
+                 entities: item.entities
+             }
+         };
+
+
+         var end =  (item) => {
+               return  {
+                   title: 'Bird Session End',
+                   subtitle: 'Ended ' + moment(item.end).format('mm:ss') + ' Events: ' + item.events.length + ' Duration: ' + moment(item.end).diff(moment(item.start), 'seconds') + ' seconds' ,
+                   iconStyle: { "backgroundColor": "#BA68C8" },
+                   iconContent: "E",
+                   on: item.end,
+                   id: item.id,
+                   entities: item.entities
+               }
+           };
+
+
        this.calls.push(
-         Chronicity.searchClusters(['On.After=7/3/2018 11:00'],['TimeSpan <= 0.0:30:0'])
+         Chronicity.searchClusters(['On.After=7/3/2018 11:00'],['TimeSpan <= 0.0:20:0'])
            .then((data) => {
-               this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,
-                (item) => {
-                    return  {
-                        title: item.type,
-                        subtitle: item.on,
-                        iconStyle: { "backgroundColor": "#BA68C8" },
-                        iconContent: "AR",
-                        on: item.on,
-                        id: item.id,
-                        entities: item.entities
-                    }
-                });
-       }));
+             this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,begin);
+             this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,end);
+           })
+       );
 
 
       this.calls.push(
