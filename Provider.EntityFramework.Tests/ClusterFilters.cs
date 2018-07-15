@@ -17,7 +17,7 @@ namespace Chronicity.Provider.EntityFramework.Tests
         public ClusterFilters()
         {
             var options = new DbContextOptionsBuilder<ChronicityContext>()
-                .UseInMemoryDatabase(databaseName: "EventFilters")
+                .UseInMemoryDatabase(databaseName: "ClusterFilters")
                 .Options;
 
             _context = new ChronicityContext(options);
@@ -53,8 +53,8 @@ namespace Chronicity.Provider.EntityFramework.Tests
 
 
             Assert.Single(match);
-            Assert.Equal(new DateTime(2001,1,1,1,1,0), match.First().Start);
-            Assert.Equal(new DateTime(2001, 1, 1, 1, 6, 0), match.First().End);
+            Assert.Equal(new DateTime(2001,1,1,1,1,0).ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"), match.First().Start);
+            Assert.Equal(new DateTime(2001, 1, 1, 1, 6, 0).ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"), match.First().End);
         }
 
         [Fact]
@@ -94,11 +94,11 @@ namespace Chronicity.Provider.EntityFramework.Tests
 
 
             Assert.Equal(2,match.Count);
-            Assert.Equal(new DateTime(2001, 1, 1, 1, 1, 0), match.First().Start);
-            Assert.Equal(new DateTime(2001, 1, 1, 1, 6, 0), match.First().End);
+            Assert.Equal(new DateTime(2001, 1, 1, 1, 1, 0).ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"), match.First().Start);
+            Assert.Equal(new DateTime(2001, 1, 1, 1, 6, 0).ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"), match.First().End);
 
-            Assert.Equal(new DateTime(2001, 1, 1, 1, 12, 0), match.Skip(1).First().Start);
-            Assert.Equal(new DateTime(2001, 1, 1, 1, 12, 0), match.Skip(1).First().End);
+            Assert.Equal(new DateTime(2001, 1, 1, 1, 12, 0).ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"), match.Skip(1).First().Start);
+            Assert.Equal(new DateTime(2001, 1, 1, 1, 12, 0).ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"), match.Skip(1).First().End);
         }
 
     }

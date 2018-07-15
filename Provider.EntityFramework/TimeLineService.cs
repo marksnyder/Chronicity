@@ -420,8 +420,8 @@ namespace Chronicity.Provider.EntityFramework
 
                 foreach(var c in clusters)
                 {
-                    c.Start = DateTime.Parse(c.Events.First().On);
-                    c.End = DateTime.Parse(c.Events.Last().On);
+                    c.Start = c.Events.First().On;
+                    c.End = c.Events.Last().On;        
                 }
             }
 
