@@ -15,8 +15,8 @@ class BirdActivity {
        var begin =  (item) => {
              return  {
                  title: 'Bird Session Begin',
-                 subtitle: 'Started ' + moment(item.start).format('mm:ss'),
-                 iconStyle: { "backgroundColor": "#BA68C8" },
+                 subtitle: 'Started ' + moment(item.start).format('hh:mm:ss'),
+                 iconStyle: { "backgroundColor": "#1b5e20" },
                  iconContent: "S",
                  on: item.start,
                  id: item.id,
@@ -28,8 +28,8 @@ class BirdActivity {
          var end =  (item) => {
                return  {
                    title: 'Bird Session End',
-                   subtitle: 'Ended ' + moment(item.end).format('mm:ss') + ' Events: ' + item.events.length + ' Duration: ' + moment(item.end).diff(moment(item.start), 'seconds') + ' seconds' ,
-                   iconStyle: { "backgroundColor": "#BA68C8" },
+                   subtitle: 'Ended ' + moment(item.end).format('hh:mm:ss') + ' Events: ' + item.events.length + ' Duration: ' + moment(item.end).diff(moment(item.start), 'seconds') + ' seconds' ,
+                   iconStyle: { "backgroundColor": "#b71c1c" },
                    iconContent: "E",
                    on: item.end,
                    id: item.id,
