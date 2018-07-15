@@ -34,6 +34,7 @@ class DataUtilities {
     var newList = [];
     markers.forEach(function(e){
       var data = callback(e);
+      
       newList.push(data);
     });
 

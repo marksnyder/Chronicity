@@ -57,6 +57,24 @@ class Chronicity {
         });
   }
 
+  static searchClusters = (filterExpressions, clusterExpressions) => {
+    var url = 'http://ex.chronicity.io/SearchClusters';
+    url = url + "?nocache=" + (new Date()).getTime();
+
+    filterExpressions.forEach(function(f) {
+        url = url + '&filterExpressions=' + encodeURIComponent(f);
+    });
+
+    clusterExpressions.forEach(function(f) {
+        url = url + '&clusterExpressions=' + encodeURIComponent(f);
+    });
+
+    return fetch(url)
+      .then(function(response) {
+        return response.json();
+      });
+  }
+
 }
 
 

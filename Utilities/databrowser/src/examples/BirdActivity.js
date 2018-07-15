@@ -12,10 +12,7 @@ class BirdActivity {
        this.calls = []
 
        this.calls.push(
-         Chronicity.filterEvents([
-           'On.After=7/3/2018 11:00',
-           'Type=Bird Arrived'
-         ])
+         Chronicity.searchClusters(['On.After=7/3/2018 11:00'],['TimeSpan <= 0.0:30:0'])
            .then((data) => {
                this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,
                 (item) => {
@@ -30,27 +27,6 @@ class BirdActivity {
                     }
                 });
        }));
-
-      this.calls.push(
-        Chronicity.filterEvents([
-           'On.After=7/3/2018 11:00',
-           'Type=Bird Departed'
-         ])
-           .then((data) => {
-             this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,
-              (item) => {
-                  return  {
-                      title: item.type,
-                      subtitle: item.on,
-                      iconStyle: { "backgroundColor": "#BA68C8" },
-                      iconContent: "DEDE",
-                      on: item.on,
-                      id: item.id,
-                      entities: item.entities
-                  }
-              });
-       }));
-
 
 
       this.calls.push(
