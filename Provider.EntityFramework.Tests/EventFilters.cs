@@ -202,6 +202,43 @@ namespace Provider.EntityFramework.Tests
             Assert.Empty(nonMatch);
         }
 
+        [Fact]
+        public void FilterEvent_EventMultiTypeMatch()
+        {
+            _context.Database.EnsureDeleted();
+
+            var e1 = new NewEvent()
+            {
+                On = "2001/01/01 01:01",
+                Type = "MyEventType1",
+                Entities = new[] { "E1" }
+            };
+
+            var e2 = new NewEvent()
+            {
+                On = "2001/01/01 01:01",
+                Type = "MyEventType2",
+                Entities = new[] { "E1" }
+            };
+
+            var e3 = new NewEvent()
+            {
+                On = "2001/01/01 01:01",
+                Type = "MyEventType3",
+                Entities = new[] { "E1" }
+            };
+
+            _service.RegisterEvent(e1);
+            _service.RegisterEvent(e2);
+            _service.RegisterEvent(e3);
+
+            var match = _service.FilterEvents(new string[] { "Type=[MyEventType1,MyEventType2]" });
+
+            Assert.Equal("MyEventType1",match.First().Type);
+            Assert.Equal("MyEventType2", match.Skip(1).First().Type);
+            Assert.Equal(2, match.Count());
+        }
+
 
     }
 }

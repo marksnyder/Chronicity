@@ -142,7 +142,19 @@ namespace Chronicity.Provider.EntityFramework
             if (expression.StartsWith("Type"))
             {
                 var value = expression.Split('=')[1];
-                ret = ret.Where(x => x.Type == value);
+
+                List<string> includeValues;
+
+                if(value.Contains("["))
+                {
+                    includeValues = value.Replace("[","" ).Replace("]", "").Split(',').ToList();
+                }
+                else
+                {
+                    includeValues = new List<string>() { value };
+                }
+
+                ret = ret.Where(x => includeValues.Contains(x.Type));
             }
             else if (expression.StartsWith("On."))
             {

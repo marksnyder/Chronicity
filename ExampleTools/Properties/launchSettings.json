@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ExampleTools": {
+      "commandName": "Project",
+      "commandLineArgs": "sunset"
+    }
+  }
+}

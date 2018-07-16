@@ -11,13 +11,15 @@ class BirdActivity {
        this.myEvents = [];
        this.myStateChanges = [];
        this.calls = []
+       this.startExpression = 'On.After=' + moment().subtract(4, 'days').format();
+       this.endExpression = 'On.Before=' + moment().format();
 
-       var begin =  (item) => {
+       var sessionStart =  (item) => {
              return  {
                  title: 'Bird Session Begin',
                  subtitle: 'Started ' + moment(item.start).format('hh:mm:ss'),
                  iconStyle: { "backgroundColor": "#1b5e20" },
-                 iconContent: "S",
+                 iconContent: "B",
                  on: item.start,
                  id: item.id,
                  entities: item.entities
@@ -25,7 +27,7 @@ class BirdActivity {
          };
 
 
-         var end =  (item) => {
+        var sessionEnd =  (item) => {
                return  {
                    title: 'Bird Session End',
                    subtitle: 'Ended ' + moment(item.end).format('hh:mm:ss') + ' Events: ' + item.events.length + ' Duration: ' + moment(item.end).diff(moment(item.start), 'seconds') + ' seconds' ,
@@ -37,19 +39,61 @@ class BirdActivity {
                }
            };
 
+         var sunset =  (item) => {
+                return  {
+                    title: 'Sunset',
+                    subtitle:  moment(item.end).format('hh:mm:ss'),
+                    iconStyle: { "backgroundColor": "#b71c1c" },
+                    iconContent: "S",
+                    on: item.on,
+                    id: item.id,
+                    entities: item.entities
+                }
+            };
+
+
+          var sunrise =  (item) => {
+                 return  {
+                     title: 'Sunrise',
+                     subtitle:  moment(item.end).format('hh:mm:ss'),
+                     iconStyle: { "backgroundColor": "#b71c1c" },
+                     iconContent: "S",
+                     on: item.on,
+                     id: item.id,
+                     entities: item.entities
+                 }
+             };
+
 
        this.calls.push(
-         Chronicity.searchClusters(['On.After=7/3/2018 11:00'],['TimeSpan <= 0.0:20:0'])
+         Chronicity.searchClusters([this.startExpression, this.endExpression],['TimeSpan <= 0.0:20:0'])
            .then((data) => {
-             this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,begin);
-             this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,end);
+             this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,sessionStart);
+             this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,sessionEnd);
+           })
+       );
+
+
+       this.calls.push(
+         Chronicity.filterEvents([this.startExpression, this.endExpression, 'Type=Sunrise'])
+           .then((data) => {
+             this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,sunrise);
+           })
+       );
+
+
+       this.calls.push(
+         Chronicity.filterEvents([this.startExpression, this.endExpression, 'Type=Sunset'])
+           .then((data) => {
+             this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,sunset);
            })
        );
 
 
       this.calls.push(
         Chronicity.filterState([
-           'On.After=7/3/2018 11:00',
+           this.startExpression,
+           this.endExpression,
            'Entity.State.temp >= 90'
          ])
            .then((data) => {
@@ -59,7 +103,8 @@ class BirdActivity {
 
       this.calls.push(
         Chronicity.filterState([
-           'On.After=7/3/2018 11:00',
+           this.startExpression,
+           this.endExpression,
            'Entity.State.temp >= 80',
            'Entity.State.temp < 90'
           ])
@@ -69,7 +114,8 @@ class BirdActivity {
 
       this.calls.push(
        Chronicity.filterState([
-           'On.After=7/3/2018 11:00',
+           this.startExpression,
+           this.endExpression,
            'Entity.State.temp >= 70',
            'Entity.State.temp < 80'
          ])
@@ -79,7 +125,8 @@ class BirdActivity {
 
       this.calls.push(
         Chronicity.filterState([
-           'On.After=7/3/2018 11:00',
+           this.startExpression,
+           this.endExpression,
            'Entity.State.temp < 70' ])
            .then((data) => {
                this.myStateChanges = DataUtilities.mergeTrackerChanges(this.myStateChanges,data,'temp','#01579b');
