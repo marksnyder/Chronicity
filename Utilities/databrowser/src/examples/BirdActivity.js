@@ -42,8 +42,8 @@ class BirdActivity {
          var sunset =  (item) => {
                 return  {
                     title: 'Sunset',
-                    subtitle:  moment(item.end).format('hh:mm:ss'),
-                    iconStyle: { "backgroundColor": "#b71c1c" },
+                    subtitle:  moment(item.on).format('hh:mm:ss'),
+                    iconStyle: { "backgroundColor": "#ff5722" },
                     iconContent: "S",
                     on: item.on,
                     id: item.id,
@@ -55,8 +55,8 @@ class BirdActivity {
           var sunrise =  (item) => {
                  return  {
                      title: 'Sunrise',
-                     subtitle:  moment(item.end).format('hh:mm:ss'),
-                     iconStyle: { "backgroundColor": "#b71c1c" },
+                     subtitle:  moment(item.on).format('hh:mm:ss'),
+                     iconStyle: { "backgroundColor": "#ffeb3b" },
                      iconContent: "S",
                      on: item.on,
                      id: item.id,
@@ -66,7 +66,7 @@ class BirdActivity {
 
 
        this.calls.push(
-         Chronicity.searchClusters([this.startExpression, this.endExpression],['TimeSpan <= 0.0:20:0'])
+         Chronicity.searchClusters([this.startExpression, this.endExpression, 'Type=[Bird Arrived,Bird Departed]'],['TimeSpan <= 0.0:20:0'])
            .then((data) => {
              this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,sessionStart);
              this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,sessionEnd);
