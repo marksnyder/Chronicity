@@ -110,7 +110,7 @@ namespace Chronicity.Provider.EntityFramework
             }
         }
 
-        public IEnumerable<ExistingEvent> FilterEvents(IEnumerable<string> expressions)
+        public IEnumerable<ExistingEvent> SearchEvents(IEnumerable<string> expressions)
         {
             var events = _context.Events.AsQueryable();
 
@@ -119,17 +119,25 @@ namespace Chronicity.Provider.EntityFramework
                 events = ParseFilterEventExpressions(expression, events);
             }
 
-            //TODO -- need to optimize this.. we shouldn't have to pull all of them back to do the filtering
-            //var contexts = events.ToList().Select(x => new Context()
-            //{ 
-            //    Event = new Event() { Entities = x.EntityList.Split(',') , On = x.On.ToString("yyyy/MM/dd HH:mm:ss"), Type = x.Type, Id = x.Id.ToString() },
-            //    States = x.EntityList.Split(',').Select(y => _stateRepository.GetEntityState(y, x.On.ToString("MM/dd/yyyy HH:mm:ss"))).ToList()
-            //});
+            var stateExpressions = expressions.Where(x => x.StartsWith("Entity.State."));
 
-            //foreach (var expression in expressions)
-            //{
-            //    contexts = ParseFilterContextExpression(expression, contexts);
-            //}
+            if (stateExpressions.Count() > 0)
+            {
+                var entities = events.SelectMany(x => x.EntityList.Split(',')).Distinct().ToArray();
+                var stateRanges = FilterState(stateExpressions, entities);
+
+                var filteredEvents = new List<Event>();
+
+                foreach (var e in events)
+                {
+                    var enlist = e.EntityList.Split(',');
+                    var relState = stateRanges.Where(x => enlist.Contains(x.Entity) && x.Start <= e.On && (x.End == null || x.End >= x.End.Value));
+                    if (relState.Count() > 0) filteredEvents.Add(e);
+                }
+
+                events = filteredEvents.AsQueryable();
+
+            }
 
             return events.Select(x => new ExistingEvent() { Entities = x.EntityList.Split(','), On = x.On.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"), Type = x.Type, Id = x.Id.ToString() } );
         }
@@ -183,16 +191,23 @@ namespace Chronicity.Provider.EntityFramework
             return ret.AsQueryable();
         }
 
-        public IList<StateRange> FilterState(IEnumerable<string> expressions)
+        public IList<StateRange> SearchState(IEnumerable<string> expressions)
+        {
+            return FilterState(expressions, null);
+        }
+
+        private IList<StateRange> FilterState(IEnumerable<string> expressions, string[] entityLimit)
         {
             var stateData = _context.TimeAndStates
-                .Join(_context.EntityStateKeys, state=> state.Key, key=> key.Key, (state,key) => new {state,key });
+            .Join(_context.EntityStateKeys, state => state.Key, key => key.Key, (state, key) => new { state, key });
+
+            if (entityLimit != null)
+            {
+                stateData = stateData.Where(x => entityLimit.Contains(x.key.Entity));
+            }
 
 
             DateTime? afterLimit = null;
-            //DateTime? beforeLimit = null;
-            //string valueLimit = null;
-            //string keyLimit = null;
 
             var postFilters = new List<Func<StateRange, bool>>();
             var postUpdates = new List<Action<StateRange>>();
@@ -214,13 +229,13 @@ namespace Chronicity.Provider.EntityFramework
                     var var = e.Split(new string[] { comparer }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
                     var value = e.Split(new string[] { comparer }, StringSplitOptions.RemoveEmptyEntries)[1];
 
-                    if(comparer == "=")
+                    if (comparer == "=")
                     {
                         stateData = stateData.Where(x => x.state.Key == var && (x.state.Value == value || x.state.PriorValue == value));
                         postFilters.Add(x => x.Key == var && x.Value == value);
                     }
 
-                    if(comparer == "<")
+                    if (comparer == "<")
                     {
                         int intVal = Convert.ToInt32(value);
                         stateData = stateData.Where(x => x.state.Key == var && (x.state.NumericValue < intVal || x.state.NumericPriorValue < intVal));
@@ -256,7 +271,7 @@ namespace Chronicity.Provider.EntityFramework
                     var e = expression.Replace("On.After", "");
                     var var = e.Split('=')[0];
                     var value = DateTime.Parse(e.Split('=')[1]);
-                    stateData = stateData.Where(x => x.state.On > value || ( x.key.LastChange < value && x.state.On == x.key.LastChange ));
+                    stateData = stateData.Where(x => x.state.On > value || (x.key.LastChange < value && x.state.On == x.key.LastChange));
                     afterLimit = value;
 
                     postUpdates.Add((x) =>
@@ -274,9 +289,9 @@ namespace Chronicity.Provider.EntityFramework
                     stateData = stateData.Where(x => x.state.On < value);
 
                     postUpdates.Add((x) =>
-                        {
-                            if (x.End > value || x.End == null) { x.End = value; }
-                        }
+                    {
+                        if (x.End > value || x.End == null) { x.End = value; }
+                    }
                     );
 
                 }
@@ -288,7 +303,7 @@ namespace Chronicity.Provider.EntityFramework
 
             var entities = finalData.Select(x => x.state.Entity).Distinct();
 
-            foreach(var entity in entities)
+            foreach (var entity in entities)
             {
                 foreach (var key in finalData.Where(x => x.state.Entity == entity).Select(x => x.state.Key).Distinct())
                 {
@@ -298,7 +313,7 @@ namespace Chronicity.Provider.EntityFramework
                     bool isFirst = true;
                     foreach (var o in ordered)
                     {
-                        if(isFirst && afterLimit != null && o.state.On > afterLimit && o.state.PriorValue != null)
+                        if (isFirst && afterLimit != null && o.state.On > afterLimit && o.state.PriorValue != null)
                         {
                             ret.Add(new StateRange()
                             {
@@ -343,14 +358,14 @@ namespace Chronicity.Provider.EntityFramework
                 }
             }
 
-            foreach(var filter in postFilters)
+            foreach (var filter in postFilters)
             {
                 ret = ret.Where(filter).ToList();
             }
 
-            foreach(var update in postUpdates)
+            foreach (var update in postUpdates)
             {
-                foreach(var r in ret)
+                foreach (var r in ret)
                 {
                     update.Invoke(r);
                 }
@@ -390,9 +405,9 @@ namespace Chronicity.Provider.EntityFramework
             .ToList();
         }
 
-        public IList<Cluster> SearchClusters(IEnumerable<string> filterExpressions, IEnumerable<string> clusterExpressions)
+        public IList<Cluster> ClusterEvents(IEnumerable<string> filterExpressions, IEnumerable<string> clusterExpressions)
         {
-            var events = this.FilterEvents(filterExpressions);
+            var events = this.SearchEvents(filterExpressions);
             return CreateClusters(clusterExpressions.First(), clusterExpressions.Skip(1), events);
         }
 

@@ -127,7 +127,7 @@ namespace Provider.EntityFramework.Tests
 
             service.RegisterEvent(e);
 
-            var contexts = service.FilterEvents(new string[] {});
+            var contexts = service.SearchEvents(new string[] {});
             
             Assert.Single(contexts);
 

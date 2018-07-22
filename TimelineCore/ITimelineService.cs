@@ -13,11 +13,11 @@ namespace Chronicity.Core
         IDictionary<string, string> GetEntityState(string entityid, string on);
         void RegisterEvent(NewEvent e);
         void RegisterObservation(Observation o);
-        IEnumerable<ExistingEvent> FilterEvents(IEnumerable<string> expressions);
+        IEnumerable<ExistingEvent> SearchEvents(IEnumerable<string> expressions);
         IList<string> SearchEventTypes(string search);
         IList<string> SearchEntities(string search);
-        IList<StateRange> FilterState(IEnumerable<string> expressions);
-        IList<Cluster> SearchClusters(IEnumerable<string> filterExpressions, IEnumerable<string> clusterExpressions);
+        IList<StateRange> SearchState(IEnumerable<string> expressions);
+        IList<Cluster> ClusterEvents(IEnumerable<string> filterExpressions, IEnumerable<string> clusterExpressions);
 
     }
 }

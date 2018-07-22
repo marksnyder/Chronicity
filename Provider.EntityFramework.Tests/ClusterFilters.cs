@@ -47,7 +47,7 @@ namespace Chronicity.Provider.EntityFramework.Tests
             _service.RegisterEvent(e1);
             _service.RegisterEvent(e2);
 
-            var match = _service.SearchClusters(
+            var match = _service.ClusterEvents(
                 new string[] { "On.After=2001/01/01 01:00" },
                 new string[] { "TimeSpan <= 0.0:5:0" });
 
@@ -88,7 +88,7 @@ namespace Chronicity.Provider.EntityFramework.Tests
             _service.RegisterEvent(e2);
             _service.RegisterEvent(e3);
 
-            var match = _service.SearchClusters(
+            var match = _service.ClusterEvents(
                 new string[] { "On.After=2001/01/01 01:00" },
                 new string[] { "TimeSpan <= 0.0:5:0" });
 

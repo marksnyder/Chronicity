@@ -27,7 +27,7 @@ namespace Provider.EntityFramework.Tests
 
 
 
-        [Fact(Skip = "TODO")]
+        [Fact]
         public void FilterEvent_BasicStateMatch()
         {
             _context.Database.EnsureDeleted();
@@ -51,15 +51,15 @@ namespace Provider.EntityFramework.Tests
             _service.RegisterEvent(e1);
 
 
-            var match = _service.FilterEvents(new string[] { "Entity.State.MyVal=Hello World" });
-            var nonMatch = _service.FilterEvents(new string[] { "Entity.State.MyVal=Not The One!" });
+            var match = _service.SearchEvents(new string[] { "Entity.State.MyVal=Hello World" });
+            var nonMatch = _service.SearchEvents(new string[] { "Entity.State.MyVal=Not The One!" });
 
             Assert.Single(match);
             Assert.Empty(nonMatch);
         }
 
 
-        [Fact(Skip = "TODO")]
+        [Fact]
         public void FilterEvent_BasicStateMatch_OutOfOrder()
         {
             _context.Database.EnsureDeleted();
@@ -83,8 +83,8 @@ namespace Provider.EntityFramework.Tests
             _service.RegisterObservation(o1);
 
 
-            var match = _service.FilterEvents(new string[] { "Entity.State.MyVal=Hello World" });
-            var nonMatch = _service.FilterEvents(new string[] { "Entity.State.MyVal=Not The One!" });
+            var match = _service.SearchEvents(new string[] { "Entity.State.MyVal=Hello World" });
+            var nonMatch = _service.SearchEvents(new string[] { "Entity.State.MyVal=Not The One!" });
 
             Assert.Single(match);
             Assert.Empty(nonMatch);
@@ -113,7 +113,7 @@ namespace Provider.EntityFramework.Tests
             _service.RegisterEvent(e1);
             _service.RegisterEvent(e2);
 
-            var match = _service.FilterEvents(new string[] { "On.After=2001/01/01 01:01" });
+            var match = _service.SearchEvents(new string[] { "On.After=2001/01/01 01:01" });
 
 
             Assert.Single(match);
@@ -143,7 +143,7 @@ namespace Provider.EntityFramework.Tests
             _service.RegisterEvent(e1);
             _service.RegisterEvent(e2);
 
-            var match = _service.FilterEvents(new string[] { "On.Before=2001/01/01 01:02" });
+            var match = _service.SearchEvents(new string[] { "On.Before=2001/01/01 01:02" });
 
 
             Assert.Single(match);
@@ -173,7 +173,7 @@ namespace Provider.EntityFramework.Tests
             _service.RegisterEvent(e1);
             _service.RegisterEvent(e2);
 
-            var match = _service.FilterEvents(new string[] { "On.Between=2001/01/01 01:00,2001/01/01 01:02" });
+            var match = _service.SearchEvents(new string[] { "On.Between=2001/01/01 01:00,2001/01/01 01:02" });
 
             Assert.Single(match);
             Assert.Equal("MyEventType1", match.First().Type);
@@ -195,8 +195,8 @@ namespace Provider.EntityFramework.Tests
 
             _service.RegisterEvent(e1);
 
-            var match = _service.FilterEvents(new string[] { "Type=MyEventType" });
-            var nonMatch = _service.FilterEvents(new string[] { "Type=Not The One!" });
+            var match = _service.SearchEvents(new string[] { "Type=MyEventType" });
+            var nonMatch = _service.SearchEvents(new string[] { "Type=Not The One!" });
 
             Assert.Single(match);
             Assert.Empty(nonMatch);
@@ -232,7 +232,7 @@ namespace Provider.EntityFramework.Tests
             _service.RegisterEvent(e2);
             _service.RegisterEvent(e3);
 
-            var match = _service.FilterEvents(new string[] { "Type=[MyEventType1,MyEventType2]" });
+            var match = _service.SearchEvents(new string[] { "Type=[MyEventType1,MyEventType2]" });
 
             Assert.Equal("MyEventType1",match.First().Type);
             Assert.Equal("MyEventType2", match.Skip(1).First().Type);

@@ -34,8 +34,8 @@ int humid = 0;
 int count = 0;
 char publishString[40];
 
-int pcelltriggerA = D7;
-int pcellechoA = D6;
+int pcelltriggerA = D5;
+int pcellechoA = D4;
 long pcellDurationA = 0;
 long pcellDistanceA = 0;
 
