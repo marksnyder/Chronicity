@@ -8,28 +8,21 @@ using System.Threading.Tasks;
 
 namespace ExampleCommon
 {
-    public class BirdDepartureAgent : IStateChangeReaction
+    public class FeederRefill : IStateChangeReaction
     {
         public ReactionResult OnChange(string entity, string key, string priorValue, string newValue, string on)
         {
-            var result = new ReactionResult(); 
+            var result = new ReactionResult();
 
             if (key == "proxa" && priorValue != string.Empty)
             {
-                if(Convert.ToInt32(newValue) >= 30 && Convert.ToInt32(priorValue) < 30)
+                if (Convert.ToInt32(newValue) < 9 && Convert.ToInt32(priorValue) >= 11)
                 {
                     result.NewEvents = new List<NewEvent>() { new NewEvent() {
                          Entities = new string [] { entity },
                          On = on,
-                         Type = "Bird Departed"
+                         Type = "Feeder Refill"
                     } };
-
-                    result.NewObservations = new List<Observation>() {
-                        new Observation() {
-                             Entity = entity,
-                             On = on,
-                            Expressions = new string [] {"Entity.State.activeBird=False" }
-                        } };
                 }
             }
 

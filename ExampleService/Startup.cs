@@ -61,8 +61,7 @@ namespace Chronicity.Service
         {
             var context = x.GetService<ChronicityContext>();
             var tl = new TimeLineService(context);
-            tl.RegisterReaction(new BirdArrivalAgent());
-            tl.RegisterReaction(new BirdDepartureAgent());
+            tl.RegisterReaction(new FeederRefill());
             return tl;
         }
 

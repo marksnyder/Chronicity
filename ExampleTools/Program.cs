@@ -34,8 +34,7 @@ namespace ExampleTools
 
             if (args[0] == "reprocess")
             {
-                service.RegisterReaction(new BirdArrivalAgent());
-                service.RegisterReaction(new BirdDepartureAgent());
+                service.RegisterReaction(new FeederRefill());
             }
 
             if(args[0] == "sunset")
