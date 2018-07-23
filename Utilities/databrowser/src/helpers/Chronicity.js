@@ -4,7 +4,7 @@ class Chronicity {
 
 
   static filterEvents = (expressions) => {
-    var url = 'http://ex.chronicity.io/FilterEvents';
+    var url = 'http://ex.chronicity.io/SearchEvents';
     url = url + "?nocache=" + (new Date()).getTime();
 
     expressions.forEach(function(f) {
@@ -44,7 +44,7 @@ class Chronicity {
   }
 
   static filterState = (expressions) => {
-      var url = 'http://ex.chronicity.io/FilterState';
+      var url = 'http://ex.chronicity.io/SearchState';
       url = url + "?nocache=" + (new Date()).getTime();
 
       expressions.forEach(function(f) {
@@ -58,7 +58,7 @@ class Chronicity {
   }
 
   static searchClusters = (filterExpressions, clusterExpressions) => {
-    var url = 'http://ex.chronicity.io/SearchClusters';
+    var url = 'http://ex.chronicity.io/ClusterEvents';
     url = url + "?nocache=" + (new Date()).getTime();
 
     filterExpressions.forEach(function(f) {

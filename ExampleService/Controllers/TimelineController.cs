@@ -40,14 +40,14 @@ namespace Service.Controllers
             _service.RegisterObservation(o);
         }
 
-        [HttpGet, Route("/FilterEvents")]
-        public IEnumerable<ExistingEvent> FilterEvents(IEnumerable<string> expressions)
+        [HttpGet, Route("/SearchEvents")]
+        public IEnumerable<ExistingEvent> SearchEvents(IEnumerable<string> expressions)
         {
             return _service.SearchEvents(expressions);
         }
 
-        [HttpGet, Route("/FilterState")]
-        public IEnumerable<StateRange> FilterState(IEnumerable<string> expressions)
+        [HttpGet, Route("/SearchState")]
+        public IEnumerable<StateRange> SearchState(IEnumerable<string> expressions)
         {
             return _service.SearchState(expressions);
         }
@@ -64,7 +64,7 @@ namespace Service.Controllers
             return _service.SearchEntities(search);
         }
 
-        [HttpGet, Route("/SearchClusters")]
+        [HttpGet, Route("/ClusterEvents")]
         public IList<Cluster> ClusterEvents(IEnumerable<string> filterExpressions, IEnumerable<string> clusterExpressions)
         {
             return _service.ClusterEvents(filterExpressions, clusterExpressions);
