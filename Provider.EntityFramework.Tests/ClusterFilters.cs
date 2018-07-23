@@ -101,5 +101,20 @@ namespace Chronicity.Provider.EntityFramework.Tests
             Assert.Equal(new DateTime(2001, 1, 1, 1, 12, 0).ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"), match.Skip(1).First().End);
         }
 
+
+        [Fact]
+        public void ClusterFilter_Handles_EmptyResults()
+        {
+            _context.Database.EnsureDeleted();
+
+            var match = _service.ClusterEvents(
+                new string[] { "On.After=2001/01/01 01:00" },
+                new string[] { "TimeSpan <= 0.0:5:0" });
+
+
+            Assert.Equal(0, match.Count);
+        }
+
+
     }
 }

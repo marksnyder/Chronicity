@@ -408,6 +408,9 @@ namespace Chronicity.Provider.EntityFramework
         public IList<Cluster> ClusterEvents(IEnumerable<string> filterExpressions, IEnumerable<string> clusterExpressions)
         {
             var events = this.SearchEvents(filterExpressions);
+
+            if (events.Count() < 1 ) return new List<Cluster>();
+
             return CreateClusters(clusterExpressions.First(), clusterExpressions.Skip(1), events);
         }
 
