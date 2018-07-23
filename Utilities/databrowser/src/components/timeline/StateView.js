@@ -21,7 +21,12 @@ class StateView extends React.Component {
           return (
             <TableRow key={n.key + n.entity}>
               <TableCell component="th" scope="row">{n.key}</TableCell>
-              <TableCell>{n.value}</TableCell>
+              <TableCell>
+                {n.key == 'cam' &&
+                <img src={'http://viewex.chronicity.io/images/' + n.value} style={{ width: 400, padding: 5 }} alt="Cam Image" />
+                }
+                <div>{n.value}</div>
+              </TableCell>
             </TableRow>
           );
         })}

@@ -66,7 +66,7 @@ class BirdActivity {
 
 
        this.calls.push(
-         Chronicity.searchClusters([this.startExpression, this.endExpression, 'Type=[Bird Arrived,Bird Departed]'],['TimeSpan <= 0.0:20:0'])
+         Chronicity.searchClusters([this.startExpression, this.endExpression, 'Type=MotionStart'],['TimeSpan <= 0.0:01:00'])
            .then((data) => {
              this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,sessionStart);
              this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,sessionEnd);
