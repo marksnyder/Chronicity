@@ -16,7 +16,7 @@ class BirdActivity {
 
        var sessionStart =  (item) => {
              return  {
-                 title: 'Activity Begin',
+                 title: 'Bird Session Begin',
                  subtitle: 'Started ' + moment(item.start).format('hh:mm:ss'),
                  iconStyle: { "backgroundColor": "#1b5e20" },
                  iconContent: "B",
@@ -29,7 +29,7 @@ class BirdActivity {
 
         var sessionEnd =  (item) => {
                return  {
-                   title: 'Activity End',
+                   title: 'Bird Session End',
                    subtitle: 'Ended ' + moment(item.end).format('hh:mm:ss') + ' Events: ' + item.events.length + ' Duration: ' + moment(item.end).diff(moment(item.start), 'seconds') + ' seconds' ,
                    iconStyle: { "backgroundColor": "#b71c1c" },
                    iconContent: "E",
@@ -64,9 +64,32 @@ class BirdActivity {
                  }
              };
 
+         var refillStart =  (item) => {
+                return  {
+                    title: 'Refill Start',
+                    subtitle:  moment(item.start).format('hh:mm:ss'),
+                    iconStyle: { "backgroundColor": "#009faf" },
+                    iconContent: "RS",
+                    on: item.start,
+                    id: item.id,
+                    entities: item.entities
+                }
+            };
+
+        var refillEnd =  (item) => {
+               return  {
+                   title: 'Refill End',
+                   subtitle:  moment(item.end).format('hh:mm:ss'),
+                   iconStyle: { "backgroundColor": "#88ffff" },
+                   iconContent: "RE",
+                   on: item.end,
+                   id: item.id,
+                   entities: item.entities
+               }
+           };
 
        this.calls.push(
-         Chronicity.searchClusters([this.startExpression, this.endExpression],['Sequence = [MotionStart,MotionEnd]'])
+         Chronicity.searchClusters([this.startExpression, this.endExpression, 'Type=MotionStart'],['Within <= 0.0:01:00'])
            .then((data) => {
              this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,sessionStart);
              this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,sessionEnd);
@@ -86,6 +109,15 @@ class BirdActivity {
          Chronicity.filterEvents([this.startExpression, this.endExpression, 'Type=Sunset'])
            .then((data) => {
              this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,sunset);
+           })
+       );
+
+
+       this.calls.push(
+         Chronicity.searchClusters([this.startExpression, this.endExpression, 'Type=Feeder Refill'],['Within <= 0.0:01:00'])
+           .then((data) => {
+             this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,refillStart);
+             this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,refillEnd);
            })
        );
 
