@@ -419,7 +419,7 @@ namespace Chronicity.Provider.EntityFramework
             var clusters = new List<Cluster>();
 
 
-            if(expression.ToLower().StartsWith("timespan"))
+            if(expression.ToLower().StartsWith("within"))
             {
 
                 string comparer = "";
@@ -447,15 +447,64 @@ namespace Chronicity.Provider.EntityFramework
                         clusters.Add(current);
                     }
                 }
+            }
+            else if(expression.ToLower().StartsWith("sequence"))
+            {
+                var sequence = expression.Split('=')[1].Trim().Replace("[","").Replace("]","").Split(',');
 
-                foreach(var c in clusters)
+                var eventStack = new List<ExistingEvent>();
+                int seqPosition = 0;
+
+                foreach(var e in events)
                 {
-                    c.Start = c.Events.First().On;
-                    c.End = c.Events.Last().On;
-                    c.Entities = c.Events.SelectMany(x => x.Entities).Distinct();
+                    if(e.Type == sequence[seqPosition])
+                    {
+                        if(seqPosition >= sequence.Count() -1)
+                        {
+                            // Pattern matches - add cluster and reset
+                            eventStack.Add(e);
+                            clusters.Add(new Cluster()
+                            {
+                                Events = eventStack
+                            });
+                            seqPosition = 0;
+                        }
+                        else
+                        {
+                        // Match - not there yet though
+                            eventStack.Add(e);
+                            seqPosition++;
+                        }
+                    }
+                    else
+                    {
+                        // Not a match - reset everything
+                        eventStack = new List<ExistingEvent>();
+
+                        if(e.Type == sequence[0])
+                        {
+                            // Wasn't a match - but it does match the first so start there
+                            eventStack.Add(e);
+                            seqPosition = 1;
+                        }
+                        else
+                        {
+                            // Start over 
+                            seqPosition = 0;
+                        }
+
+
+                    }
                 }
 
             }
+            foreach (var c in clusters)
+            {
+                c.Start = c.Events.First().On;
+                c.End = c.Events.Last().On;
+                c.Entities = c.Events.SelectMany(x => x.Entities).Distinct();
+            }
+
 
             if (childExpressions.Count() == 0) return clusters;
 
