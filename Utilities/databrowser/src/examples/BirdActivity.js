@@ -16,7 +16,7 @@ class BirdActivity {
 
        var sessionStart =  (item) => {
              return  {
-                 title: 'Bird Session Begin',
+                 title: 'Activity Begin',
                  subtitle: 'Started ' + moment(item.start).format('hh:mm:ss'),
                  iconStyle: { "backgroundColor": "#1b5e20" },
                  iconContent: "B",
@@ -29,7 +29,7 @@ class BirdActivity {
 
         var sessionEnd =  (item) => {
                return  {
-                   title: 'Bird Session End',
+                   title: 'Activity End',
                    subtitle: 'Ended ' + moment(item.end).format('hh:mm:ss') + ' Events: ' + item.events.length + ' Duration: ' + moment(item.end).diff(moment(item.start), 'seconds') + ' seconds' ,
                    iconStyle: { "backgroundColor": "#b71c1c" },
                    iconContent: "E",
@@ -66,7 +66,7 @@ class BirdActivity {
 
 
        this.calls.push(
-         Chronicity.searchClusters([this.startExpression, this.endExpression, 'Type=MotionStart'],['TimeSpan <= 0.0:01:00'])
+         Chronicity.searchClusters([this.startExpression, this.endExpression],['Sequence = [MotionStart,MotionEnd]'])
            .then((data) => {
              this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,sessionStart);
              this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,sessionEnd);

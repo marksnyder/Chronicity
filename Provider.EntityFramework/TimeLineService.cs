@@ -455,7 +455,7 @@ namespace Chronicity.Provider.EntityFramework
                 var eventStack = new List<ExistingEvent>();
                 int seqPosition = 0;
 
-                foreach(var e in events)
+                foreach(var e in events.OrderBy(x => x.On))
                 {
                     if(e.Type == sequence[seqPosition])
                     {
