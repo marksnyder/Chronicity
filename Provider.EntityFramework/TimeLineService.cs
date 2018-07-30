@@ -411,12 +411,66 @@ namespace Chronicity.Provider.EntityFramework
 
             if (events.Count() < 1 ) return new List<Cluster>();
 
-            return CreateClusters(clusterExpressions.First(), clusterExpressions.Skip(1), events);
+            var eventClusters = events.Select(x => new Cluster()
+            {
+                 End = x.On,
+                 Start = x.On,
+                 Entities = x.Entities,
+                 SourceClusters = new List<Cluster>(),
+                 Type = x.Type
+            });
+
+            var layers = new Dictionary<int,List<string>>();
+
+            foreach(var exp in clusterExpressions)
+            {
+                int layer = 1;
+                string expClean = exp;
+
+                if(exp.Contains("|"))
+                {
+                    var layerSplit = exp.Split('|');
+                    layer = int.Parse(layerSplit[0]);
+                    expClean = string.Concat(layerSplit[1], "|", layerSplit[2]);
+                }
+
+                if(!layers.ContainsKey(layer))
+                {
+                    layers[layer] = new List<string>();
+                }
+
+                layers[layer].Add(expClean);
+            }
+
+            IEnumerable<Cluster> clusters = eventClusters;
+
+            foreach(var key in layers.Keys.OrderBy(x => x))
+            {
+                var layerClusters = new List<Cluster>();
+
+                foreach(var exp in layers[key])
+                {
+                    layerClusters.AddRange(CreateClusters(exp, clusters.OrderBy(x => x.Start)));
+                }
+
+                clusters = layerClusters;
+            }
+
+            return clusters.ToList();
         }
 
-        public IList<Cluster> CreateClusters(string expression, IEnumerable<string> childExpressions, IEnumerable<ExistingEvent> events)
+        public IList<Cluster> CreateClusters(string expression,  IEnumerable<Cluster> events)
         {
             var clusters = new List<Cluster>();
+
+            string typedExpression = string.Empty;
+
+            if(expression.Contains("|"))
+            {
+                var typeSplit = expression.Split('|');
+                typedExpression = typeSplit[0].Trim();
+                expression = typeSplit[1].Trim();
+            }
 
 
             if(expression.ToLower().StartsWith("within"))
@@ -428,22 +482,22 @@ namespace Chronicity.Provider.EntityFramework
                 var value = expression.Split(new string[] { comparer }, StringSplitOptions.RemoveEmptyEntries)[1];
                 var t = TimeSpan.Parse(value);
 
-                var current = new Cluster() { Events = new List<ExistingEvent>() };
+                var current = new Cluster() { SourceClusters = new List<Cluster>() };
                 clusters.Add(current);
                 DateTime? lastTime = null;
                 
                 foreach(var e in events)
                 {
-                    if(lastTime == null || DateTime.Parse(e.On).Subtract(lastTime.Value) <= t)
+                    if(lastTime == null || DateTime.Parse(e.Start).Subtract(lastTime.Value) <= t)
                     {
-                        current.Events.Add(e);
-                        lastTime = DateTime.Parse(e.On);
+                        current.SourceClusters.Add(e);
+                        lastTime = DateTime.Parse(e.End);
                     }
                     else
                     {
-                        current = new Cluster() { Events = new List<ExistingEvent>() };
-                        current.Events.Add(e);
-                        lastTime = DateTime.Parse(e.On);
+                        current = new Cluster() { SourceClusters = new List<Cluster>() };
+                        current.SourceClusters.Add(e);
+                        lastTime = DateTime.Parse(e.End);
                         clusters.Add(current);
                     }
                 }
@@ -452,10 +506,10 @@ namespace Chronicity.Provider.EntityFramework
             {
                 var sequence = expression.Split('=')[1].Trim().Replace("[","").Replace("]","").Split(',');
 
-                var eventStack = new List<ExistingEvent>();
+                var eventStack = new List<Cluster>();
                 int seqPosition = 0;
 
-                foreach(var e in events.OrderBy(x => x.On))
+                foreach(var e in events.OrderBy(x => x.Start))
                 {
                     if(e.Type == sequence[seqPosition])
                     {
@@ -465,7 +519,7 @@ namespace Chronicity.Provider.EntityFramework
                             eventStack.Add(e);
                             clusters.Add(new Cluster()
                             {
-                                Events = eventStack
+                                SourceClusters = eventStack
                             });
                             seqPosition = 0;
                         }
@@ -479,7 +533,7 @@ namespace Chronicity.Provider.EntityFramework
                     else
                     {
                         // Not a match - reset everything
-                        eventStack = new List<ExistingEvent>();
+                        eventStack = new List<Cluster>();
 
                         if(e.Type == sequence[0])
                         {
@@ -500,22 +554,14 @@ namespace Chronicity.Provider.EntityFramework
             }
             foreach (var c in clusters)
             {
-                c.Start = c.Events.First().On;
-                c.End = c.Events.Last().On;
-                c.Entities = c.Events.SelectMany(x => x.Entities).Distinct();
+                c.Start = c.SourceClusters.First().Start;
+                c.End = c.SourceClusters.Last().End;
+                c.Entities = c.SourceClusters.SelectMany(x => x.Entities).Distinct();
+                c.Type = typedExpression;
             }
 
 
-            if (childExpressions.Count() == 0) return clusters;
-
-            var results = new List<Cluster>();
-
-            foreach (var cluster in clusters)
-            {
-                results.AddRange(CreateClusters(childExpressions.First(), childExpressions.Skip(1), cluster.Events));
-            }
-
-            return results;
+            return clusters;
         }
 
     }

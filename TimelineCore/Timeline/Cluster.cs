@@ -8,7 +8,8 @@ namespace Chronicity.Core.Timeline
     {
         public string Start { get; set; }
         public string End { get; set; }
-        public IList<ExistingEvent> Events { get; set; }
+        public IList<Cluster> SourceClusters { get; set; }
         public IEnumerable<string> Entities { get; set; }
+        public string Type { get; set; }
     }
 }
