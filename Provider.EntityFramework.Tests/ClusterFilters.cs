@@ -48,7 +48,7 @@ namespace Chronicity.Provider.EntityFramework.Tests
             _service.RegisterEvent(e2);
 
             var match = _service.ClusterEvents(
-                new string[] { "On.After=2001/01/01 01:00" },
+                new string[] { "On > 2001/01/01 01:00" },
                 new string[] { "Within <= 0.0:5:0" });
 
 
@@ -89,7 +89,7 @@ namespace Chronicity.Provider.EntityFramework.Tests
             _service.RegisterEvent(e3);
 
             var match = _service.ClusterEvents(
-                new string[] { "On.After=2001/01/01 01:00" },
+                new string[] { "On > 2001/01/01 01:00" },
                 new string[] { "Within <= 0.0:5:0" });
 
 
@@ -108,7 +108,7 @@ namespace Chronicity.Provider.EntityFramework.Tests
             _context.Database.EnsureDeleted();
 
             var match = _service.ClusterEvents(
-                new string[] { "On.After=2001/01/01 01:00" },
+                new string[] { "On > 2001/01/01 01:00" },
                 new string[] { "Within <= 0.0:5:0" });
 
 
@@ -140,7 +140,7 @@ namespace Chronicity.Provider.EntityFramework.Tests
             _service.RegisterEvent(e2);
 
             var match = _service.ClusterEvents(
-                new string[] { "On.After=2001/01/01 01:00" },
+                new string[] { "On > 2001/01/01 01:00" },
                 new string[] { "Sequence = [MyEventType1,MyEventType2]" });
 
 
@@ -181,7 +181,7 @@ namespace Chronicity.Provider.EntityFramework.Tests
             _service.RegisterEvent(e3);
 
             var match = _service.ClusterEvents(
-                new string[] { "On.After=2001/01/01 01:00" },
+                new string[] { "On > 2001/01/01 01:00" },
                 new string[] { "Sequence = [MyEventType1,MyEventType2]" });
 
 
@@ -230,7 +230,7 @@ namespace Chronicity.Provider.EntityFramework.Tests
             _service.RegisterEvent(e4);
 
             var match = _service.ClusterEvents(
-                new string[] { "On.After=2001/01/01 01:00" },
+                new string[] { "On > 2001/01/01 01:00" },
                 new string[] {
                     " 1 | MyCluster1 | Sequence = [MyEventType1,MyEventType2]",
                     " 1 | MyCluster2 | Sequence = [MyEventType3,MyEventType4]",

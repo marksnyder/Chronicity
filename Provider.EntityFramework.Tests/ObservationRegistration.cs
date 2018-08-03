@@ -39,7 +39,7 @@ namespace Provider.EntityFramework.Tests
                 On = "2001/01/01",
                 Type = "MyEventType",
                 Entity = "E1" ,
-                Expressions = new[] { "Entity.State.MyVal=Hello World" }
+                Expressions = new[] { "State.MyVal=Hello World" }
             };
 
             service.RegisterObservation(o);
@@ -58,7 +58,7 @@ namespace Provider.EntityFramework.Tests
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World" }
+                Expressions = new[] { "State.MyVal=Hello World" }
             };
 
             var o2 = new Observation()
@@ -66,7 +66,7 @@ namespace Provider.EntityFramework.Tests
                 On = "2001/01/01 01:02",
                 Type = "MyEventType",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyNextVal=Hello World Again" }
+                Expressions = new[] { "State.MyNextVal=Hello World Again" }
             };
 
             service.RegisterObservation(o1);
@@ -87,7 +87,7 @@ namespace Provider.EntityFramework.Tests
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World" }
+                Expressions = new[] { "State.MyVal=Hello World" }
             };
 
             var o2 = new Observation()
@@ -95,7 +95,7 @@ namespace Provider.EntityFramework.Tests
                 On = "2001/01/01 01:02",
                 Type = "MyEventType",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyNextVal=Hello World Again" }
+                Expressions = new[] { "State.MyNextVal=Hello World Again" }
             };
 
             service.RegisterObservation(o1);
@@ -118,7 +118,7 @@ namespace Provider.EntityFramework.Tests
                 On = "2001/01/01 01:03",
                 Type = "MyEventType",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyNextVal=3" }
+                Expressions = new[] { "State.MyNextVal=3" }
             };
 
             var o2 = new Observation()
@@ -126,7 +126,7 @@ namespace Provider.EntityFramework.Tests
                 On = "2001/01/01 01:02",
                 Type = "MyEventType",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyNextVal=2" }
+                Expressions = new[] { "State.MyNextVal=2" }
             };
 
             var o3 = new Observation()
@@ -134,7 +134,7 @@ namespace Provider.EntityFramework.Tests
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyNextVal=1" }
+                Expressions = new[] { "State.MyNextVal=1" }
             };
 
 
@@ -158,7 +158,7 @@ namespace Provider.EntityFramework.Tests
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World" }
+                Expressions = new[] { "State.MyVal=Hello World" }
             };
 
             var o2 = new Observation()
@@ -166,7 +166,7 @@ namespace Provider.EntityFramework.Tests
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyNextVal=Hello World Again" }
+                Expressions = new[] { "State.MyNextVal=Hello World Again" }
             };
 
 
@@ -188,7 +188,7 @@ namespace Provider.EntityFramework.Tests
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World", "Entity.State.MyNextVal=Hello World Again" }
+                Expressions = new[] { "State.MyVal=Hello World", "State.MyNextVal=Hello World Again" }
             };
 
             service.RegisterObservation(o1);
@@ -208,7 +208,7 @@ namespace Provider.EntityFramework.Tests
                 On = "2001/01/01 01:01",
                 Type = "MyEventType",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World" }
+                Expressions = new[] { "State.MyVal=Hello World" }
             };
 
             var o2 = new Observation()
@@ -216,7 +216,7 @@ namespace Provider.EntityFramework.Tests
                 On = "2001/01/01 01:02",
                 Type = "MyEventType",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyNextVal=Hello World Again" }
+                Expressions = new[] { "State.MyNextVal=Hello World Again" }
             };
 
 
@@ -241,7 +241,7 @@ namespace Provider.EntityFramework.Tests
             {
                 On = "2001/01/01",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World" }
+                Expressions = new[] { "State.MyVal=Hello World" }
             };
 
 
@@ -249,7 +249,7 @@ namespace Provider.EntityFramework.Tests
             {
                 On = "2001/01/02",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World Again" }
+                Expressions = new[] { "State.MyVal=Hello World Again" }
             };
 
 
@@ -272,7 +272,7 @@ namespace Provider.EntityFramework.Tests
             {
                 On = "2001/01/01",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World" }
+                Expressions = new[] { "State.MyVal=Hello World" }
             };
 
 
@@ -280,7 +280,7 @@ namespace Provider.EntityFramework.Tests
             {
                 On = "2001/01/02",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World Again" }
+                Expressions = new[] { "State.MyVal=Hello World Again" }
             };
 
 

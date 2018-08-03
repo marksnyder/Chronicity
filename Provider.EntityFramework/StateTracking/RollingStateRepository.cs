@@ -150,9 +150,9 @@ namespace Provider.EntityFramework.StateTracking
 
             foreach (var observation in expressions)
             {
-                if (observation.StartsWith("Entity.State."))
+                if (observation.StartsWith("State."))
                 {
-                    var expression = observation.Replace("Entity.State.", "");
+                    var expression = observation.Replace("State.", "");
                     var var = expression.Split('=')[0];
                     var value = expression.Split('=')[1];
 

@@ -35,20 +35,20 @@ namespace Chronicity.Provider.EntityFramework.Tests
             {
                 On = "2001/01/01",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World" }
+                Expressions = new[] { "State.MyVal=Hello World" }
             };
 
             var o2 = new Observation()
             {
                 On = "2001/01/02",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=More" }
+                Expressions = new[] { "State.MyVal=More" }
             };
 
             service.RegisterObservation(o);
             service.RegisterObservation(o2);
 
-            var result = service.SearchState(new[] { "Entity.State.MyVal=Hello World" }).First();
+            var result = service.SearchState(new[] { "State.MyVal=Hello World" }).First();
 
             Assert.Equal("E1", result.Entity);
             Assert.Equal(new DateTime(2001, 1, 1), result.Start);
@@ -65,28 +65,28 @@ namespace Chronicity.Provider.EntityFramework.Tests
             {
                 On = "2001/01/01",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World" }
+                Expressions = new[] { "State.MyVal=Hello World" }
             };
 
             var o2 = new Observation()
             {
                 On = "2001/01/02",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=More" }
+                Expressions = new[] { "State.MyVal=More" }
             };
 
             var o3 = new Observation()
             {
                 On = "2001/01/03",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=More More" }
+                Expressions = new[] { "State.MyVal=More More" }
             };
 
             service.RegisterObservation(o);
             service.RegisterObservation(o2);
             service.RegisterObservation(o3);
 
-            var result = service.SearchState(new[] { "Entity.State.MyVal=Hello World" });
+            var result = service.SearchState(new[] { "State.MyVal=Hello World" });
 
             Assert.Equal("E1", result.First().Entity);
             Assert.Equal(new DateTime(2001, 1, 1), result.First().Start);
@@ -105,21 +105,21 @@ namespace Chronicity.Provider.EntityFramework.Tests
             {
                 On = "2001/01/01",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=1" }
+                Expressions = new[] { "State.MyVal=1" }
             };
 
             var o2 = new Observation()
             {
                 On = "2001/01/02",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=10" }
+                Expressions = new[] { "State.MyVal=10" }
             };
 
 
             service.RegisterObservation(o);
             service.RegisterObservation(o2);
 
-            var result = service.SearchState(new[] { "Entity.State.MyVal < 10" });
+            var result = service.SearchState(new[] { "State.MyVal < 10" });
 
             Assert.Equal("E1", result.First().Entity);
             Assert.Equal(new DateTime(2001, 1, 1), result.First().Start);
@@ -137,21 +137,21 @@ namespace Chronicity.Provider.EntityFramework.Tests
             {
                 On = "2001/01/01",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=10" }
+                Expressions = new[] { "State.MyVal=10" }
             };
 
             var o2 = new Observation()
             {
                 On = "2001/01/02",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=11" }
+                Expressions = new[] { "State.MyVal=11" }
             };
 
 
             service.RegisterObservation(o);
             service.RegisterObservation(o2);
 
-            var result = service.SearchState(new[] { "Entity.State.MyVal <= 10" });
+            var result = service.SearchState(new[] { "State.MyVal <= 10" });
 
             Assert.Equal("E1", result.First().Entity);
             Assert.Equal(new DateTime(2001, 1, 1), result.First().Start);
@@ -170,21 +170,21 @@ namespace Chronicity.Provider.EntityFramework.Tests
             {
                 On = "2001/01/01",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=1" }
+                Expressions = new[] { "State.MyVal=1" }
             };
 
             var o2 = new Observation()
             {
                 On = "2001/01/02",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=11" }
+                Expressions = new[] { "State.MyVal=11" }
             };
 
 
             service.RegisterObservation(o);
             service.RegisterObservation(o2);
 
-            var result = service.SearchState(new[] { "Entity.State.MyVal > 10" });
+            var result = service.SearchState(new[] { "State.MyVal > 10" });
 
             Assert.Equal("E1", result.First().Entity);
             Assert.Equal(new DateTime(2001, 1, 2), result.First().Start);
@@ -202,21 +202,21 @@ namespace Chronicity.Provider.EntityFramework.Tests
             {
                 On = "2001/01/01",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=1" }
+                Expressions = new[] { "State.MyVal=1" }
             };
 
             var o2 = new Observation()
             {
                 On = "2001/01/02",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=10" }
+                Expressions = new[] { "State.MyVal=10" }
             };
 
 
             service.RegisterObservation(o);
             service.RegisterObservation(o2);
 
-            var result = service.SearchState(new[] { "Entity.State.MyVal >= 10" });
+            var result = service.SearchState(new[] { "State.MyVal >= 10" });
 
             Assert.Equal("E1", result.First().Entity);
             Assert.Equal(new DateTime(2001, 1, 2), result.First().Start);
@@ -235,20 +235,20 @@ namespace Chronicity.Provider.EntityFramework.Tests
             {
                 On = "2001/01/01",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World" }
+                Expressions = new[] { "State.MyVal=Hello World" }
             };
 
             var o2 = new Observation()
             {
                 On = "2001/01/03",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=More" }
+                Expressions = new[] { "State.MyVal=More" }
             };
 
             service.RegisterObservation(o);
             service.RegisterObservation(o2);
 
-            var result = service.SearchState(new[] { "On.After=1/04/2001" }).First();
+            var result = service.SearchState(new[] { "After=1/04/2001" }).First();
 
             Assert.Equal(new DateTime(2001, 1, 4), result.Start);
             Assert.Equal("More", result.Value);
@@ -265,20 +265,20 @@ namespace Chronicity.Provider.EntityFramework.Tests
             {
                 On = "2001/01/01",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World" }
+                Expressions = new[] { "State.MyVal=Hello World" }
             };
 
             var o2 = new Observation()
             {
                 On = "2001/01/03",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=More" }
+                Expressions = new[] { "State.MyVal=More" }
             };
 
             service.RegisterObservation(o);
             service.RegisterObservation(o2);
 
-            var result = service.SearchState(new[] { "On.After=1/01/2000" });
+            var result = service.SearchState(new[] { "After=1/01/2000" });
 
             Assert.Equal(2, result.Count());
             Assert.Equal(new DateTime(2001, 1, 1), result.First().Start);
@@ -301,20 +301,20 @@ namespace Chronicity.Provider.EntityFramework.Tests
             {
                 On = "2001/01/01",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World" }
+                Expressions = new[] { "State.MyVal=Hello World" }
             };
 
             var o2 = new Observation()
             {
                 On = "2001/01/03",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=More" }
+                Expressions = new[] { "State.MyVal=More" }
             };
 
             service.RegisterObservation(o);
             service.RegisterObservation(o2);
 
-            var result = service.SearchState(new[] { "On.After=1/02/2001" });
+            var result = service.SearchState(new[] { "After=1/02/2001" });
 
             Assert.Equal(2, result.Count());
             Assert.Equal(new DateTime(2001, 1, 2), result.First().Start);
@@ -338,20 +338,20 @@ namespace Chronicity.Provider.EntityFramework.Tests
             {
                 On = "2001/01/01",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World" }
+                Expressions = new[] { "State.MyVal=Hello World" }
             };
 
             var o2 = new Observation()
             {
                 On = "2001/01/04",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=More" }
+                Expressions = new[] { "State.MyVal=More" }
             };
 
             service.RegisterObservation(o);
             service.RegisterObservation(o2);
 
-            var result = service.SearchState(new[] { "On.Before=1/02/2001" });
+            var result = service.SearchState(new[] { "Before=1/02/2001" });
 
             Assert.Equal(new DateTime(2001, 1, 1), result.First().Start);
             Assert.Equal(new DateTime(2001, 1, 2), result.First().End);

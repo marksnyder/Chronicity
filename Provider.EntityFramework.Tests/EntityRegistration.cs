@@ -35,7 +35,7 @@ namespace Provider.EntityFramework.Tests
             {
                 On = "2001/01/01 01:01",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World" }
+                Expressions = new[] { "State.MyVal=Hello World" }
             };
 
             var e2 = new NewEvent()
@@ -49,7 +49,7 @@ namespace Provider.EntityFramework.Tests
             {
                 On = "2001/01/01 01:02",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World Again" }
+                Expressions = new[] { "State.MyVal=Hello World Again" }
             };
 
 
@@ -82,7 +82,7 @@ namespace Provider.EntityFramework.Tests
             {
                 On = "2001/01/01 01:01",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World" }
+                Expressions = new[] { "State.MyVal=Hello World" }
             };
 
             var e2 = new NewEvent()
@@ -96,7 +96,7 @@ namespace Provider.EntityFramework.Tests
             {
                 On = "2001/01/01 01:03",
                 Entity = "E1",
-                Expressions = new[] { "Entity.State.MyVal=Hello World Again" }
+                Expressions = new[] { "State.MyVal=Hello World Again" }
             };
 
 

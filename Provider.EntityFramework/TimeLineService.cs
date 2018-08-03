@@ -119,7 +119,7 @@ namespace Chronicity.Provider.EntityFramework
                 events = ParseFilterEventExpressions(expression, events);
             }
 
-            var stateExpressions = expressions.Where(x => x.StartsWith("Entity.State."));
+            var stateExpressions = expressions.Where(x => x.StartsWith("State."));
 
             if (stateExpressions.Count() > 0)
             {
@@ -147,10 +147,19 @@ namespace Chronicity.Provider.EntityFramework
         {
             var ret = events;
 
+            string comparer = "";
+
+            if (expression.Contains("=")) comparer = "=";
+            if (expression.Contains("<")) comparer = "<";
+            if (expression.Contains(">")) comparer = ">";
+            if (expression.Contains(">=")) comparer = ">=";
+            if (expression.Contains("<=")) comparer = "<=";
+
+            var action = expression.Split(comparer.ToCharArray())[0].Trim();
+            var value = expression.Split(comparer.ToCharArray())[1].Trim();
+
             if (expression.StartsWith("Type"))
             {
-                var value = expression.Split('=')[1];
-
                 List<string> includeValues;
 
                 if(value.Contains("["))
@@ -164,28 +173,13 @@ namespace Chronicity.Provider.EntityFramework
 
                 ret = ret.Where(x => includeValues.Contains(x.Type));
             }
-            else if (expression.StartsWith("On."))
+            else if(action == "On")
             {
-                var e = expression.Replace("On.", "");
-                var action = e.Split('=')[0];
-
-                if (action == "After")
-                {
-                    var value = DateTime.Parse(e.Split('=')[1]);
-                    ret = ret.Where(x => x.On > value);
-                }
-                else if (action == "Before")
-                {
-                    var value = DateTime.Parse(e.Split('=')[1]);
-                    ret = ret.Where(x =>x.On < value);
-                }
-                else if (action == "Between")
-                {
-                    var value = e.Split('=')[1].Split(',');
-                    var value1 = DateTime.Parse(value[0]);
-                    var value2 = DateTime.Parse(value[1]);
-                    ret = ret.Where(x => x.On > value1 && x.On < value2);
-                }
+                if(comparer == "=") ret = ret.Where(x => x.On == DateTime.Parse(value));
+                if(comparer == ">=") ret = ret.Where(x => x.On >= DateTime.Parse(value));
+                if(comparer == ">") ret = ret.Where(x => x.On > DateTime.Parse(value));
+                if(comparer == "<=") ret = ret.Where(x => x.On <= DateTime.Parse(value));
+                if(comparer == "<") ret = ret.Where(x => x.On < DateTime.Parse(value));
             }
 
             return ret.AsQueryable();
@@ -214,9 +208,9 @@ namespace Chronicity.Provider.EntityFramework
 
             foreach (var expression in expressions)
             {
-                if (expression.StartsWith("Entity.State."))
+                if (expression.StartsWith("State."))
                 {
-                    var e = expression.Replace("Entity.State.", "");
+                    var e = expression.Replace("State.", "");
 
                     string comparer = "";
 
@@ -266,9 +260,9 @@ namespace Chronicity.Provider.EntityFramework
 
                 }
 
-                if (expression.StartsWith("On.After"))
+                if (expression.StartsWith("After"))
                 {
-                    var e = expression.Replace("On.After", "");
+                    var e = expression.Replace("After", "");
                     var var = e.Split('=')[0];
                     var value = DateTime.Parse(e.Split('=')[1]);
                     stateData = stateData.Where(x => x.state.On > value || (x.key.LastChange < value && x.state.On == x.key.LastChange));
@@ -281,9 +275,9 @@ namespace Chronicity.Provider.EntityFramework
 );
                 }
 
-                if (expression.StartsWith("On.Before"))
+                if (expression.StartsWith("Before"))
                 {
-                    var e = expression.Replace("On.Before", "");
+                    var e = expression.Replace("Before", "");
                     var var = e.Split('=')[0];
                     var value = DateTime.Parse(e.Split('=')[1]);
                     stateData = stateData.Where(x => x.state.On < value);
@@ -378,9 +372,9 @@ namespace Chronicity.Provider.EntityFramework
         {
             var ret = contexts;
 
-            if (expression.StartsWith("Entity.State."))
+            if (expression.StartsWith("State."))
             {
-                var e = expression.Replace("Entity.State.", "");
+                var e = expression.Replace("State.", "");
                 var var = e.Split('=')[0];
                 var value = e.Split('=')[1];
                 ret = ret.Where(x => x.States.Count(y => y.ContainsKey(var) && y[var] == value) > 0);
