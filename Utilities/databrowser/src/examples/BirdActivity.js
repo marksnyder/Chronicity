@@ -11,12 +11,12 @@ class BirdActivity {
        this.myEvents = [];
        this.myStateChanges = [];
        this.calls = []
-       this.startExpression = 'On.After=' + moment().subtract(4, 'days').format();
-       this.endExpression = 'On.Before=' + moment().format();
+       this.startExpression = 'On > ' + moment().subtract(4, 'days').format();
+       this.endExpression = 'On <' + moment().format();
 
        var sessionStart =  (item) => {
              return  {
-                 title: 'Bird Session Begin',
+                 title: 'Motion Began',
                  subtitle: 'Started ' + moment(item.start).format('hh:mm:ss'),
                  iconStyle: { "backgroundColor": "#1b5e20" },
                  iconContent: "B",
@@ -29,7 +29,7 @@ class BirdActivity {
 
         var sessionEnd =  (item) => {
                return  {
-                   title: 'Bird Session End',
+                   title: 'Motion Ended',
                    subtitle: 'Ended ' + moment(item.end).format('hh:mm:ss') + ' Events: ' + item.sourceClusters.length + ' Duration: ' + moment(item.end).diff(moment(item.start), 'seconds') + ' seconds' ,
                    iconStyle: { "backgroundColor": "#b71c1c" },
                    iconContent: "E",
@@ -89,7 +89,9 @@ class BirdActivity {
            };
 
        this.calls.push(
-         Chronicity.searchClusters([this.startExpression, this.endExpression, 'Type=MotionStart'],['Within <= 0.0:01:00'])
+         Chronicity.searchClusters([this.startExpression, this.endExpression, 'Type=[MotionStart,MotionEnd]' ],
+           ['1 | MotionSession | Sequence = [MotionStart,MotionEnd]',
+            '2 | MotionGroup | Within <= 0.0:01:00 '],)
            .then((data) => {
              this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,sessionStart);
              this.myEvents = DataUtilities.mergeMarkers(this.myEvents,data,sessionEnd);
@@ -126,7 +128,7 @@ class BirdActivity {
         Chronicity.filterState([
            this.startExpression,
            this.endExpression,
-           'Entity.State.temp >= 90'
+           'State.temp >= 90'
          ])
            .then((data) => {
                this.myStateChanges = DataUtilities.mergeTrackerChanges(this.myStateChanges,data,'temp','#f57f17');
@@ -137,8 +139,8 @@ class BirdActivity {
         Chronicity.filterState([
            this.startExpression,
            this.endExpression,
-           'Entity.State.temp >= 80',
-           'Entity.State.temp < 90'
+           'State.temp >= 80',
+           'State.temp < 90'
           ])
            .then((data) => {
                this.myStateChanges = DataUtilities.mergeTrackerChanges(this.myStateChanges,data,'temp','#fbc02d');
@@ -148,8 +150,8 @@ class BirdActivity {
        Chronicity.filterState([
            this.startExpression,
            this.endExpression,
-           'Entity.State.temp >= 70',
-           'Entity.State.temp < 80'
+           'State.temp >= 70',
+           'State.temp < 80'
          ])
            .then((data) => {
                this.myStateChanges = DataUtilities.mergeTrackerChanges(this.myStateChanges,data,'temp','#4fc3f7');
@@ -159,7 +161,7 @@ class BirdActivity {
         Chronicity.filterState([
            this.startExpression,
            this.endExpression,
-           'Entity.State.temp < 70' ])
+           'State.temp < 70' ])
            .then((data) => {
                this.myStateChanges = DataUtilities.mergeTrackerChanges(this.myStateChanges,data,'temp','#01579b');
        }));
