@@ -522,7 +522,7 @@ namespace Chronicity.Provider.EntityFramework
                                 Count = eventStack.Count,
                                 Start = eventStack.Min(x => DateTime.Parse(x.Start)).ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"),
                                 End = eventStack.Max(x => DateTime.Parse(x.End)).ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"),
-                                Entities = eventStack.SelectMany(x => x.Entities).Distinct()
+                                Entities = eventStack.SelectMany(x => x.Entities).Distinct().ToList()
                             });
                             seqPosition = 0;
                             eventStack.Clear();

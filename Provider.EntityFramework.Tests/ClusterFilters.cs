@@ -290,6 +290,7 @@ namespace Chronicity.Provider.EntityFramework.Tests
                 });
 
             Assert.Equal("FinalCluster", match.First().Type);
+            Assert.Equal("E1", match.First().Entities.First());
             Assert.Single(match);
 
         }
