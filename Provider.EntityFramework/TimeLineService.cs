@@ -487,6 +487,8 @@ namespace Chronicity.Provider.EntityFramework
                         lastTime = DateTime.Parse(e.End);
                         if (String.IsNullOrEmpty(current.Start) || DateTime.Parse(e.Start) < DateTime.Parse(current.Start)) current.Start = e.Start;
                         if (String.IsNullOrEmpty(current.End) || DateTime.Parse(e.End) > DateTime.Parse(current.End)) current.End = e.End;
+                        current.Entities = current.Entities.Concat(e.Entities).Distinct();
+
                     }
                     else
                     {
@@ -495,6 +497,7 @@ namespace Chronicity.Provider.EntityFramework
                         lastTime = DateTime.Parse(e.End);
                         if (String.IsNullOrEmpty(current.Start) || DateTime.Parse(e.Start) < DateTime.Parse(current.Start)) current.Start = e.Start;
                         if (String.IsNullOrEmpty(current.End) || DateTime.Parse(e.End) > DateTime.Parse(current.End)) current.End = e.End;
+                        current.Entities = current.Entities.Concat(e.Entities).Distinct();
                         clusters.Add(current);
                     }
                 }
@@ -518,7 +521,8 @@ namespace Chronicity.Provider.EntityFramework
                             {
                                 Count = eventStack.Count,
                                 Start = eventStack.Min(x => DateTime.Parse(x.Start)).ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"),
-                                End = eventStack.Max(x => DateTime.Parse(x.End)).ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz")
+                                End = eventStack.Max(x => DateTime.Parse(x.End)).ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"),
+                                Entities = eventStack.SelectMany(x => x.Entities).Distinct()
                             });
                             seqPosition = 0;
                             eventStack.Clear();

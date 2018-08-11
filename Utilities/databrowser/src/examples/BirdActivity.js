@@ -30,7 +30,7 @@ class BirdActivity {
         var sessionEnd =  (item) => {
                return  {
                    title: 'Motion Ended',
-                   subtitle: 'Ended ' + moment(item.end).format('hh:mm:ss') + ' Events: ' + item.sourceClusters.length + ' Duration: ' + moment(item.end).diff(moment(item.start), 'seconds') + ' seconds' ,
+                   subtitle: 'Ended ' + moment(item.end).format('hh:mm:ss') + ' Events: ' + item.count + ' Duration: ' + moment(item.end).diff(moment(item.start), 'seconds') + ' seconds' ,
                    iconStyle: { "backgroundColor": "#b71c1c" },
                    iconContent: "E",
                    on: item.end,
