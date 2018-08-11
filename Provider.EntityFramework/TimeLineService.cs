@@ -475,7 +475,7 @@ namespace Chronicity.Provider.EntityFramework
                 var value = expression.Split(new string[] { comparer }, StringSplitOptions.RemoveEmptyEntries)[1];
                 var t = TimeSpan.Parse(value);
 
-                var current = new Cluster();
+                var current = new Cluster() { Entities = new List<string>() };
                 clusters.Add(current);
                 DateTime? lastTime = null;
                 
@@ -492,7 +492,7 @@ namespace Chronicity.Provider.EntityFramework
                     }
                     else
                     {
-                        current = new Cluster();
+                        current = new Cluster() { Entities = new List<string>() };
                         current.Count++;
                         lastTime = DateTime.Parse(e.End);
                         if (String.IsNullOrEmpty(current.Start) || DateTime.Parse(e.Start) < DateTime.Parse(current.Start)) current.Start = e.Start;
