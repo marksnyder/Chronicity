@@ -410,7 +410,6 @@ namespace Chronicity.Provider.EntityFramework
                  End = x.On,
                  Start = x.On,
                  Entities = x.Entities,
-                 SourceClusters = new List<Cluster>(),
                  Type = x.Type
             });
 
@@ -476,7 +475,7 @@ namespace Chronicity.Provider.EntityFramework
                 var value = expression.Split(new string[] { comparer }, StringSplitOptions.RemoveEmptyEntries)[1];
                 var t = TimeSpan.Parse(value);
 
-                var current = new Cluster() { SourceClusters = new List<Cluster>() };
+                var current = new Cluster();
                 clusters.Add(current);
                 DateTime? lastTime = null;
                 
@@ -484,14 +483,18 @@ namespace Chronicity.Provider.EntityFramework
                 {
                     if(lastTime == null || DateTime.Parse(e.Start).Subtract(lastTime.Value) <= t)
                     {
-                        current.SourceClusters.Add(e);
+                        current.Count++;
                         lastTime = DateTime.Parse(e.End);
+                        if (String.IsNullOrEmpty(current.Start) || DateTime.Parse(e.Start) < DateTime.Parse(current.Start)) current.Start = e.Start;
+                        if (String.IsNullOrEmpty(current.End) || DateTime.Parse(e.End) > DateTime.Parse(current.End)) current.End = e.End;
                     }
                     else
                     {
-                        current = new Cluster() { SourceClusters = new List<Cluster>() };
-                        current.SourceClusters.Add(e);
+                        current = new Cluster();
+                        current.Count++;
                         lastTime = DateTime.Parse(e.End);
+                        if (String.IsNullOrEmpty(current.Start) || DateTime.Parse(e.Start) < DateTime.Parse(current.Start)) current.Start = e.Start;
+                        if (String.IsNullOrEmpty(current.End) || DateTime.Parse(e.End) > DateTime.Parse(current.End)) current.End = e.End;
                         clusters.Add(current);
                     }
                 }
@@ -513,9 +516,12 @@ namespace Chronicity.Provider.EntityFramework
                             eventStack.Add(e);
                             clusters.Add(new Cluster()
                             {
-                                SourceClusters = eventStack
+                                Count = eventStack.Count,
+                                Start = eventStack.Min(x => DateTime.Parse(x.Start)).ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"),
+                                End = eventStack.Max(x => DateTime.Parse(x.End)).ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz")
                             });
                             seqPosition = 0;
+                            eventStack.Clear();
                         }
                         else
                         {
@@ -548,9 +554,6 @@ namespace Chronicity.Provider.EntityFramework
             }
             foreach (var c in clusters)
             {
-                c.Start = c.SourceClusters.First().Start;
-                c.End = c.SourceClusters.Last().End;
-                c.Entities = c.SourceClusters.SelectMany(x => x.Entities).Distinct();
                 c.Type = typedExpression;
             }
 
